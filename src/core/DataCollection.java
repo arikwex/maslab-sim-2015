@@ -1,7 +1,11 @@
-package robot
+package core;
+
+import java.util.ArrayList;
+
+import orc.Orc;
 
 public class DataCollection {
-    private OrcController orc;
+    private Orc orc;
 
     public EncoderPair encoders;
     public ArrayList<Sonar> sonars;
@@ -9,10 +13,10 @@ public class DataCollection {
     public Delta delta;
     
     
-    public DataCollection(OrcController orc) {
+    public DataCollection(Orc orc) {
         this.orc = orc;    
 
-        encoders = new EncoderPair();
+        encoders = new EncoderPair(orc);
         //sonars = new ArrayList<Sonar>;
         //vision = new Vision();
         //delta = new Delta();

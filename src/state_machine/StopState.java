@@ -1,16 +1,16 @@
-package state_machine
+package state_machine;
 
-public class StopState() extends State{
+public class StopState extends State{
     
     public StopState() {
         
     }
     
-    private State transition() {
+    protected State transition() {
         return null;
     }
     
-    private void run() {
+    protected void run() {
         
     }
 }

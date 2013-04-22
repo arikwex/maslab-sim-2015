@@ -1,16 +1,16 @@
-package state_machine
+package state_machine;
 
-public class ExploreState() extends State{
+public class ExploreState extends State{
     
     public ExploreState() {
         
     }
     
-    private State transition() {
+    protected State transition() {
         return this;
     }
     
-    private void run() {
+    protected void run() {
         
     }
 }

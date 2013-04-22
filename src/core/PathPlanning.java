@@ -1,4 +1,6 @@
-package robot
+package core;
+
+import state_machine.StateMachine;
 
 public class PathPlanning {
     StateMachine sm;

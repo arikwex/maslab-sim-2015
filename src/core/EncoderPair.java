@@ -1,18 +1,18 @@
-package robot
+package core;
 
 import orc.Orc;
 import orc.QuadratureEncoder;
 
 public class EncoderPair {
     public long dt, prevTime, time;
-    public long deltaLeft, prevLeft, left;
-    public long deltaRight, prevRight, right;
+    public long dLeft, prevLeft, left;
+    public long dRight, prevRight, right;
 
 
     QuadratureEncoder leftEncoder;
     QuadratureEncoder rightEncoder;
     
-    public EncoderPair(OrcController orc) {
+    public EncoderPair(Orc orc) {
         leftEncoder = new QuadratureEncoder(orc, 0, false);
         rightEncoder = new QuadratureEncoder(orc, 1, true);
     }
@@ -23,11 +23,11 @@ public class EncoderPair {
       prevRight = right;
 
       time = System.currentTimeMillis();
-      right = right.getPosition();
-      left = left.getPosition();
+      right = rightEncoder.getPosition();
+      left = leftEncoder.getPosition();
 
       dt = time - prevTime;
-      deltaLeft = left-prevLeft;
-      deltaRight = right-prevRight;
+      dLeft = left-prevLeft;
+      dRight = right-prevRight;
     }
 }

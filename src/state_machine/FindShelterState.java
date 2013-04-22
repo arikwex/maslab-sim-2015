@@ -1,16 +1,16 @@
-package state_machine
+package state_machine;
 
-public class FindShelterState() extends State{
+public class FindShelterState extends State{
     
     public FindShelterState() {
         
     }
     
-    private State transition() {
+    protected State transition() {
         return null;
     }
     
-    private void run() {
+    protected void run() {
         
     }
 }

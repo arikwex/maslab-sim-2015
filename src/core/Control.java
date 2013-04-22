@@ -1,4 +1,6 @@
-package robot
+package core;
+
+import uORCInterface.OrcController;
 
 public class Control {
     private OrcController orc;
@@ -15,5 +17,9 @@ public class Control {
     private void setMotors(int left, int right) {
         orc.motorSet(LEFT, left);
         orc.motorSet(RIGHT, right);
+    }
+    
+    public void step() {
+    
     }
 }

@@ -47,16 +47,10 @@ import javax.swing.JPanel;
  * 
  * @author Ryan Young
  */
-public class RobotGraph extends JFrame implements Observer {
+public class RobotGraph extends JFrame {
 	private static final long serialVersionUID = -1299466487663318439L;
 
-	//TODO see if we can delete this variable -- i don't think I actually use it
-	private int[] prev_ticks; // (left wheel, right wheel, make int[]
-        private static final double WHEEL_RADIUS_IN_M = WheelVelocityController.WHEEL_RADIUS_IN_M;
-        private static final double ENCODER_RESOLUTION = WheelVelocityController.ENCODER_RESOLUTION;
-        private static final double GEAR_RATIO = WheelVelocityController.GEAR_RATIO;
-        private static final double WHEEL_METERS_PER_TICK = WHEEL_RADIUS_IN_M * Math.PI * 2/(WheelVelocityController.TICKS_PER_REVOLUTION);
-	private static final double WHEELBASE = .428;
+
 	/**
 	 * [x][y][theta]
 	 */
@@ -406,30 +400,11 @@ public class RobotGraph extends JFrame implements Observer {
 	 * @param ticks : each entry contains the number of encoder ticks since the
 	 * last update 
 	 */
-	public void update(int[] ticks) {
-		if (prev_ticks == null && (ticks[0]==0 && ticks[1]==0)) {
-			prev_ticks = ticks;
-		}
-		else if (prev_ticks == null) {
-			return;
-		}
-		if (ticks[0] == 0 && ticks[1] == 0) return; // we haven't moved at all
-		
-		double s_left = (ticks[0])*WHEEL_METERS_PER_TICK;
-		double s_right = (ticks[1])*WHEEL_METERS_PER_TICK;
-		double theta = (s_left - s_right)/WHEELBASE;
-		pose[2] += -theta;
-		pose[0] += (s_left+s_right)*Math.cos(pose[2])/2.0;
-		pose[1] += (s_left+s_right)*Math.sin(pose[2])/2.0;
+	public void update(double[] newPose) {
+		pose = newPose;
 		System.out.println("pose : " + pose[0]);
 		poseHistory.add(new double[] {pose[0], pose[1], pose[2]});
-		prev_ticks[0] = ticks[0];
-		prev_ticks[1] = ticks[1];
 		repaint();
-	}
-	public void update(Observable arg0, Object arg1) {
-		int[] ticks = (int[]) arg1;
-		update(ticks);
 	}
 	
 	public static void main(String[] args) {

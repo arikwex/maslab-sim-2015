@@ -1,24 +1,30 @@
-package robot
+package core;
+
+import orc.Orc;
+import state_machine.StateMachine;
+import uORCInterface.OrcController;
 
 public class Robot {
     
-    OrcController orc;
+    OrcController orcControl;
+    Orc orc;
 
     DataCollection dc;
-    StateEstimation se;
+    StateEstimator se;
     StateMachine sm;
     PathPlanning pp;
     Control c;
 
 
     public Robot() {
-        orc = new OrcController(new int[]{0,1});
+        orcControl = new OrcController(new int[]{0,1});
+        orc = Orc.makeOrc();
 
         dc = new DataCollection(orc);
-        se = new StateEstimation(dc);
+        se = new StateEstimator(dc);
         sm = new StateMachine(se);
         pp = new PathPlanning(sm, se);
-        c = new Control(cm, orc);
+        c = new Control(orcControl, pp);
     }
 
     public void start() {

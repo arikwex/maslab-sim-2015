@@ -1,4 +1,4 @@
-package robot
+package core;
 
 public class Config {
     

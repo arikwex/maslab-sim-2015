@@ -1,4 +1,4 @@
-package state_machine
+package state_machine;
 
 public abstract class State {
     long startTime;
@@ -8,11 +8,11 @@ public abstract class State {
     }
     
     public State step() {
-        State next = self.transition()
-        next.run()
-        return next
+        State next = this.transition();
+        next.run();
+        return next;
     }
     
-    private State transition();
-    private void run();
+    protected abstract State transition();
+    protected abstract void run();
 }

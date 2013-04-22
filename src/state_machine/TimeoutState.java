@@ -1,16 +1,16 @@
-package state_machine
+package state_machine;
 
-public class TimeoutState() extends State{
+public class TimeoutState extends State{
     
     public TimeoutState() {
         
     }
     
-    private State transition() {
+    protected State transition() {
         return null;
     }
     
-    private void run() {
+    protected void run() {
         
     }
 }

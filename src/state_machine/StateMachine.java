@@ -1,11 +1,13 @@
-package robot
+package state_machine;
+
+import core.StateEstimator;
 
 public class StateMachine {
-    private StateEstimation se;
+    private StateEstimator se;
 
     private State state;
     
-    public StateMachine(StateEstimation se) {
+    public StateMachine(StateEstimator se) {
         this.se = se;
         state = new ExploreState();
     }

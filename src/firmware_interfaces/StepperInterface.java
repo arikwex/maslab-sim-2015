@@ -1,5 +1,5 @@
-package firmware_interfaces
+package firmware_interfaces;
 
-public class StepperInterface() {
+public class StepperInterface {
 
 }
