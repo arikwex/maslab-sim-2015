@@ -1,33 +1,24 @@
 package robot
 
 public class DataCollection {
-    public ArrayList<Sonar> sonars = new ArrayList<Sonar>;
-    public Encoder encoder = new Encoder();
-    public Vision vision = new Vision();
-    public Delta delta = new Vision();
+    private OrcController orc;
+
+    public EncoderPair encoders;
+    public ArrayList<Sonar> sonars;
+    public Vision vision;
+    public Delta delta;
     
     
-    public DataCollection() {
-        
+    public DataCollection(OrcController orc) {
+        this.orc = orc;    
+
+        encoders = new EncoderPair();
+        //sonars = new ArrayList<Sonar>;
+        //vision = new Vision();
+        //delta = new Delta();
     }
     
     public void step() {
-        
-    }
-    
-    public void loadSonar() {
-    
-    }
-    
-    public void loadEncoder() {
-        
-    }
-    
-    public void loadVision() {
-        
-    }
-    
-    public void loadDelta() {
-        
+        encoders.sample();
     }
 }
