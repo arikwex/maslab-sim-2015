@@ -1,3 +1,11 @@
+# binaries
+/bin
+
+#eclipse
+.classpath
+.project
+.settings
+
 # vim temporary files
 *.swp
 *.*~

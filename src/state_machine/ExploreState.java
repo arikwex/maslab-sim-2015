@@ -7,7 +7,7 @@ public class ExploreState() extends State{
     }
     
     private State transition() {
-        return null;
+        return this;
     }
     
     private void run() {

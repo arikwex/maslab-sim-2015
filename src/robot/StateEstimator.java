@@ -3,13 +3,19 @@ package robot
 public class StateEstimator {
     private DataCollection dc;
 
-    Map worldMap;
-    Map localMap;
+    private Map worldMap;
+    private Map localMap;
     
-    double botX;
-    double botY;
-    double botTheta;
-    
+    private double botX;
+    private double botY;
+    private double botTheta;
+
+
+    public static final double TICKS_PER_REV = 65500;
+    public static final double WHEEL_RADIUS = .0625;
+    //0.0000059954
+    public static final double METERS_PER_TICK = WHEEL_RADIUS*Math.PI*2/TICKS_PER_REV;
+
     public StateEstimator(DataCollection dc) {
         this.dc = dc;    
     }
@@ -26,7 +32,7 @@ public class StateEstimator {
         
         double dTheta = (dl - dr)/WHEELBASE;
 
-        botTheta += theta;
+        botTheta += dTheta;
         botX += (dl+dr)*Math.cos(botTheta)/2.0;
         botY += (dl+dr)*Math.sin(botTtheta)/2.0;
     }
