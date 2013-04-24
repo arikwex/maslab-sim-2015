@@ -3,26 +3,16 @@ package core;
 public class Block {
 
     public static final double minDist;
-    public double relX;
-    public double relY;
-
     public double x;
     public double y;
 
     public String color;
     public long time;
     
-    public Block(double x, double y, String color,Boolean initial) {
-        if (initial){
-          this.relX = x;
-          this.relY = y;
-          this.color= color;
-          }
-        else{
-          this.x = x;
-          this.y = y;
-          this.color= color;
-          }
+    public Block(double x, double y, String color) {
+        this.x = x;
+        this.y = y;
+        this.color= color;
     }
     
     
