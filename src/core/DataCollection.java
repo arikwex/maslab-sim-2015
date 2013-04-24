@@ -11,7 +11,7 @@ public class DataCollection {
     public ArrayList<Sonar> sonars;
     public Vision vision;
     public Delta delta;
-    
+    public ArrayList<Block> BlocksInVision; 
     
     public DataCollection(Orc orc) {
         this.orc = orc;    
@@ -20,6 +20,7 @@ public class DataCollection {
         //sonars = new ArrayList<Sonar>;
         //vision = new Vision();
         //delta = new Delta();
+        //BlocksInVision = new ArrayList<Block>;
     }
     
     public void step() {

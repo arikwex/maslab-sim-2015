@@ -9,7 +9,9 @@ public class StateEstimator {
     private double botX;
     private double botY;
     private double botTheta;
-
+    
+    private ArrayList<Block> BlocksOnMap;
+    private Block closestBlock;
 
     public static final double WHEELBASE = .4;
     public static final double TICKS_PER_REV = 65500;
