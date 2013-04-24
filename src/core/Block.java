@@ -38,7 +38,7 @@ public class Block {
 
     public Boolean isOnMap(ArrayList<Block> BlocksOnMap){
         for (Block b : BlocksOnMap){
-            if(this.distanceToBlock(b) < minDist){
+            if(this.distanceToBlock(b) < minDist && b.color.equals(this.color)){
                 return True;
             }
         }
@@ -50,4 +50,10 @@ public class Block {
         deltaY = this.y - otherBlock.y;
         return Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
     }
+
+    public double distanceTo(double x, double y){
+     
+        return Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+    }
+
 }

@@ -39,4 +39,30 @@ public class StateEstimator {
         botX += (dl+dr)*Math.cos(botTheta)/2.0;
         botY += (dl+dr)*Math.sin(botTheta)/2.0;
     }
+
+    public void updateBlocks() {
+        for (Block b: dc.BlocksInVision){
+
+            b.setPosition(dc.botX, dc.botY, dc,botTheta);
+
+            if (!(b.isOnMap(this.BlocksOnMap)){
+                BlocksOnMap.add(b);
+            }
+        }      
+    }
+
+    public void closestBlock() {
+        Block bestBlock = BlocksOnMap.get(0);
+        double minDist = bestBlock.distanceTo(botX,botY);
+        
+        for Block b : BlocksOnMap{
+            d = b.distanceTo(botX,botY);
+            if (d < minDist){
+                minDist = d;
+                bestBlock = b;
+            }
+        }
+        closestBlock = bestBlock;
+         
+    }
 }
