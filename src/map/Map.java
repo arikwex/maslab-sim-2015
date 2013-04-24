@@ -1,17 +1,20 @@
 package map;
 
+import java.util.ArrayList;
+
 public class Map {
     ArrayList<Obstacle> obstacles;
-    ArrayList<Blocks> blocks;
+    //ArrayList<Block> blocks;
 
-    Robot bot;
+    //Robot bot;
 
-    public Map(bot, margin) {
+    //takes bot +
+    public Map(double margin) {
 
     }
 
     public boolean addBlock() {
-
+        return false;
     }
 
     public void moveRobot(double x, double y, double theta) {

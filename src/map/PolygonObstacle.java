@@ -1,4 +1,4 @@
-package robot;
+package map;
 
 import java.awt.geom.*;
 import java.util.*;
