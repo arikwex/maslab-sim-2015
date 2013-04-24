@@ -1,15 +1,22 @@
 package core;
 
+import core.Config.Color;
+
 public class Block {
 
-    public static final double minDist;
+    
     public double x;
     public double y;
+    
+    public double relX;
+    public double relY;
+    
+    public int sizeP;
 
-    public String color;
+    public Color color;
     public long time;
     
-    public Block(double x, double y, String color) {
+    public Block(double x, double y, Color color) {
         this.x = x;
         this.y = y;
         this.color= color;
@@ -17,27 +24,20 @@ public class Block {
     
     
 
-    public void setPosition(double botY, double botY, double botTheta) {
-        r =Math.sqrt( Math.pow(this.relX,2) + Math.pow(this.relY,2));
+    public void setPosition(double botX, double botY, double botTheta) {
+        double r =Math.sqrt( Math.pow(this.relX,2) + Math.pow(this.relY,2));
 
-        phi = Math.atan(this.relX/this.relY);
+        double phi = Math.atan(this.relX/this.relY);
 
         x = botX + r * Math.cos(phi + botTheta);
         y = botY + r * Math.sin(phi + botTheta);
     }
 
-    public Boolean isOnMap(ArrayList<Block> BlocksOnMap){
-        for (Block b : BlocksOnMap){
-            if(this.distanceToBlock(b) < minDist && b.color.equals(this.color)){
-                return True;
-            }
-        }
-        return False;
-    }
+    
 
     public double distanceToBlock(Block otherBlock){
-        deltaX = this.x - otherBlock.x;
-        deltaY = this.y - otherBlock.y;
+        double deltaX = this.x - otherBlock.x;
+        double deltaY = this.y - otherBlock.y;
         return Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2));
     }
 

@@ -2,9 +2,12 @@ package map;
 
 import java.util.ArrayList;
 
+import core.Block;
+import core.Config.Color;
+
 public class Map {
     ArrayList<Obstacle> obstacles;
-    //ArrayList<Block> blocks;
+    ArrayList<MapBlock> blocks;
 
     //Robot bot;
 
@@ -13,7 +16,7 @@ public class Map {
 
     }
 
-    public boolean addBlock() {
+    public boolean addBlock(Block b,) {
         return false;
     }
 
@@ -28,6 +31,15 @@ public class Map {
     public void nearestIntersectingSegment(Segment seg) {
 
     }
-
+    
+    public boolean isOnMap(MapBlock block){
+        for (MapBlock b : blocks){
+        	Color color = b.getColor();
+            if(b.distance(block) < minDist && color == block.getColor() ){
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
