@@ -47,5 +47,20 @@ public class Map {
         }
         return false;
     }
-
+    
+    public MapBlock closestBlock(double botX, double botY) {
+        MapBlock bestBlock = blocks.get(0);
+        double minDist = bestBlock.distance(botX,botY);
+        
+        for (MapBlock b : blocks){
+            double d = b.distance(botX,botY);
+            
+            if (d < minDist){
+                minDist = d;
+                bestBlock = b;
+            }
+        }
+        return bestBlock;
+         
+    }
 }

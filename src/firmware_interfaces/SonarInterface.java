@@ -1,5 +1,8 @@
 package firmware_interfaces;
 
+import core.Sonar;
+import core.Config;
+import java.util.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -7,7 +10,7 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
-import java.util.Enumeration;
+
 
 public class SonarInterface implements SerialPortEventListener {
     SerialPort serialPort;
@@ -30,7 +33,7 @@ public class SonarInterface implements SerialPortEventListener {
     private static final int DATA_RATE = 9600;
     public int ultNum = 0;
     public int numUlts = 7;
-    public int[] sonarValues = new int[numUlts];
+    public ArrayList<Sonar> sonars;
 
     public void initialize() {
         CommPortIdentifier portId = null;
@@ -66,6 +69,11 @@ public class SonarInterface implements SerialPortEventListener {
             // add event listeners
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
+            
+            //initialize Sonars
+            for (int i = 0; i < numUlts; i++){
+            	Sonar tempSonar = new Sonar(Config.sonarPositions[i]);
+            }
         } catch (Exception e) {
             System.err.println(e.toString());
         }

@@ -6,6 +6,8 @@ import core.Config.Color;
 
 public class Block extends Point{
 
+	public double relX;
+	public double relY;
     public double x;
     public double y;
     public int sizeP; 

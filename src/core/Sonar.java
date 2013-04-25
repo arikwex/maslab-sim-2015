@@ -14,6 +14,12 @@ public class Sonar {
         this.theta = theta;
     }
     
+    public Sonar(double[] positions){
+    	this.x = positions[0];
+    	this.y = positions[1];
+    	this.theta = positions[2];
+    }
+    
     public void setMeasurement(double meas, long time) {
         
     }
