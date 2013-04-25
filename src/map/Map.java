@@ -29,8 +29,8 @@ public class Map {
 
     }
 
-    public void checkSegment(Segment seg) {
-
+    public boolean checkSegment(Segment seg) {
+    	return false;
     }
 
     public void nearestIntersectingSegment(Segment seg) {
