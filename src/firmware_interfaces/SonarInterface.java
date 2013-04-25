@@ -5,7 +5,7 @@ import core.Config;
 import java.util.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
+
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
@@ -35,7 +35,7 @@ public class SonarInterface implements SerialPortEventListener {
     public int numUlts = 7;
     public ArrayList<Sonar> sonars;
 
-    public void initialize() {
+    public void SonarInterface() {
         CommPortIdentifier portId = null;
         Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
 
@@ -73,6 +73,7 @@ public class SonarInterface implements SerialPortEventListener {
             //initialize Sonars
             for (int i = 0; i < numUlts; i++){
             	Sonar tempSonar = new Sonar(Config.sonarPositions[i]);
+            	sonars.add(tempSonar);
             }
         } catch (Exception e) {
             System.err.println(e.toString());
@@ -108,11 +109,16 @@ public class SonarInterface implements SerialPortEventListener {
                         sonars.get(ultNum).setMeasurement(cm, System.currentTimeMillis());
                     }
                 }
+                
             } catch (Exception e) {
                 System.err.println(e.toString());
             }
         }
         // Ignore all the other eventTypes, but you should consider the other
         // ones.
+    }
+    
+    public ArrayList<Sonar> getSonars(){
+    	return sonars;
     }
 }

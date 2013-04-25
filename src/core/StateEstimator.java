@@ -14,10 +14,8 @@ public class StateEstimator {
     private double botX;
     private double botY;
     private double botTheta;
-    
     private Map map;
     private Block closestBlock;
-
     public static final double WHEELBASE = .4;
     public static final double TICKS_PER_REV = 65500;
     public static final double WHEEL_RADIUS = .0625;
@@ -46,7 +44,7 @@ public class StateEstimator {
     }
 
     public void updateBlocks() {
-        for (Block b: dc.BlocksInVision){
+        for (Block b : dc.BlocksInVision){
 
             b.setPosition(botX, botY, botTheta);
 

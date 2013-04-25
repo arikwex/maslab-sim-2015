@@ -2,12 +2,15 @@ package core;
 
 import java.util.ArrayList;
 
+import firmware_interfaces.SonarInterface;
+
 import orc.Orc;
 
 public class DataCollection {
     private Orc orc;
 
     public EncoderPair encoders;
+    public SonarInterface SonarInterface;
     public ArrayList<Sonar> sonars;
     public Vision vision;
     public Delta delta;
@@ -17,7 +20,7 @@ public class DataCollection {
         this.orc = orc;    
 
         encoders = new EncoderPair(orc);
-        //sonars = new ArrayList<Sonar>;
+        SonarInterface = new SonarInterface();
         //vision = new Vision();
         //delta = new Delta();
         //BlocksInVision = new ArrayList<Block>;
@@ -25,5 +28,6 @@ public class DataCollection {
     
     public void step() {
         encoders.sample();
+        sonars = SonarInterface.getSonars();
     }
 }
