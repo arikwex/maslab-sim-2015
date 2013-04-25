@@ -48,7 +48,7 @@ public class StateEstimator {
     public void updateBlocks() {
         for (Block b: dc.BlocksInVision){
 
-            b.setPosition(dc.botX, dc.botY, dc,botTheta);
+            b.setPosition(botX, botY, botTheta);
 
         }      
     }
