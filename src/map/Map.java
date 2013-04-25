@@ -4,11 +4,10 @@ import java.util.ArrayList;
 
 import core.Block;
 import core.Config.Color;
-
+import core.Config;
 public class Map {
     ArrayList<Obstacle> obstacles;
     ArrayList<MapBlock> blocks;
-
     //Robot bot;
 
     //takes bot +
@@ -16,8 +15,15 @@ public class Map {
 
     }
 
-    public boolean addBlock(Block b,) {
-        return false;
+    public boolean addBlock(Block b) {
+        if(this.isOnMap(b)){
+        	MapBlock tempBlock = new MapBlock(b);
+        	blocks.add(tempBlock); 
+        	return true;
+        }
+        else{
+        	return false;
+        }
     }
 
     public void moveRobot(double x, double y, double theta) {
@@ -32,10 +38,10 @@ public class Map {
 
     }
     
-    public boolean isOnMap(MapBlock block){
+    public boolean isOnMap(Block block){
         for (MapBlock b : blocks){
         	Color color = b.getColor();
-            if(b.distance(block) < minDist && color == block.getColor() ){
+            if(b.distance(block) < Config.minDist && color == block.getColor() ){
                 return true;
             }
         }
