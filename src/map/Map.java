@@ -21,17 +21,16 @@ public class Map {
         	blocks.add(tempBlock); 
         	return true;
         }
-        else{
-        	return false;
-        }
+
+        return false;
     }
 
     public void moveRobot(double x, double y, double theta) {
 
     }
 
-    public void checkSegment(Segment seg) {
-
+    public boolean checkSegment(Segment seg) {
+    	return false;
     }
 
     public void nearestIntersectingSegment(Segment seg) {
