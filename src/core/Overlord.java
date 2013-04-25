@@ -4,7 +4,7 @@ import orc.Orc;
 import state_machine.StateMachine;
 import uORCInterface.OrcController;
 
-public class Robot {
+public class Overlord {
     
     OrcController orcControl;
     Orc orc;
@@ -16,7 +16,7 @@ public class Robot {
     Control c;
 
 
-    public Robot() {
+    public Overlord() {
         orcControl = new OrcController(new int[]{0,1});
         orc = Orc.makeOrc();
 

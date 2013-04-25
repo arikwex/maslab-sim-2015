@@ -45,7 +45,7 @@ public class StateEstimator {
 
             b.setPosition(dc.botX, dc.botY, dc,botTheta);
 
-            if (!(b.isOnMap(this.BlocksOnMap)){
+            if (!(b.isOnMap(this.BlocksOnMap)``{
                 BlocksOnMap.add(b);
             }
         }      
