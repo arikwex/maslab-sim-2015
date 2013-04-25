@@ -100,11 +100,12 @@ public class SonarInterface implements SerialPortEventListener {
                 String in = "";
                 ultNum = 0;
                 while (!(in.equals("J"))) {
+                	ultNum++;
                     in = input.readLine();
                     if (!(in.equals("J"))) {
                         int cm = Integer.parseInt(in);
                         cm /= 58;
-                        sonarValues[ultNum] = cm;
+                        sonars.get(ultNum).setMeasurement(cm, System.currentTimeMillis());
                     }
                 }
             } catch (Exception e) {
