@@ -21,9 +21,8 @@ public class Map {
         	blocks.add(tempBlock); 
         	return true;
         }
-        else{
-        	return false;
-        }
+
+        return false;
     }
 
     public void moveRobot(double x, double y, double theta) {
