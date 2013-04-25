@@ -1,5 +1,10 @@
 package core;
 
+import java.util.ArrayList;
+
+import map.Map;
+import map.MapBlock;
+
 public class StateEstimator {
     private DataCollection dc;
 
@@ -10,7 +15,7 @@ public class StateEstimator {
     private double botY;
     private double botTheta;
     
-    private ArrayList<Block> BlocksOnMap;
+    private Map map;
     private Block closestBlock;
 
     public static final double WHEELBASE = .4;
@@ -43,26 +48,9 @@ public class StateEstimator {
     public void updateBlocks() {
         for (Block b: dc.BlocksInVision){
 
-            b.setPosition(dc.botX, dc.botY, dc,botTheta);
+            b.setPosition(botX, botY, botTheta);
 
-            if (!(b.isOnMap(this.BlocksOnMap)``{
-                BlocksOnMap.add(b);
-            }
         }      
     }
 
-    public void closestBlock() {
-        Block bestBlock = BlocksOnMap.get(0);
-        double minDist = bestBlock.distanceTo(botX,botY);
-        
-        for Block b : BlocksOnMap{
-            d = b.distanceTo(botX,botY);
-            if (d < minDist){
-                minDist = d;
-                bestBlock = b;
-            }
-        }
-        closestBlock = bestBlock;
-         
-    }
 }

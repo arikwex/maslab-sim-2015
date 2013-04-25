@@ -5,5 +5,5 @@ public class Config {
     public enum Color {
     	RED, GREEN, BLUE, YELLOW, NONE
     }
-    public static final double minDist;
+    public static double[][] sonarPositions = {{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{0,0,0}};
 }

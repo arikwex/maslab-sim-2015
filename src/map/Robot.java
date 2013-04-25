@@ -1,5 +1,5 @@
 package map;
 
-public class Robot {
+public class Robot extends Polygon{
 
 }

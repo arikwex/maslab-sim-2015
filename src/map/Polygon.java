@@ -4,10 +4,11 @@ import java.awt.geom.*;
 import java.util.*;
 import java.awt.Color;
 
-public class Poly {
+public class Polygon {
 
-    protected GeneralPath path = new GeneralPath();
-
+    protected Path2D path = new Path2D.Float();
+    protected ArrayList<Point> points = new ArrayList<Point>();
+    
     protected boolean started = false;
     protected boolean closed = false;
 
@@ -22,7 +23,6 @@ public class Poly {
     }
 
     public void addVertex(float x, float y) {
-
         if (closed)
             throw new IllegalStateException("already closed");
 
@@ -50,14 +50,6 @@ public class Poly {
 
     public boolean contains(Point2D p) {
         return path.contains(p);
-    }
-
-    public boolean intersects(double x, double y, double w, double h) {
-        return path.intersects(x, y, w, h);
-    }
-
-    public boolean intersects(Rectangle2D r) {
-        return path.intersects(r);
     }
 
     public List<Point2D.Double> getVertices() {
