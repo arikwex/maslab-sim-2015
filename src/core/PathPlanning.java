@@ -22,7 +22,7 @@ public class PathPlanning {
 
     public void findPath() {
     	Point goal = sm.goal;
-    	Point start = new Point(se.map.bot.center.X, se.map.bot.center.Y);
+    	Point start = new Point(se.map.bot.center.x, se.map.bot.center.y);
     	TreeNode root = new TreeNode(start);
     	Tree rrt = new Tree(root);
     	

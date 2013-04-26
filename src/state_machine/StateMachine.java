@@ -7,7 +7,7 @@ public class StateMachine {
     protected StateEstimator se;
 
     private State state;
-    private Point goal;
+    public Point goal;
     
     public StateMachine(StateEstimator se) {
         this.se = se;

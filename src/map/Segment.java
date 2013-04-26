@@ -6,4 +6,9 @@ public class Segment {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Segment trim(int maxlength) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
