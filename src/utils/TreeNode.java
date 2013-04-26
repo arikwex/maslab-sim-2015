@@ -6,7 +6,7 @@ import map.Point;
 public class TreeNode {
 	public Point loc;
 	Tree tree;
-	TreeNode parent;
+	public TreeNode parent;
 	LinkedList<TreeNode> children;
 	
 	public TreeNode(Point location) {

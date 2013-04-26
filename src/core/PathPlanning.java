@@ -1,5 +1,7 @@
 package core;
 
+import java.util.LinkedList;
+
 import map.Map;
 import map.Point;
 import map.Segment;
@@ -11,6 +13,7 @@ public class PathPlanning {
     private static final int MAXLENGTH = 5;
 	StateMachine sm;
     StateEstimator se;
+    LinkedList<Point> path;
 
     public PathPlanning(StateMachine sm, StateEstimator se) {
         this.sm = sm;
@@ -27,8 +30,9 @@ public class PathPlanning {
     	Tree rrt = new Tree(root);
     	
     	Point p;	
-    	TreeNode closest, newNode;
+    	TreeNode closest, newNode, goalNode;
     	Segment seg;
+    	
     	
     	while (true){
     		p = se.map.randomPoint();
@@ -46,8 +50,32 @@ public class PathPlanning {
     			continue;
     		}
     		
-    		newNode = new TreeNode(p);
+    		newNode = new TreeNode(goal);
     		closest.addChild(newNode);
+    		closest = root;
+    		for (TreeNode node : rrt.nodes){
+    			if (node.loc.distance(goal) < closest.loc.distance(goal)){
+    				closest = node;
+    			}
+    		}
+    		
+    		seg = new Segment(closest.loc, p);
+    	
+    		if (!se.map.checkSegment(seg) || closest.loc.distance(goal) > MAXLENGTH){
+    			continue;
+    		}
+    		
+    		goalNode = new TreeNode(goal);
+    		closest.addChild(goalNode);
+    		break;
+    	}
+    	
+    	TreeNode curNode = goalNode;
+    	Boolean pathcomplete = false;
+    	path = new LinkedList<Point>();
+    	while (!pathcomplete){
+    		path.add(0, curNode.loc);
+    		curNode = curNode.parent;
     	}
     	
     }
