@@ -21,6 +21,8 @@ public class DataCollection {
 
         encoders = new EncoderPair(orc);
         SonarInterface = new SonarInterface();
+        sonars = SonarInterface.getSonars();
+
         //vision = new Vision();
         //delta = new Delta();
         //BlocksInVision = new ArrayList<Block>;
@@ -28,6 +30,5 @@ public class DataCollection {
     
     public void step() {
         encoders.sample();
-        sonars = SonarInterface.getSonars();
     }
 }

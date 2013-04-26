@@ -21,6 +21,7 @@ public class Sonar {
     }
     
     public void setMeasurement(double meas, long time) {
-        
+        this.time = time;
+        this.meas = meas;
     }
 }
