@@ -9,7 +9,7 @@ import map.Robot;
 public class StateEstimator {
     private DataCollection dc;
     
-    private Map map;
+    Map map;
     
     public static final double WHEELBASE = .4;
     public static final double TICKS_PER_REV = 65500;

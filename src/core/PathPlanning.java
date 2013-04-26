@@ -21,8 +21,8 @@ public class PathPlanning {
     }
 
     public void findPath() {
-    	Point goal = se.goal;
-    	Point start = new Point(se.botX, se.botY);
+    	Point goal = sm.goal;
+    	Point start = new Point(se.map.bot.center.X, se.map.bot.center.Y);
     	TreeNode root = new TreeNode(start);
     	Tree rrt = new Tree(root);
     	
@@ -31,7 +31,7 @@ public class PathPlanning {
     	Segment seg;
     	
     	while (true){
-    		p = se.worldMap.randomPoint();
+    		p = se.map.randomPoint();
     		closest = root;
     		for (TreeNode node : rrt.nodes){
     			if (node.loc.distance(p) < closest.loc.distance(p)){
@@ -40,9 +40,9 @@ public class PathPlanning {
     		}
     		
     		seg = new Segment(closest.loc, p);
-    		seg = seg.Trim(MAXLENGTH);
+    		seg = seg.trim(MAXLENGTH);
     		
-    		if (!se.worldMap.checkSegment(seg)){
+    		if (!se.map.checkSegment(seg)){
     			continue;
     		}
     		
