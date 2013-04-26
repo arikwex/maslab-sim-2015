@@ -10,3 +10,6 @@
 # vim temporary files
 *.swp
 *.*~
+
+# log files
+*.log

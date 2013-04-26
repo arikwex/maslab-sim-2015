@@ -151,4 +151,9 @@ public class Map {
             throw new ParseException("malformed number on line " + lineNumber, lineNumber);
         }
     }
+    
+    public Point randomPoint(){
+    	// TODO return a random point in the map
+		return null;
+    }
 }
