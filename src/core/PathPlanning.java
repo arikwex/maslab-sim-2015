@@ -14,6 +14,8 @@ public class PathPlanning {
 	StateMachine sm;
     StateEstimator se;
     LinkedList<Point> path;
+    Point nextWaypoint;
+    Point goal;
 
     public PathPlanning(StateMachine sm, StateEstimator se) {
         this.sm = sm;
@@ -21,8 +23,21 @@ public class PathPlanning {
     }
 
     public void step() {
+    	Point curLoc= new Point(se.map.bot.center.x, se.map.bot.center.y);
+    	if(sm.goal != goal || nextWaypoint == null || !se.map.checkSegment(new Segment(curLoc, nextWaypoint))){
+    		findPath();
+    	}
+    	for (Point p : path){
+    		if (curLoc.distance(p) < curLoc.distance(nextWaypoint)){
+    			nextWaypoint = p;
+    		}
+    	}
     }
 
+    public Point getNextWaypoint(){
+    	return nextWaypoint;
+    }
+    
     public void findPath() {
     	Point goal = sm.goal;
     	Point start = new Point(se.map.bot.center.x, se.map.bot.center.y);
