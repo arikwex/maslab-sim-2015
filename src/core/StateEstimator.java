@@ -4,18 +4,13 @@ import java.util.ArrayList;
 
 import map.Map;
 import map.MapBlock;
+import map.Robot;
 
 public class StateEstimator {
     private DataCollection dc;
-
-    //private Map worldMap;
-    //private Map localMap;
     
-    private double botX;
-    private double botY;
-    private double botTheta;
     private Map map;
-    private Block closestBlock;
+    
     public static final double WHEELBASE = .4;
     public static final double TICKS_PER_REV = 65500;
     public static final double WHEEL_RADIUS = .0625;
@@ -27,10 +22,11 @@ public class StateEstimator {
     }
     
     public void step() {
-        computePose();        
+        updatePose(); 
+        updateBlocks();
     }
     
-    public void computePose() {
+    public void updatePose() {
         double dl = dc.encoders.dLeft * METERS_PER_TICK;
         double dr = dc.encoders.dRight * METERS_PER_TICK;
 
@@ -38,17 +34,22 @@ public class StateEstimator {
         
         double dTheta = (dl - dr)/WHEELBASE;
 
-        botTheta += dTheta;
-        botX += (dl+dr)*Math.cos(botTheta)/2.0;
-        botY += (dl+dr)*Math.sin(botTheta)/2.0;
+        Robot bot = map.bot;
+        bot.theta += dTheta;
+        bot.center.x += (dl+dr)*Math.cos(bot.theta)/2.0;
+        bot.center.y += (dl+dr)*Math.sin(bot.theta)/2.0;
     }
 
     public void updateBlocks() {
+        MapBlock tempBlock;
         for (Block b : dc.BlocksInVision){
+            tempBlock = new MapBlock(map.bot.getAbsolute(b.relX, b.relY), b.color);
 
-            b.setPosition(botX, botY, botTheta);
-
-        }      
+            map.addBlock(tempBlock);
+        }
     }
-
+    
+    public MapBlock getClosestBlock() {
+        return map.closestBlock();
+    }
 }

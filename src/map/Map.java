@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
-import core.Block;
 import core.Config.BlockColor;
 import core.Config;
 
@@ -19,7 +18,7 @@ public class Map {
 
     protected ArrayList<Obstacle> obstacles;
     protected ArrayList<MapBlock> blocks;
-    Robot bot;
+    public Robot bot;
 
     protected Point robotStart;
     protected Point robotGoal;
@@ -29,19 +28,16 @@ public class Map {
 
     }
 
-    public boolean addBlock(Block b) {
-        if (this.isOnMap(b)) {
-            MapBlock tempBlock = new MapBlock(b);
-            blocks.add(tempBlock);
+    public boolean addBlock(MapBlock b) {        
+        if (!this.isOnMap(b)) {
+            blocks.add(b);
             return true;
         }
-
+        
         return false;
     }
 
-    public void moveRobot(Point p, double theta) {
-        
-    }
+    
 
     public boolean checkSegment(Segment seg) {
         return false;
@@ -51,7 +47,7 @@ public class Map {
 
     }
 
-    public boolean isOnMap(Block block) {
+    public boolean isOnMap(MapBlock block) {
         for (MapBlock b : blocks) {
             BlockColor color = b.getColor();
             if (b.distance(block) < Config.minDist && color == block.getColor()) {
@@ -61,12 +57,12 @@ public class Map {
         return false;
     }
 
-    public MapBlock closestBlock(double botX, double botY) {
+    public MapBlock closestBlock() {
         MapBlock bestBlock = blocks.get(0);
-        double minDist = bestBlock.distance(botX, botY);
+        double minDist = bestBlock.distance(bot.center);
 
         for (MapBlock b : blocks) {
-            double d = b.distance(botX, botY);
+            double d = b.distance(bot.center);
 
             if (d < minDist) {
                 minDist = d;

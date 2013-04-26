@@ -1,4 +1,4 @@
-package utils;
+package control;
 
 public class PID {
 	double kp, ki, kd, maxi, max;

@@ -33,14 +33,15 @@ public class SonarInterface implements SerialPortEventListener {
     public int ultNum = 0;
     public int numUlts = 7;
     public ArrayList<Sonar> sonars;
+    public ArrayList<Sonar> internalSonars;
 
-    public void SonarInterface() {
+    public SonarInterface() {
         CommPortIdentifier portId = null;
-        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+        Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
 
         // First, Find an instance of serial port as set in PORT_NAMES.
         while (portEnum.hasMoreElements()) {
-            CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+            CommPortIdentifier currPortId = portEnum.nextElement();
             for (String portName : PORT_NAMES) {
                 if (currPortId.getName().equals(portName)) {
                     System.out.println("found it" + portName);
@@ -70,9 +71,12 @@ public class SonarInterface implements SerialPortEventListener {
             serialPort.notifyOnDataAvailable(true);
 
             //initialize Sonars
+            Sonar tempSonar;
             for (int i = 0; i < numUlts; i++){
-            	Sonar tempSonar = new Sonar(Config.sonarPositions[i]);
+            	tempSonar = new Sonar(Config.sonarPositions[i]);
             	sonars.add(tempSonar);
+            	tempSonar = new Sonar(Config.sonarPositions[i]);
+            	internalSonars.add(tempSonar);
 
             }
         } catch (Exception e) {
@@ -106,7 +110,7 @@ public class SonarInterface implements SerialPortEventListener {
                     if (!(in.equals("J"))) {
                         int cm = Integer.parseInt(in);
                         cm /= 58;
-                        sonars.get(ultNum).setMeasurement(cm, System.currentTimeMillis());
+                        internalSonars.get(ultNum).setMeasurement(cm, System.currentTimeMillis());
                     }
                 }
                 
@@ -120,5 +124,13 @@ public class SonarInterface implements SerialPortEventListener {
     
     public ArrayList<Sonar> getSonars(){
     	return sonars;
+    }
+    
+    public void sample() {
+        Sonar internal;
+        for (int i = 0; i < internalSonars.size(); i++) {
+            internal = internalSonars.get(i);
+            sonars.get(i).setMeasurement(internal.meas, internal.time);
+        }
     }
 }

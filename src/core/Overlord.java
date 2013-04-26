@@ -1,5 +1,6 @@
 package core;
 
+import control.Control;
 import orc.Orc;
 import state_machine.StateMachine;
 import uORCInterface.OrcController;

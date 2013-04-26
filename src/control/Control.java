@@ -1,5 +1,9 @@
-package core;
+package control;
 
+import core.PathPlanning;
+import core.StateEstimator;
+import map.Point;
+import map.Robot;
 import uORCInterface.OrcController;
 
 public class Control {
@@ -20,6 +24,11 @@ public class Control {
     }
     
     public void step() {
+        Robot bot = null;
+        Point wayPoint = null;
+    }
     
+    public void goToWaypoint(Point wp) {
+        
     }
 }

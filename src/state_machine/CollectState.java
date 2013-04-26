@@ -2,10 +2,10 @@ package state_machine;
 
 public class CollectState extends State{
     
-    public CollectState() {
-        
+    public CollectState(StateMachine sm) {
+        super(sm);
     }
-    
+
     protected State transition() {
         return null;
     }
