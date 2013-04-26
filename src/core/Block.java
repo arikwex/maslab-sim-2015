@@ -2,7 +2,7 @@ package core;
 
 
 import map.Point;
-import core.Config.Color;
+import core.Config.BlockColor;
 
 public class Block extends Point{
 
@@ -11,10 +11,10 @@ public class Block extends Point{
     public double x;
     public double y;
     public int sizeP; 
-    public Color color;
+    public BlockColor color;
     
     
-    public Block(double x, double y,int sizeP, Color color) {
+    public Block(double x, double y,int sizeP, BlockColor color) {
         super(x,y);
         this.color= color;
         this.sizeP = sizeP;
@@ -33,7 +33,7 @@ public class Block extends Point{
         y = botY + r * Math.sin(phi + botTheta);
     }
     
-    public Color getColor(){
+    public BlockColor getColor(){
     	return this.color;
     }
 }

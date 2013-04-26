@@ -11,7 +11,6 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
-
 public class SonarInterface implements SerialPortEventListener {
     SerialPort serialPort;
     /** The port we're normally going to use. */
@@ -69,11 +68,12 @@ public class SonarInterface implements SerialPortEventListener {
             // add event listeners
             serialPort.addEventListener(this);
             serialPort.notifyOnDataAvailable(true);
-            
+
             //initialize Sonars
             for (int i = 0; i < numUlts; i++){
             	Sonar tempSonar = new Sonar(Config.sonarPositions[i]);
             	sonars.add(tempSonar);
+
             }
         } catch (Exception e) {
             System.err.println(e.toString());
@@ -101,7 +101,7 @@ public class SonarInterface implements SerialPortEventListener {
                 String in = "";
                 ultNum = 0;
                 while (!(in.equals("J"))) {
-                	ultNum++;
+                    ultNum++;
                     in = input.readLine();
                     if (!(in.equals("J"))) {
                         int cm = Integer.parseInt(in);

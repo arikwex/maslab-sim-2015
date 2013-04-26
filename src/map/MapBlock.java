@@ -1,14 +1,14 @@
 package map;
 
 import core.Block;
-import core.Config.Color;
+import core.Config.BlockColor;
 
 
 public class MapBlock extends Point {
 	
-	private Color color;
+	private BlockColor color;
 
-	public MapBlock (double x, double y, Color color){
+	public MapBlock (double x, double y, BlockColor color){
 		super(x,y);
 		this.color = color;
 	}
@@ -17,7 +17,7 @@ public class MapBlock extends Point {
 		this.color = b.getColor();
 	}
 	
-	public Color getColor(){
+	public BlockColor getColor(){
 		return this.color;
 	}
 
