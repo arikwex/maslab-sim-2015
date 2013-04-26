@@ -72,6 +72,7 @@ public class Map {
         return bestBlock;
     }
 
+
     private void parsePoint(Point point, BufferedReader br, String name, int lineNumber) throws IOException,
             ParseException, NumberFormatException {
 
@@ -151,7 +152,6 @@ public class Map {
             throw new ParseException("malformed number on line " + lineNumber, lineNumber);
         }
     }
-    
     public Point randomPoint(){
     	// TODO return a random point in the map
 		return null;
