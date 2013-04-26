@@ -16,6 +16,7 @@ public class CaptureImage {
     private static void captureFrame() {
         // 0-default camera, 1 - next...so on
         final OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(0);
+        //final VideoInputFrameGrabber grabber = new VideoInputFrameGrabber(0);
         try {
             grabber.start();
             IplImage img = grabber.grab();
@@ -29,6 +30,9 @@ public class CaptureImage {
         }
     }
     public static void main(String[] args) throws InterruptedException {
+        System.out.println(System.getProperty("java.library.path"));
+        System.loadLibrary("opencv_java245");
+
         while(true){
             captureFrame(); 
             Thread.sleep(100);
