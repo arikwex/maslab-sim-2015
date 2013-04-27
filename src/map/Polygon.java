@@ -8,6 +8,7 @@ public class Polygon {
 
     protected Path2D.Double path = new Path2D.Double();
     protected ArrayList<Point> points = new ArrayList<Point>();
+    protected ArrayList<Segment> segments = new ArrayList<Segment>();
     
     protected boolean started = false;
     protected boolean closed = false;
@@ -29,10 +30,12 @@ public class Polygon {
         if (closed)
             throw new IllegalStateException("already closed");
 
-        if (!started)
+        if (!started) {
             path.moveTo(p.getX(), p.getY());
-        else
+        } else {
             path.lineTo(p.getX(), p.getY());
+            segments.add(new Segment(points.get(points.size()), p));
+        }
 
         started = true;
         
@@ -44,8 +47,17 @@ public class Polygon {
             throw new IllegalStateException("already closed");
 
         path.closePath();
+        segments.add(new Segment(points.get(points.size()), points.get(0)));
 
         closed = true;
+    }
+
+    public boolean intersects(Segment seg) {
+        for (Segment s : segments)
+            if (s.intersects(seg))
+                return true;
+        
+        return false;
     }
     
     public ArrayList<Point> getVertices() {

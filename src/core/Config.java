@@ -14,6 +14,7 @@ public class Config {
     public static final double TICKS_PER_REV = 65500;
     public static final double WHEEL_RADIUS = .0625;
     public static final double METERS_PER_TICK = WHEEL_RADIUS * Math.PI * 2 / TICKS_PER_REV;
+    public static final double MAX_VELOCITY = WHEEL_RADIUS * Math.PI * 2 * 1.183;
 
     public static double[][] botPoly = new double[][] {{ -.2, -.3 }, { -.2, .1 }, { .2, .1 }, { .2, -.3 }};
 }

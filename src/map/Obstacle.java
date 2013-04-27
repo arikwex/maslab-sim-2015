@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Obstacle extends Polygon {
-    Path2D.Double naiveCSpace;
+    Polygon naiveCSpace;
 
     public void computeNaiveCSpace(double r) {
         List<Point> csoPoints = new LinkedList<Point>();
@@ -19,10 +19,10 @@ public class Obstacle extends Polygon {
                 csoPoints.add(new Point(p.x + Math.cos(t), p.y + Math.sin(t)));
         }
 
-        naiveCSpace = GeomUtils.convexHull(csoPoints).getPath();
+        naiveCSpace = GeomUtils.convexHull(csoPoints);
     }
 
-    private void computePolygonCSpace(Robot bot) {
+    private Polygon getBotCSpace(Robot bot) {
         List<Point> csoPoints = new LinkedList<Point>();
 
         List<Point> roVertices = getVertices();
@@ -31,10 +31,19 @@ public class Obstacle extends Polygon {
             for (Point p : bot.getVertices())
                 csoPoints.add(new Point(v.x - p.x, v.y - p.y));
 
-        Polygon ret = GeomUtils.convexHull(csoPoints);
+        return GeomUtils.convexHull(csoPoints);
+    }
+    
+    public boolean intersects(Segment seg, Robot bot) {
+        return naiveCSpace.intersects(seg);
+        
+        //if (naiveCSpace.intersects(seg))
+        //    if (getBotCSpace(bot).intersects(seg))
+        //        return true;
+        //return false;
     }
 
-    public Path2D getNaiveCSpace() {
+    public Polygon getNaiveCSpace() {
         return naiveCSpace;
     }
 }

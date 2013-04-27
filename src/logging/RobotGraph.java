@@ -241,7 +241,7 @@ public class RobotGraph extends JFrame {
                 g.setColor(o.color);
                 g.draw(o.getPath());
                 if (drawCSpace)
-                    g.draw(o.getNaiveCSpace());
+                    g.draw(o.getNaiveCSpace().getPath());
             }
         }
         

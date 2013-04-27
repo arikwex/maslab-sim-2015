@@ -27,5 +27,9 @@ public class Point extends Point2D {
 		this.x = x;
 		this.y = y;	
 	}
+	
+	public double angleTo(Point p) {
+        return -Math.toDegrees(Math.atan2(p.y-this.y, p.x-this.x));
+	}
 
 }

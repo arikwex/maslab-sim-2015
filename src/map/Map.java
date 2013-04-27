@@ -37,9 +37,11 @@ public class Map {
         return false;
     }
 
-    
-
     public boolean checkSegment(Segment seg) {
+        for (Obstacle o : obstacles) {
+            if (o.intersects(seg))
+                return false;
+        }
         return false;
     }
 
@@ -152,8 +154,10 @@ public class Map {
             throw new ParseException("malformed number on line " + lineNumber, lineNumber);
         }
     }
-    public Point randomPoint(){
-    	// TODO return a random point in the map
-		return null;
+    
+    public Point randomPoint() {
+        double x = Math.random()*(worldRect.width) + worldRect.x;
+        double y = Math.random()*(worldRect.height) + worldRect.y;
+        return new Point(x,y);
     }
 }
