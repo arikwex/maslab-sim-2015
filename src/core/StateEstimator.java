@@ -1,7 +1,5 @@
 package core;
 
-import java.util.ArrayList;
-
 import map.Map;
 import map.MapBlock;
 import map.Robot;
@@ -9,13 +7,9 @@ import map.Robot;
 public class StateEstimator {
     private DataCollection dc;
    
-    Map map;
+    public Map map;
 
-    public static final double WHEELBASE = .4;
-    public static final double TICKS_PER_REV = 65500;
-    public static final double WHEEL_RADIUS = .0625;
-    //0.0000059954
-    public static final double METERS_PER_TICK = WHEEL_RADIUS*Math.PI*2/TICKS_PER_REV;
+
 
     public StateEstimator(DataCollection dc) {
         this.dc = dc;    
@@ -27,17 +21,17 @@ public class StateEstimator {
     }
     
     public void updatePose() {
-        double dl = dc.encoders.dLeft * METERS_PER_TICK;
-        double dr = dc.encoders.dRight * METERS_PER_TICK;
+        double dl = dc.encoders.dLeft * Config.METERS_PER_TICK;
+        double dr = dc.encoders.dRight * Config.METERS_PER_TICK;
 
         if (dr == 0 && dl == 0) return; // we haven't moved at all
         
-        double dTheta = (dl - dr)/WHEELBASE;
+        double dTheta = (dl - dr)/Config.WHEELBASE;
 
         Robot bot = map.bot;
-        bot.theta += dTheta;
-        bot.center.x += (dl+dr)*Math.cos(bot.theta)/2.0;
-        bot.center.y += (dl+dr)*Math.sin(bot.theta)/2.0;
+        bot.pose.theta += dTheta;
+        bot.pose.x += (dl+dr)*Math.cos(bot.pose.theta)/2.0;
+        bot.pose.y += (dl+dr)*Math.sin(bot.pose.theta)/2.0;
     }
 
     public void updateBlocks() {

@@ -1,8 +1,7 @@
 package map;
 
 public class Robot extends Polygon {
-    public Point center;
-    public double theta;
+    public Pose pose;
 
     public Robot() {
         super();
@@ -21,8 +20,8 @@ public class Robot extends Polygon {
 
         double phi = Math.atan(x / y);
 
-        x = center.x + r * Math.cos(phi + theta);
-        y = center.y + r * Math.sin(phi + theta);
+        x = pose.x + r * Math.cos(phi + pose.theta);
+        y = pose.y + r * Math.sin(phi + pose.theta);
 
         return new Point(x, y);
     }

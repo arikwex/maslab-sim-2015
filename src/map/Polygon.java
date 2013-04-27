@@ -48,7 +48,11 @@ public class Polygon {
         closed = true;
     }
     
-    public ArrayList<Point> getVertices(List<Point2D.Double> vertices) {
+    public ArrayList<Point> getVertices() {
         return points;
+    }
+    
+    public Path2D.Double getPath() {
+        return path;
     }
 }

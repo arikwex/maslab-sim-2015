@@ -59,10 +59,10 @@ public class Map {
 
     public MapBlock closestBlock() {
         MapBlock bestBlock = blocks.get(0);
-        double minDist = bestBlock.distance(bot.center);
+        double minDist = bestBlock.distance(bot.pose);
 
         for (MapBlock b : blocks) {
-            double d = b.distance(bot.center);
+            double d = b.distance(bot.pose);
 
             if (d < minDist) {
                 minDist = d;
