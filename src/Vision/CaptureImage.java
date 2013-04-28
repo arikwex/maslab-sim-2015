@@ -1,4 +1,4 @@
-package core;
+package Vision;
 
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.OpenCVFrameGrabber;
@@ -30,5 +30,9 @@ public class CaptureImage implements Runnable {
 		while (true){
     		captureFrame();
     	}
+	}
+	
+	public static void main(String[] Args){
+		captureFrame();
 	}
 }
