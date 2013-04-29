@@ -25,7 +25,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import map.Obstacle;
-import map.Polygon;
 import map.Robot;
 
 public class RobotGraph extends JFrame {
