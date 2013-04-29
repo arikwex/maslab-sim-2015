@@ -47,6 +47,11 @@ import static com.googlecode.javacv.cpp.opencv_core.cvRectangle;
 
 public class ObjectPositionDetect extends Thread {
 
+	private int posX;
+	private int posY;
+	private double momX10;
+	private double momY01;
+	private double area;
 	ArrayList<Block> blocks;
 	ArrayList<Block> redBlocks;
 	ArrayList<Block> blueBlocks;
@@ -56,6 +61,19 @@ public class ObjectPositionDetect extends Thread {
     long lastTime;
 
 	CanvasFrame canvas2 = new CanvasFrame("my image");
+	private CvMemStorage mem;
+	private CvSeq contours;
+	private CvSeq ptr;
+	private CvRect boundbox;
+	private double round;
+	private CvScalar sColor;
+	private double a;
+	private double b;
+	private double c;
+	private double num;
+	private double den;
+	private IplImage imgThreshold;
+	private IplImage imgHSV;
 	
     public void run() {
     	lastTime = System.currentTimeMillis();
@@ -63,40 +81,37 @@ public class ObjectPositionDetect extends Thread {
     	capture.start();
     	try {Thread.sleep(2500);} catch (InterruptedException e) {}
     	while (true){
-    	if (capture.img != null){
-        //canvas2.showImage(capture.img);
-    	//System.out.println(capture.i);
-        //capture.image = capture.img;
-        IplImage orgImg = capture.img.clone();
-        lastTime = System.currentTimeMillis();
-        orgImg = getBlocks(Color.red, orgImg);
-        System.out.println(System.currentTimeMillis()-lastTime);
-        //orgImg = getBlocks(Color.blue, orgImg);
-        //orgImg = getBlocks(Color.green, orgImg);
-        //orgImg = getBlocks(Color.yellow, orgImg);
-        canvas2.showImage(orgImg);
-        //cvSaveImage("target2.jpg", orgImg);
-        
-    	}
+	    	if (capture.img != null){
+		        IplImage orgImg = capture.img.clone();
+		        lastTime = System.currentTimeMillis();
+		        orgImg = getBlocks(Color.red, orgImg);
+		        orgImg = getBlocks(Color.blue, orgImg);
+		        orgImg = getBlocks(Color.green, orgImg);
+		        orgImg = getBlocks(Color.yellow, orgImg);
+		        System.out.println(System.currentTimeMillis()-lastTime);
+		
+		        canvas2.showImage(orgImg);
+	        
+	    	}
     	}
     }
 private IplImage getBlocks(Color color, IplImage orgImg) {
 
     
     IplImage thresholdImage = hsvThreshold(orgImg, color);
-	blocksCanvas.showImage(thresholdImage);
-    cvSaveImage("hsvthreshold2.jpg", thresholdImage);
+	//blocksCanvas.showImage(thresholdImage);
+    //cvSaveImage("hsvthreshold2.jpg", thresholdImage);
     //Dimension position = getCoordinates(thresholdImage, orgImg);
     //System.out.println("Dimension of original Image : " + thresholdImage.width() + " , " + thresholdImage.height());
     //System.out.println("Position of  spot    : x : " + position.width + " , y : " + position.height);
 
-    CvMemStorage mem;
-    CvSeq contours = new CvSeq();
-    CvSeq ptr = new CvSeq();
+    contours = new CvSeq();
+
+    ptr = new CvSeq();
     mem = cvCreateMemStorage(0);
+
     cvFindContours(thresholdImage, mem, contours, sizeof(CvContour.class) , CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0));
-    double round;
-    CvRect boundbox;
+    
     if(contours.isNull())
     	   return orgImg;
     for (ptr = contours; ptr != null; ptr = ptr.h_next()) {
@@ -106,35 +121,32 @@ private IplImage getBlocks(Color color, IplImage orgImg) {
         	continue;
         }
         
-        CvScalar sColor = CV_RGB( color.getRed(), color.getGreen(), color.getBlue());
+        sColor = CV_RGB( color.getRed(), color.getGreen(), color.getBlue());
         cvDrawContours(orgImg, ptr, sColor, CV_RGB(0,0,0), -1, CV_FILLED, 8, cvPoint(0,0));
     	boundbox = cvBoundingRect(ptr, 0);
         cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
 
         //System.out.println("Roundness of "+color.toString()+" spot    : " + round);
     }
-
     return orgImg;
 }
-private static double getArea(CvSeq contour) {
-    CvMoments moments = new CvMoments();
-    cvMoments(contour, moments, 1);
-    // cv Spatial moment : Mji=sumx,y(I(x,y)台j句i)
-    // where I(x,y) is the intensity of the pixel (x, y).
-    double area = cvGetCentralMoment(moments, 0, 0);
-    return area;
-
+	private double getArea(CvSeq contour) {
+	    CvMoments moments = new CvMoments();
+	    cvMoments(contour, moments, 1);
+	    // cv Spatial moment : Mji=sumx,y(I(x,y)台j句i)
+	    // where I(x,y) is the intensity of the pixel (x, y).
+	    return cvGetCentralMoment(moments, 0, 0);
+	
 	}
-	static Dimension getCoordinates(IplImage thresholdImage, IplImage orgImg) {
-        int posX = 0;
-        int posY = 0;
+	Dimension getCoordinates(IplImage thresholdImage, IplImage orgImg) {
+
         CvMoments moments = new CvMoments();
         cvMoments(thresholdImage, moments, 1);
         // cv Spatial moment : Mji=sumx,y(I(x,y)台j句i)
         // where I(x,y) is the intensity of the pixel (x, y).
-        double momX10 = cvGetSpatialMoment(moments, 1, 0); // (x,y)
-        double momY01 = cvGetSpatialMoment(moments, 0, 1);// (x,y)
-        double area = cvGetCentralMoment(moments, 0, 0);
+        momX10 = cvGetSpatialMoment(moments, 1, 0); // (x,y)
+        momY01 = cvGetSpatialMoment(moments, 0, 1);// (x,y)
+        area = cvGetCentralMoment(moments, 0, 0);
         
         posX = (int) (momX10 / area);
         posY = (int) (momY01 / area);
@@ -142,36 +154,36 @@ private static double getArea(CvSeq contour) {
         return new Dimension(posX, posY);
     }
 	
-	static double getArea(IplImage image) {
+	double getArea(IplImage image) {
 
         CvMoments moments = new CvMoments();
         cvMoments(image, moments, 1);
         // cv Spatial moment : Mji=sumx,y(I(x,y)台j句i)
         // where I(x,y) is the intensity of the pixel (x, y).
-        double area = cvGetCentralMoment(moments, 0, 0);
+        area = cvGetCentralMoment(moments, 0, 0);
         return area;
 	}
 	
-	static double getRoundness(CvSeq ptr) {
+	double getRoundness(CvSeq ptr) {
         CvMoments moments = new CvMoments();
         cvMoments(ptr, moments, 1);
         // cv Spatial moment : Mji=sumx,y(I(x,y)台j句i)
         // where I(x,y) is the intensity of the pixel (x, y).
-        double a = cvGetCentralMoment(moments, 2, 0);
-        double b = cvGetCentralMoment(moments, 0, 2);
-        double c = cvGetCentralMoment(moments, 1, 1);
-        double num = a+b+Math.sqrt(Math.pow((a-b), 2)+4*Math.pow(c, 2));
-        double den = a+b-Math.sqrt(Math.pow((a-b), 2)+4*Math.pow(c, 2));
+        a = cvGetCentralMoment(moments, 2, 0);
+        b = cvGetCentralMoment(moments, 0, 2);
+        c = cvGetCentralMoment(moments, 1, 1);
+        num = a+b+Math.sqrt(Math.pow((a-b), 2)+4*Math.pow(c, 2));
+        den = a+b-Math.sqrt(Math.pow((a-b), 2)+4*Math.pow(c, 2));
         return den/num;
 	}
 
-	static IplImage hsvThreshold(IplImage orgImg, Color color) {
+	IplImage hsvThreshold(IplImage orgImg, Color color) {
         // 8-bit, 3- color =(RGB)
-    	IplImage imgHSV = cvCreateImage(cvGetSize(orgImg), 8, 3);
+    	imgHSV = cvCreateImage(cvGetSize(orgImg), 8, 3);
         //System.out.println(cvGetSize(orgImg));
         cvCvtColor(orgImg, imgHSV, CV_BGR2HSV);
         // 8-bit 1- color = monochrome
-        IplImage imgThreshold = cvCreateImage(cvGetSize(orgImg), 8, 1);
+        imgThreshold = cvCreateImage(cvGetSize(orgImg), 8, 1);
 
         if (color.equals(Color.red)){
     		// cvScalar : ( H , S , V, A)
@@ -193,11 +205,8 @@ private static double getArea(CvSeq contour) {
     }
 	
 	public static void main(String[] Args){
-		CaptureImage capture = new CaptureImage();
 		ObjectPositionDetect me = new ObjectPositionDetect();
 
-		
-		
 		me.start();
 	}
 }
