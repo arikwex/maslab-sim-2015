@@ -12,14 +12,21 @@ public class Block extends Point{
     public double y;
     public int sizeP; 
     public BlockColor color;
-    
-    
+
+    /*
     public Block(double x, double y,int sizeP, BlockColor color) {
         super(x,y);
         this.color= color;
         this.sizeP = sizeP;
     }
+    */
     
+    public Block(double relx, double rely,int sizeP, BlockColor color) {
+    	this.relX = relx;
+    	this.relY = rely;
+        this.color= color;
+        this.sizeP = sizeP;
+    }
     
  // setPosition Transforms to coordinate positions of the world. 
 // Taking into account the angle of the robot to the world. 

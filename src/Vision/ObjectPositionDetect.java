@@ -17,6 +17,9 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvMoments;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Date;
 
 
 import com.googlecode.javacv.CanvasFrame;
@@ -27,6 +30,8 @@ import com.googlecode.javacv.cpp.opencv_core.CvScalar;
 import com.googlecode.javacv.cpp.opencv_core.CvSeq;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_imgproc.CvMoments;
+
+import core.Block;
 
 import static com.googlecode.javacpp.Loader.sizeof;
 import static com.googlecode.javacv.cpp.opencv_core.CV_FILLED;
@@ -40,120 +45,77 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvBoundingRect;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cvFindContours;
 import static com.googlecode.javacv.cpp.opencv_core.cvRectangle;
 
-public class ObjectPositionDetect {
+public class ObjectPositionDetect extends Thread {
 
-    public static void main(String[] args) {
-        IplImage orgImg = cvLoadImage("capture.jpg");
+	ArrayList<Block> blocks;
+	ArrayList<Block> redBlocks;
+	ArrayList<Block> blueBlocks;
+	ArrayList<Block> greenBlocks;
+	ArrayList<Block> yellowBlocks;
+	CanvasFrame blocksCanvas = new CanvasFrame("Blocks Canvas");
+    long lastTime;
 
-        CanvasFrame redcanvas = new CanvasFrame("red");
-        IplImage redthresholdImage = hsvThreshold(orgImg, Color.red);
-		redcanvas.showImage(redthresholdImage);
-        cvSaveImage("hsvthreshold.jpg", redthresholdImage);
-        Dimension redposition = getCoordinates(redthresholdImage, orgImg);
-        System.out.println("Dimension of original Image : " + redthresholdImage.width() + " , " + redthresholdImage.height());
-        System.out.println("Position of red spot    : x : " + redposition.width + " , y : " + redposition.height);
-
-        CvMemStorage mem;
-        CvSeq contours = new CvSeq();
-        CvSeq ptr = new CvSeq();
-        mem = cvCreateMemStorage(0);
-        cvFindContours(redthresholdImage, mem, contours, sizeof(CvContour.class) , CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0));
-        double round;
-        CvRect boundbox;
-        for (ptr = contours; ptr != null; ptr = ptr.h_next()) {
-        	round = getRoundness(ptr);
-            if (round < 0.45 || getArea(ptr)<100){
-            	continue;
-            }
-            CvScalar color = CV_RGB( Color.red.getRed(), Color.red.getGreen(), Color.red.getBlue());
-            cvDrawContours(orgImg, ptr, color, CV_RGB(0,0,0), -1, CV_FILLED, 8, cvPoint(0,0));
-        	boundbox = cvBoundingRect(ptr, 0);
-            cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
-
-            System.out.println("Roundness of red spot    : " + round);
-        }
-
-        CanvasFrame bluecanvas = new CanvasFrame("blue");
-        IplImage bluethresholdImage = hsvThreshold(orgImg, Color.blue);
-		bluecanvas.showImage(bluethresholdImage);
-        cvSaveImage("hsvthreshold.jpg", bluethresholdImage);
-        Dimension blueposition = getCoordinates(bluethresholdImage, orgImg);
-        System.out.println("Dimension of original Image : " + bluethresholdImage.width() + " , " + bluethresholdImage.height());
-        System.out.println("Position of blue spot    : x : " + blueposition.width + " , y : " + blueposition.height);
+	CanvasFrame canvas2 = new CanvasFrame("my image");
+	
+    public void run() {
+    	lastTime = System.currentTimeMillis();
+    	CaptureImage capture = new CaptureImage();
+    	capture.start();
+    	try {Thread.sleep(2500);} catch (InterruptedException e) {}
+    	while (true){
+    	if (capture.img != null){
+        //canvas2.showImage(capture.img);
+    	//System.out.println(capture.i);
+        //capture.image = capture.img;
+        IplImage orgImg = capture.img.clone();
+        lastTime = System.currentTimeMillis();
+        orgImg = getBlocks(Color.red, orgImg);
+        System.out.println(System.currentTimeMillis()-lastTime);
+        //orgImg = getBlocks(Color.blue, orgImg);
+        //orgImg = getBlocks(Color.green, orgImg);
+        //orgImg = getBlocks(Color.yellow, orgImg);
+        canvas2.showImage(orgImg);
+        //cvSaveImage("target2.jpg", orgImg);
         
-        contours = new CvSeq();
-        ptr = new CvSeq();
-        mem = cvCreateMemStorage(0);
-        cvFindContours(bluethresholdImage, mem, contours, sizeof(CvContour.class) , CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0));
-
-        for (ptr = contours; ptr != null; ptr = ptr.h_next()) {
-        	round = getRoundness(ptr);
-            if (round < 0.45 || getArea(ptr)<100){
-            	continue;
-            }
-            CvScalar color = CV_RGB( Color.blue.getRed(), Color.blue.getGreen(), Color.blue.getBlue());
-            cvDrawContours(orgImg, ptr, color, CV_RGB(0,0,0), -1, CV_FILLED, 8, cvPoint(0,0));
-        	boundbox = cvBoundingRect(ptr, 0);
-            cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
-
-            System.out.println("Round of blue spot    : " + round);
-        }
-        
-        CanvasFrame greencanvas = new CanvasFrame("green");
-        IplImage greenthresholdImage = hsvThreshold(orgImg, Color.green);
-		greencanvas.showImage(greenthresholdImage);
-        cvSaveImage("hsvthreshold.jpg", greenthresholdImage);
-        Dimension greenposition = getCoordinates(greenthresholdImage, orgImg);
-        System.out.println("Dimension of original Image : " + greenthresholdImage.width() + " , " + greenthresholdImage.height());
-        System.out.println("Position of green spot    : x : " + greenposition.width + " , y : " + greenposition.height);
-
-        contours = new CvSeq();
-        ptr = new CvSeq();
-        mem = cvCreateMemStorage(0);
-        cvFindContours(greenthresholdImage, mem, contours, sizeof(CvContour.class) , CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0));
-        
-        for (ptr = contours; ptr != null; ptr = ptr.h_next()) {
-        	round = getRoundness(ptr);
-            if (round < 0.45 || getArea(ptr)<100){
-            	continue;
-            }
-        	CvScalar color = CV_RGB( Color.green.getRed(), Color.green.getGreen(), Color.green.getBlue());
-            cvDrawContours(orgImg, ptr, color, CV_RGB(0,0,0), -1, CV_FILLED, 8, cvPoint(0,0));
-        	boundbox = cvBoundingRect(ptr, 0);
-            cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
-
-            System.out.println("Roundness of green spot    : " + round);
-        }
-
-        
-        CanvasFrame yellowcanvas = new CanvasFrame("yellow");
-        IplImage yellowthresholdImage = hsvThreshold(orgImg, Color.yellow);
-		yellowcanvas.showImage(yellowthresholdImage);
-        cvSaveImage("hsvthreshold.jpg", yellowthresholdImage);
-        Dimension yellowposition = getCoordinates(yellowthresholdImage, orgImg);
-        System.out.println("Dimension of original Image : " + yellowthresholdImage.width() + " , " + yellowthresholdImage.height());
-        System.out.println("Position of yellow spot    : x : " + yellowposition.width + " , y : " + yellowposition.height);
-
-        contours = new CvSeq();
-        ptr = new CvSeq();
-        mem = cvCreateMemStorage(0);
-        cvFindContours(yellowthresholdImage, mem, contours, sizeof(CvContour.class) , CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0));
-        for (ptr = contours; ptr != null; ptr = ptr.h_next()) {
-        	round = getRoundness(ptr);
-            if (round < 0.45 || getArea(ptr)<100){
-            	continue;
-            }CvScalar color = CV_RGB( Color.yellow.getRed(), Color.yellow.getGreen(), Color.yellow.getBlue());
-            cvDrawContours(orgImg, ptr, color, CV_RGB(0,0,0), -1, CV_FILLED, 8, cvPoint(0,0));
-            boundbox = cvBoundingRect(ptr, 0);
-            cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
-        	
-            System.out.println("Roundness of green spot    : " + round);
-        }
-
-        cvSaveImage("target.jpg", orgImg);
-        CanvasFrame canvas = new CanvasFrame("image");
-        canvas.showImage(orgImg);
+    	}
+    	}
     }
+private IplImage getBlocks(Color color, IplImage orgImg) {
+
+    
+    IplImage thresholdImage = hsvThreshold(orgImg, color);
+	blocksCanvas.showImage(thresholdImage);
+    cvSaveImage("hsvthreshold2.jpg", thresholdImage);
+    //Dimension position = getCoordinates(thresholdImage, orgImg);
+    //System.out.println("Dimension of original Image : " + thresholdImage.width() + " , " + thresholdImage.height());
+    //System.out.println("Position of  spot    : x : " + position.width + " , y : " + position.height);
+
+    CvMemStorage mem;
+    CvSeq contours = new CvSeq();
+    CvSeq ptr = new CvSeq();
+    mem = cvCreateMemStorage(0);
+    cvFindContours(thresholdImage, mem, contours, sizeof(CvContour.class) , CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0));
+    double round;
+    CvRect boundbox;
+    if(contours.isNull())
+    	   return orgImg;
+    for (ptr = contours; ptr != null; ptr = ptr.h_next()) {
+    	
+    	round = getRoundness(ptr);
+        if (round < 0.45 || getArea(ptr)<225){
+        	continue;
+        }
+        
+        CvScalar sColor = CV_RGB( color.getRed(), color.getGreen(), color.getBlue());
+        cvDrawContours(orgImg, ptr, sColor, CV_RGB(0,0,0), -1, CV_FILLED, 8, cvPoint(0,0));
+    	boundbox = cvBoundingRect(ptr, 0);
+        cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
+
+        //System.out.println("Roundness of "+color.toString()+" spot    : " + round);
+    }
+
+    return orgImg;
+}
 private static double getArea(CvSeq contour) {
     CvMoments moments = new CvMoments();
     cvMoments(contour, moments, 1);
@@ -206,17 +168,17 @@ private static double getArea(CvSeq contour) {
 	static IplImage hsvThreshold(IplImage orgImg, Color color) {
         // 8-bit, 3- color =(RGB)
     	IplImage imgHSV = cvCreateImage(cvGetSize(orgImg), 8, 3);
-        System.out.println(cvGetSize(orgImg));
+        //System.out.println(cvGetSize(orgImg));
         cvCvtColor(orgImg, imgHSV, CV_BGR2HSV);
         // 8-bit 1- color = monochrome
         IplImage imgThreshold = cvCreateImage(cvGetSize(orgImg), 8, 1);
 
         if (color.equals(Color.red)){
     		// cvScalar : ( H , S , V, A)
-    		cvInRangeS(imgHSV, cvScalar(160, 145, 50, 0), cvScalar(180, 255, 255, 0), imgThreshold);
+    		cvInRangeS(imgHSV, cvScalar(160, 125, 50, 0), cvScalar(180, 255, 255, 0), imgThreshold);
     	} else if (color.equals(Color.blue)){
             // cvScalar : ( H , S , V, A)
-            cvInRangeS(imgHSV, cvScalar(100, 50, 20, 0), cvScalar(130, 255, 100, 0), imgThreshold);
+            cvInRangeS(imgHSV, cvScalar(110, 120, 20, 0), cvScalar(130, 255, 180, 0), imgThreshold);
         } else if (color.equals(Color.green)){
             // cvScalar : ( H , S , V, A)
             cvInRangeS(imgHSV, cvScalar(60, 50, 50, 0), cvScalar(100, 255, 255, 0), imgThreshold);
@@ -229,4 +191,13 @@ private static double getArea(CvSeq contour) {
         // save
         return imgThreshold;
     }
+	
+	public static void main(String[] Args){
+		CaptureImage capture = new CaptureImage();
+		ObjectPositionDetect me = new ObjectPositionDetect();
+
+		
+		
+		me.start();
+	}
 }

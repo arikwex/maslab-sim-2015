@@ -1,37 +1,41 @@
 package Vision;
 
+import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.OpenCVFrameGrabber;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
-import static com.googlecode.javacv.cpp.opencv_highgui.*;
+import static com.googlecode.javacv.cpp.opencv_highgui.cvSaveImage;
 
-public class CaptureImage implements Runnable {
+public class CaptureImage extends Thread {
 
-    static IplImage img;
-	static IplImage image;
-    private static void captureFrame() {
+    public IplImage img,image;
+    public int i;
+    private void captureFrame(OpenCVFrameGrabber grabber, CanvasFrame canvas) {
         // 0-default camera, 1 - next...so on
-        final OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(0);
         try {
-            grabber.start();
-            img = grabber.grab();
-            if (img != null) {
-                cvSaveImage("capture.jpg", img);
-                
-                image = cvLoadImage("capture.jpg");
-            }
+    		img = grabber.grab();
+    		if (img != null)
+    			canvas.showImage(img);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
 	@Override
-	public void run() {
+	public synchronized void run() {
+		this.i = 1;
+		final OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(0);
+		grabber.setImageHeight(240);
+		grabber.setImageWidth(320);
+		CanvasFrame canvas = new CanvasFrame("canvas");
+		try {grabber.start();		} catch (com.googlecode.javacv.FrameGrabber.Exception e) {}       
 		while (true){
-    		captureFrame();
+			i++;
+    		captureFrame(grabber, canvas);
     	}
 	}
 	
 	public static void main(String[] Args){
-		captureFrame();
+		CaptureImage me = new CaptureImage();
+		me.run();
 	}
 }
