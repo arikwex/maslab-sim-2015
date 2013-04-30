@@ -1,8 +1,11 @@
 package state_machine;
 
+import core.Config;
+
 public abstract class State {
     StateMachine machine;
     long startTime;
+	protected long tooLong;
     
     public State(StateMachine sm) {
         this.machine = sm;
@@ -11,7 +14,12 @@ public abstract class State {
     
     public State step() {
         State next = this.transition();
-        next.run();
+        if (System.currentTimeMillis() - startTime >= this.tooLong){
+        	machine.state = new TimeoutState(machine, this);
+        }
+        else {
+        	next.run();
+        }
         return next;
         
     }

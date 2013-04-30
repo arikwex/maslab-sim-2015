@@ -1,18 +1,20 @@
 package state_machine;
 
+import core.Config;
+
 public class StopState extends State{
     
     
     public StopState(StateMachine sm) {
         super(sm);
-        // TODO Auto-generated constructor stub
+        tooLong = Config.CHALLENGE_TIME;
     }
 
     protected State transition() {
-        return null;
+        return machine.state;
     }
     
     protected void run() {
-        
+        this.machine.setGoal(this.machine.se.map.bot.pose);
     }
 }

@@ -23,6 +23,8 @@ public class Map {
     protected Point robotStart;
     protected Point robotGoal;
 
+	public Point ShelterLocation;
+
     // takes bot +
     public Map(double margin) {
 

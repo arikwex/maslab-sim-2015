@@ -5,7 +5,7 @@ import map.MapBlock;
 import map.Robot;
 
 public class StateEstimator extends Thread {
-    private static final double TOOCLOSE = 0.1;
+
 
 	private DataCollection dc;
    
@@ -15,11 +15,16 @@ public class StateEstimator extends Thread {
 	public boolean[] tooClose;
 	public boolean anyTooClose;
 
+	public int numCollectedBlocks;
+
+	public int numBlocksLeft;
+
 
 
     public StateEstimator(DataCollection dc) {
         this.dc = dc;    
         tooClose = new boolean[dc.numSonars];
+        numCollectedBlocks = 0;
     }
     
     public void step() {
@@ -54,7 +59,7 @@ public class StateEstimator extends Thread {
     public void sonarCheck() {
     	anyTooClose = false;
 		for (int i=0; i< dc.sonars.size();i++){
-			tooClose[i] = (dc.sonars.get(i).meas < TOOCLOSE);
+			tooClose[i] = (dc.sonars.get(i).meas < Config.TOOCLOSE);
 			if (tooClose[i])
 				anyTooClose = true;
 		}

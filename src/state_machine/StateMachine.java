@@ -6,7 +6,7 @@ import core.StateEstimator;
 public class StateMachine {
     protected StateEstimator se;
 
-    private State state;
+    protected State state;
     public Point goal;
     
     public StateMachine(StateEstimator se) {
