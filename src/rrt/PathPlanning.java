@@ -28,7 +28,7 @@ public class PathPlanning {
     		findPath();
     	}
     	for (Point p : path){
-    		if (curLoc.distance(p) < curLoc.distance(nextWaypoint)){
+    		if (curLoc.distance(p) < curLoc.distance(nextWaypoint) && se.map.checkSegment(new Segment(curLoc, p))){
     			nextWaypoint = p;
     		}
     	}

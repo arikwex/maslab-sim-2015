@@ -11,7 +11,7 @@ public class StateEstimator extends Thread {
    
     public Map map;
 
-	private boolean ready = false;
+	boolean ready = false;
 	public boolean[] tooClose;
 	public boolean anyTooClose;
 
