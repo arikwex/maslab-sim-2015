@@ -11,7 +11,7 @@ import gnu.io.SerialPort;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 
-public class SonarInterface implements SerialPortEventListener {
+public class SonarInterface extends Thread implements SerialPortEventListener {
     SerialPort serialPort;
     /** The port we're normally going to use. */
     private static final String PORT_NAMES[] = { "/dev/tty.usbmodem1411", // Mac
@@ -34,6 +34,7 @@ public class SonarInterface implements SerialPortEventListener {
     public int numUlts = 7;
     public ArrayList<Sonar> sonars;
     public ArrayList<Sonar> internalSonars;
+	public boolean ready;
 
     public SonarInterface() {
         CommPortIdentifier portId = null;
@@ -132,5 +133,12 @@ public class SonarInterface implements SerialPortEventListener {
             internal = internalSonars.get(i);
             sonars.get(i).setMeasurement(internal.meas, internal.time);
         }
+    }
+    
+    public void run(){
+    	while (true){
+    		sample();
+    		ready = true;
+    	}
     }
 }

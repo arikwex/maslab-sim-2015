@@ -1,4 +1,4 @@
-package vision;
+package Vision;
 
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.OpenCVFrameGrabber;
@@ -9,12 +9,14 @@ public class CaptureImage extends Thread {
 
     public IplImage img,image;
     public int i;
+	public boolean ready = false;
     private void captureFrame(OpenCVFrameGrabber grabber, CanvasFrame canvas) {
         // 0-default camera, 1 - next...so on
         try {
     		img = grabber.grab();
     		if (img != null)
     			canvas.showImage(img);
+    		ready  = true;
         } catch (Exception e) {
             e.printStackTrace();
         }

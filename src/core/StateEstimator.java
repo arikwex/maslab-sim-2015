@@ -21,8 +21,8 @@ public class StateEstimator {
     }
     
     public void updatePose() {
-        double dl = dc.encoders.dLeft * Config.METERS_PER_TICK;
-        double dr = dc.encoders.dRight * Config.METERS_PER_TICK;
+        double dl = dc.dLeft * Config.METERS_PER_TICK;
+        double dr = dc.dRight * Config.METERS_PER_TICK;
 
         if (dr == 0 && dl == 0) return; // we haven't moved at all
         

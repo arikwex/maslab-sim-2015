@@ -3,7 +3,7 @@ package core;
 import orc.Orc;
 import orc.QuadratureEncoder;
 
-public class EncoderPair {
+public class EncoderPair extends Thread {
     public long dt, prevTime, time;
     public long dLeft, prevLeft, left;
     public long dRight, prevRight, right;
@@ -11,6 +11,7 @@ public class EncoderPair {
 
     QuadratureEncoder leftEncoder;
     QuadratureEncoder rightEncoder;
+	boolean ready;
     
     public EncoderPair(Orc orc) {
         leftEncoder = new QuadratureEncoder(orc, 0, false);
@@ -29,5 +30,12 @@ public class EncoderPair {
       dt = time - prevTime;
       dLeft = left-prevLeft;
       dRight = right-prevRight;
+    }
+    
+    public void run(){
+    	while (true){
+    		sample();
+    		ready = true;
+    	}
     }
 }
