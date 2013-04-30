@@ -11,4 +11,8 @@ public class Pose extends Point{
     public Pose clone() {
         return new Pose(x, y, theta);
     }
+    
+    public String toString() {
+        return "X: " + x + " Y: " + y + "Theta: " + theta; 
+    }
 }

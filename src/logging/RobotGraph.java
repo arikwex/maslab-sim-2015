@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import map.Map;
 import map.Obstacle;
 import map.Robot;
 
@@ -171,10 +172,12 @@ public class RobotGraph extends JFrame {
         }
     }
 
-    public RobotGraph() {
+    public RobotGraph(Map m) {
         // visually bring up the frame
         setPreferredSize(new Dimension(501, 532));
 
+        this.bot = m.bot;
+        
         setWidgets();
         poseHistory.add(new double[] { 0, 0, 0 });
 
@@ -243,12 +246,12 @@ public class RobotGraph extends JFrame {
                     g.draw(o.getNaiveCSpace().getPath());
             }
         }
-        
+                
         private void paintBot(Graphics2D g) {
             AffineTransform t = new AffineTransform();
             t.setToIdentity();
             t.translate(bot.pose.x, bot.pose.y);
-            t.rotate(bot.pose.theta);
+            t.rotate(Math.toRadians(bot.pose.theta));
 
             g.setColor(bot.color);
             g.draw(t.createTransformedShape(bot.getPath()));
@@ -297,12 +300,16 @@ public class RobotGraph extends JFrame {
         }
     }
 
+    public void paintBot() {
+        p.paint((Graphics2D)p.getGraphics());
+    }
+    
     public void addPolygon(Obstacle o) {
         obstacles.add(o);
     }
 
     public static void main(String[] args) {
-        JFrame f = new RobotGraph();
-        f.setPreferredSize(new Dimension(FRAME_WIDTH + 1, FRAME_HEIGHT + 32));
+        //JFrame f = new RobotGraph();
+        //f.setPreferredSize(new Dimension(FRAME_WIDTH + 1, FRAME_HEIGHT + 32));
     }
 }

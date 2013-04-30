@@ -3,8 +3,8 @@ package state_machine;
 public class TimeoutState extends State{
     
     
-    public TimeoutState(StateMachine sm) {
-        super(sm);
+    public TimeoutState() {
+        super();
         // TODO Auto-generated constructor stub
     }
 

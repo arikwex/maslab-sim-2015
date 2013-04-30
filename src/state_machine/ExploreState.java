@@ -1,9 +1,11 @@
 package state_machine;
 
+import core.StateEstimator;
+
 public class ExploreState extends State{
     
-    public ExploreState(StateMachine sm) {
-        super(sm);
+    public ExploreState() {
+        super();
     }
 
     protected State transition() {
@@ -11,6 +13,8 @@ public class ExploreState extends State{
     }
     
     protected void run() {
-        this.machine.setGoal(this.machine.se.getClosestBlock());
+        StateMachine sm = StateMachine.getInstance();
+        StateEstimator se = StateEstimator.getInstance();
+        sm.setGoal(se.getClosestBlock());
     }
 }

@@ -2,7 +2,7 @@ package control;
 
 import uORCInterface.OrcController;
 import core.Config;
-import core.EncoderPair;
+import data_collection.EncoderPair;
 
 public class WheelVelocityController {
     public static final int LEFT = 0;

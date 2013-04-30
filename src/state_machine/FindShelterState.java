@@ -1,8 +1,8 @@
 package state_machine;
 
 public class FindShelterState extends State{
-    public FindShelterState(StateMachine sm) {
-        super(sm);
+    public FindShelterState() {
+        super();
     }
 
     protected State transition() {

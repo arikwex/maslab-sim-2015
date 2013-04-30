@@ -1,4 +1,4 @@
-package core;
+package data_collection;
 
 import orc.Orc;
 import orc.QuadratureEncoder;
@@ -15,6 +15,9 @@ public class EncoderPair {
     public EncoderPair(Orc orc) {
         leftEncoder = new QuadratureEncoder(orc, 0, false);
         rightEncoder = new QuadratureEncoder(orc, 1, true);
+        
+        sample();
+        sample();
     }
     
     public void sample() {
@@ -29,5 +32,9 @@ public class EncoderPair {
       dt = time - prevTime;
       dLeft = left-prevLeft;
       dRight = right-prevRight;
+    }
+    
+    public String toString() {
+        return "L: " + left + " R: " + right + " DL: " + dLeft + " DR: " + dRight ; 
     }
 }

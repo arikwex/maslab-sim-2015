@@ -1,4 +1,4 @@
-package core;
+package data_collection;
 
 public class Sonar {
     public final double x;

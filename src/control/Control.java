@@ -1,12 +1,16 @@
 package control;
 
 import rrt.PathPlanning;
+import map.Map;
 import map.Point;
 import map.Robot;
 import uORCInterface.OrcController;
 
 public class Control {
+    private static Control instance;
+    
     private PathPlanning pp;
+    private Robot bot;
 
     private WheelVelocityController leftController;
     private WheelVelocityController rightController;
@@ -14,8 +18,10 @@ public class Control {
     private PID rotPid;
     private PID velPid;
 
-    public Control(OrcController orc, PathPlanning pp) {
-        this.pp = pp;
+    public Control() {
+        OrcController orc = new OrcController(new int[]{0,1});
+        this.pp = PathPlanning.getInstance();
+        bot = Map.getInstance().bot;
         
         rotPid = new PID(.0035, 0, 0, 0, .3);
         rotPid.start(0, 0);
@@ -25,6 +31,12 @@ public class Control {
         
         leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
         rightController = new WheelVelocityController(orc, WheelVelocityController.RIGHT);
+    }
+    
+    public static Control getInstance() {
+        if (instance == null)
+            instance = new Control();
+        return instance;   
     }
 
     private void setMotion(double vel, double rot) {
@@ -41,7 +53,6 @@ public class Control {
     }
 
     public void goToWaypoint() {
-        Robot bot = null;
         Point wayPoint = pp.getNextWaypoint();
         
         double distance = bot.pose.distance(wayPoint);

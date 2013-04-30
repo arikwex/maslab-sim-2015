@@ -3,8 +3,8 @@ package state_machine;
 public class StopState extends State{
     
     
-    public StopState(StateMachine sm) {
-        super(sm);
+    public StopState() {
+        super();
         // TODO Auto-generated constructor stub
     }
 

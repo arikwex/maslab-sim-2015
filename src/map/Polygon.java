@@ -34,7 +34,7 @@ public class Polygon {
             path.moveTo(p.getX(), p.getY());
         } else {
             path.lineTo(p.getX(), p.getY());
-            segments.add(new Segment(points.get(points.size()), p));
+            segments.add(new Segment(points.get(points.size()-1), p));
         }
 
         started = true;
@@ -47,7 +47,7 @@ public class Polygon {
             throw new IllegalStateException("already closed");
 
         path.closePath();
-        segments.add(new Segment(points.get(points.size()), points.get(0)));
+        segments.add(new Segment(points.get(points.size()-1), points.get(0)));
 
         closed = true;
     }

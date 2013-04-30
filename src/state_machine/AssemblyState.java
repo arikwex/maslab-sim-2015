@@ -2,8 +2,8 @@ package state_machine;
 
 public class AssemblyState extends State{
     
-    public AssemblyState(StateMachine sm) {
-        super(sm);
+    public AssemblyState() {
+        super();
         // TODO Auto-generated constructor stub
     }
 

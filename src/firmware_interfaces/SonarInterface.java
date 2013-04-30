@@ -1,10 +1,11 @@
 package firmware_interfaces;
 
-import core.Sonar;
 import core.Config;
 import java.util.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
+import data_collection.Sonar;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;

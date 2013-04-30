@@ -2,8 +2,8 @@ package state_machine;
 
 public class CollectState extends State{
     
-    public CollectState(StateMachine sm) {
-        super(sm);
+    public CollectState() {
+        super();
     }
 
     protected State transition() {

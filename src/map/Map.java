@@ -12,8 +12,11 @@ import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 import core.Config.BlockColor;
 import core.Config;
+import core.StateEstimator;
 
 public class Map {
+    private static Map instance;
+    
     protected Rectangle2D.Double worldRect = new Rectangle2D.Double();
 
     protected ArrayList<Obstacle> obstacles;
@@ -24,10 +27,16 @@ public class Map {
     protected Point robotGoal;
 
     // takes bot +
-    public Map(double margin) {
-
+    private Map() {
+        this.bot = new Robot(0,0,0);
     }
-
+    
+    public static Map getInstance() {
+        if (instance == null)
+            instance = new Map();
+        return instance;   
+    }
+    
     public boolean addBlock(MapBlock b) {        
         if (!this.isOnMap(b)) {
             blocks.add(b);

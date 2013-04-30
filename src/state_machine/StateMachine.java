@@ -1,18 +1,22 @@
 package state_machine;
 
 import map.Point;
-import core.StateEstimator;
 
 public class StateMachine {
-    protected StateEstimator se;
-
+    private static StateMachine instance;
+    
     private State state;
     public Point goal;
     
-    public StateMachine(StateEstimator se) {
-        this.se = se;
-        state = new ExploreState(this);
+    public StateMachine() {
+        state = new ExploreState();
     }
+    
+    public static StateMachine getInstance() {
+        if (instance == null)
+            instance = new StateMachine();
+        return instance;   
+    } 
     
     public void step() {
         state = state.step();

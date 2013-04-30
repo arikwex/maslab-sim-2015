@@ -1,11 +1,9 @@
 package state_machine;
 
 public abstract class State {
-    StateMachine machine;
     long startTime;
     
-    public State(StateMachine sm) {
-        this.machine = sm;
+    public State() {
         startTime = System.currentTimeMillis();
     }
     

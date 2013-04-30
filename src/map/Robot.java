@@ -1,10 +1,21 @@
 package map;
 
+import java.awt.Color;
+
+import core.Config;
+
 public class Robot extends Polygon {
     public Pose pose;
 
-    public Robot() {
+    public Robot(double x, double y, double theta) {
         super();
+        this.pose = new Pose(x, y, theta);
+        this.color = Color.red;
+        
+        for (int i = 0; i<Config.botPoly.length; i++) {
+            this.addVertex(new Point(Config.botPoly[i][0], Config.botPoly[i][1]));
+        }
+        this.close();
     }
 
     public void scale(double ratio) {

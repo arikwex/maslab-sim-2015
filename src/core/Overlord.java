@@ -1,6 +1,8 @@
 package core;
 
+import logging.Log;
 import control.Control;
+import data_collection.DataCollection;
 import orc.Orc;
 import rrt.PathPlanning;
 import state_machine.StateMachine;
@@ -16,31 +18,40 @@ public class Overlord {
     StateMachine sm;
     PathPlanning pp;
     Control c;
+    
+    Log l;
 
 
     public Overlord() {
         orcControl = new OrcController(new int[]{0,1});
         orc = Orc.makeOrc();
 
-        dc = new DataCollection(orc);
-        se = new StateEstimator(dc);
-        sm = new StateMachine(se);
-        pp = new PathPlanning(sm, se);
-        c = new Control(orcControl, pp);
+        dc = DataCollection.getInstance();
+        se = StateEstimator.getInstance();
+        sm = StateMachine.getInstance();
+        pp = PathPlanning.getInstance();
+        c = Control.getInstance();
+        
+        l = Log.getInstance();
     }
 
     public void start() {
         while (true) {
             dc.step();
+            
+            dc.log();
             se.step();
-            sm.step();
-            pp.step();
-            c.step();
+            l.updatePose();
+            //sm.step();
+            //pp.step();
+            //c.step();
 
         }
     }
     
     public static void main(String[] args) {
         System.out.println("compile!");
+        Overlord robot = new Overlord();
+        robot.start();
     }
 }
