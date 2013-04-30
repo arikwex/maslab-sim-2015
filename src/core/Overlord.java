@@ -8,7 +8,7 @@ import rrt.PathPlanning;
 import state_machine.StateMachine;
 import uORCInterface.OrcController;
 
-public class Overlord {
+public class Overlord extends Thread{
     
     OrcController orcControl;
     Orc orc;
@@ -48,10 +48,11 @@ public class Overlord {
 
         }
     }
+
     
     public static void main(String[] args) {
         System.out.println("compile!");
-        Overlord robot = new Overlord();
-        robot.start();
+        Overlord me = new Overlord();
+        me.start();
     }
 }

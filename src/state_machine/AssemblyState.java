@@ -1,17 +1,22 @@
 package state_machine;
 
-public class AssemblyState extends State{
-    
+import core.Config;
+
+public class AssemblyState extends State {
+
     public AssemblyState() {
         super();
-        // TODO Auto-generated constructor stub
+        tooLong = Config.ASSEMBLY_TOO_LONG;
     }
 
     protected State transition() {
-        return null;
+        if (se.numCollectedBlocks == 0) {
+            return new ExploreState();
+        }
+        return this;
     }
-    
+
     protected void run() {
-        
+
     }
 }

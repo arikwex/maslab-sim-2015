@@ -10,23 +10,29 @@ import core.Delta;
 import firmware_interfaces.SonarInterface;
 
 import orc.Orc;
+import vision.ObjectPositionDetect;
 
 public class DataCollection {
 
     private static DataCollection instance;
     
-    public EncoderPair encoders;
-    public SonarInterface sonarInterface;
-    public ArrayList<Sonar> sonars;
-    public Delta delta;
-    public ArrayList<Block> BlocksInVision; 
+    private EncoderPair encoders;
+    private SonarInterface sonarInterface;
+    private ObjectPositionDetect vision;
+    
+    private ArrayList<Sonar> sonars;
+    private Delta delta;
+    private ArrayList<Block> blocksInVision; 
+    
     
     private DataCollection() {
         Orc orc = Orc.makeOrc();
         
         encoders = new EncoderPair(orc);
-        //sonarInterface = new SonarInterface();
-        //sonars = sonarInterface.getSonars();
+        sonarInterface = new SonarInterface();
+        sonars = sonarInterface.getSonars();
+
+        vision = new ObjectPositionDetect();
 
 
         //vision = new Vision();
@@ -42,8 +48,21 @@ public class DataCollection {
     
     public void step() {
         encoders.sample();
-        //System.out.println(encoders);
-        //sonarInterface.sample();
+        sonarInterface.sample();
+        
+        blocksInVision = vision.blocks;
+    }
+    
+    public EncoderPair getEncoders() {
+        return encoders;
+    }
+    
+    public ArrayList<Sonar> getSonars() {
+        return sonars;
+    }
+    
+    public ArrayList<Block> getBlocks() {
+        return blocksInVision;
     }
     
     public void log() {

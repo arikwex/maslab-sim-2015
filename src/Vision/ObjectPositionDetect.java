@@ -1,12 +1,10 @@
 package vision; 
-//imports
+
 import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
 import static com.googlecode.javacv.cpp.opencv_core.cvGetSize;
 import static com.googlecode.javacv.cpp.opencv_core.cvInRangeS;
 import static com.googlecode.javacv.cpp.opencv_core.cvReleaseImage;
 import static com.googlecode.javacv.cpp.opencv_core.cvScalar;
-import static com.googlecode.javacv.cpp.opencv_highgui.cvLoadImage;
-import static com.googlecode.javacv.cpp.opencv_highgui.cvSaveImage;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_BGR2HSV;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_MEDIAN;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cvCvtColor;
@@ -17,10 +15,7 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvMoments;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Date;
-
 
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.cpp.opencv_core.CvContour;
@@ -32,6 +27,7 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_imgproc.CvMoments;
 
 import core.Block;
+import core.Config.BlockColor;
 
 import static com.googlecode.javacpp.Loader.sizeof;
 import static com.googlecode.javacv.cpp.opencv_core.CV_FILLED;
@@ -52,11 +48,11 @@ public class ObjectPositionDetect extends Thread {
 	private double momX10;
 	private double momY01;
 	private double area;
-	ArrayList<Block> blocks;
-	ArrayList<Block> redBlocks;
-	ArrayList<Block> blueBlocks;
-	ArrayList<Block> greenBlocks;
-	ArrayList<Block> yellowBlocks;
+	public ArrayList<Block> blocks = new ArrayList<Block>();
+	ArrayList<Block> redBlocks = new ArrayList<Block>();
+	ArrayList<Block> blueBlocks = new ArrayList<Block>();
+	ArrayList<Block> greenBlocks = new ArrayList<Block>();
+	ArrayList<Block> yellowBlocks = new ArrayList<Block>();
 	CanvasFrame blocksCanvas = new CanvasFrame("Blocks Canvas");
     long lastTime;
 
@@ -74,20 +70,27 @@ public class ObjectPositionDetect extends Thread {
 	private double den;
 	private IplImage imgThreshold;
 	private IplImage imgHSV;
+	private Block block;
+	private Dimension position;
+	public boolean ready;
 	
     public void run() {
     	lastTime = System.currentTimeMillis();
     	CaptureImage capture = new CaptureImage();
     	capture.start();
-    	try {Thread.sleep(2500);} catch (InterruptedException e) {}
+		
+    	while (!capture.ready){
+    		try {Thread.sleep((long) 0.0001);} catch (InterruptedException e) {}
+    	}
+    	ready = true;
     	while (true){
 	    	if (capture.img != null){
 		        IplImage orgImg = capture.img.clone();
 		        lastTime = System.currentTimeMillis();
-		        orgImg = getBlocks(Color.red, orgImg);
-		        orgImg = getBlocks(Color.blue, orgImg);
-		        orgImg = getBlocks(Color.green, orgImg);
-		        orgImg = getBlocks(Color.yellow, orgImg);
+		        orgImg = getBlocks(BlockColor.RED, orgImg);
+		        orgImg = getBlocks(BlockColor.BLUE, orgImg);
+		        orgImg = getBlocks(BlockColor.GREEN, orgImg);
+		        orgImg = getBlocks(BlockColor.YELLOW, orgImg);
 		        System.out.println(System.currentTimeMillis()-lastTime);
 		
 		        canvas2.showImage(orgImg);
@@ -95,16 +98,15 @@ public class ObjectPositionDetect extends Thread {
 	    	}
     	}
     }
-private IplImage getBlocks(Color color, IplImage orgImg) {
+private IplImage getBlocks(BlockColor color, IplImage orgImg) {
 
     
     IplImage thresholdImage = hsvThreshold(orgImg, color);
 	//blocksCanvas.showImage(thresholdImage);
     //cvSaveImage("hsvthreshold2.jpg", thresholdImage);
-    //Dimension position = getCoordinates(thresholdImage, orgImg);
     //System.out.println("Dimension of original Image : " + thresholdImage.width() + " , " + thresholdImage.height());
     //System.out.println("Position of  spot    : x : " + position.width + " , y : " + position.height);
-
+    
     contours = new CvSeq();
 
     ptr = new CvSeq();
@@ -120,8 +122,36 @@ private IplImage getBlocks(Color color, IplImage orgImg) {
         if (round < 0.45 || getArea(ptr)<225){
         	continue;
         }
+
+        position = getCoordinates(thresholdImage, orgImg);
+        block = new Block(position.width, position.height, ptr.total(), color);
+        blocks.add(block);
+
+        Color actualColor;
         
-        sColor = CV_RGB( color.getRed(), color.getGreen(), color.getBlue());
+        switch (color){
+        case BLUE:
+        	blueBlocks.add(block);
+        	actualColor = Color.BLUE;
+        	break;
+        case RED:
+        	redBlocks.add(block);
+        	actualColor = Color.RED;
+        	break;
+        case GREEN:
+        	greenBlocks.add(block);
+        	actualColor = Color.GREEN;
+        	break;
+        case YELLOW:
+        	yellowBlocks.add(block);
+        	actualColor = Color.YELLOW;
+        	break;
+        default:
+        	actualColor = Color.WHITE;
+        		
+        }
+        
+        sColor = CV_RGB( actualColor.getRed(), actualColor.getGreen(), actualColor.getBlue());
         cvDrawContours(orgImg, ptr, sColor, CV_RGB(0,0,0), -1, CV_FILLED, 8, cvPoint(0,0));
     	boundbox = cvBoundingRect(ptr, 0);
         cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
@@ -177,7 +207,7 @@ private IplImage getBlocks(Color color, IplImage orgImg) {
         return den/num;
 	}
 
-	IplImage hsvThreshold(IplImage orgImg, Color color) {
+	IplImage hsvThreshold(IplImage orgImg, BlockColor color) {
         // 8-bit, 3- color =(RGB)
     	imgHSV = cvCreateImage(cvGetSize(orgImg), 8, 3);
         //System.out.println(cvGetSize(orgImg));
@@ -185,16 +215,16 @@ private IplImage getBlocks(Color color, IplImage orgImg) {
         // 8-bit 1- color = monochrome
         imgThreshold = cvCreateImage(cvGetSize(orgImg), 8, 1);
 
-        if (color.equals(Color.red)){
+        if (color.equals(BlockColor.RED)){
     		// cvScalar : ( H , S , V, A)
     		cvInRangeS(imgHSV, cvScalar(160, 125, 50, 0), cvScalar(180, 255, 255, 0), imgThreshold);
-    	} else if (color.equals(Color.blue)){
+    	} else if (color.equals(BlockColor.BLUE)){
             // cvScalar : ( H , S , V, A)
             cvInRangeS(imgHSV, cvScalar(110, 120, 20, 0), cvScalar(130, 255, 180, 0), imgThreshold);
-        } else if (color.equals(Color.green)){
+        } else if (color.equals(BlockColor.GREEN)){
             // cvScalar : ( H , S , V, A)
             cvInRangeS(imgHSV, cvScalar(60, 50, 50, 0), cvScalar(100, 255, 255, 0), imgThreshold);
-        } else if (color.equals(Color.yellow)){
+        } else if (color.equals(BlockColor.YELLOW)){
             // cvScalar : ( H , S , V, A)
             cvInRangeS(imgHSV, cvScalar(10, 60, 100, 0), cvScalar(35, 255, 255, 0), imgThreshold);
         }

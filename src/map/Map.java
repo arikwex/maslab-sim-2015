@@ -26,6 +26,8 @@ public class Map {
     protected Point robotStart;
     protected Point robotGoal;
 
+	public Point ShelterLocation;
+
     // takes bot +
     private Map() {
         this.bot = new Robot(0,0,0);

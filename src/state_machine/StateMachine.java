@@ -3,6 +3,7 @@ package state_machine;
 import map.Point;
 
 public class StateMachine {
+
     private static StateMachine instance;
     
     private State state;
