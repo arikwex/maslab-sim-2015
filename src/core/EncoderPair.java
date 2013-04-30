@@ -16,6 +16,7 @@ public class EncoderPair extends Thread {
     public EncoderPair(Orc orc) {
         leftEncoder = new QuadratureEncoder(orc, 0, false);
         rightEncoder = new QuadratureEncoder(orc, 1, true);
+        ready = false;
     }
     
     public void sample() {

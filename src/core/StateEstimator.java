@@ -4,23 +4,31 @@ import map.Map;
 import map.MapBlock;
 import map.Robot;
 
-public class StateEstimator {
-    private DataCollection dc;
+public class StateEstimator extends Thread {
+    private static final double TOOCLOSE = 0.1;
+
+	private DataCollection dc;
    
     public Map map;
+
+	private boolean ready = false;
+	public boolean[] tooClose;
+	public boolean anyTooClose;
 
 
 
     public StateEstimator(DataCollection dc) {
         this.dc = dc;    
+        tooClose = new boolean[dc.numSonars];
     }
     
     public void step() {
         updatePose(); 
         updateBlocks();
+        sonarCheck();
     }
-    
-    public void updatePose() {
+
+	public void updatePose() {
         double dl = dc.dLeft * Config.METERS_PER_TICK;
         double dr = dc.dRight * Config.METERS_PER_TICK;
 
@@ -43,7 +51,27 @@ public class StateEstimator {
         }
     }
     
+    public void sonarCheck() {
+    	anyTooClose = false;
+		for (int i=0; i< dc.sonars.size();i++){
+			tooClose[i] = (dc.sonars.get(i).meas < TOOCLOSE);
+			if (tooClose[i])
+				anyTooClose = true;
+		}
+	}
+    
     public MapBlock getClosestBlock() {
         return map.closestBlock();
+    }
+    
+    public void run(){
+    	dc.start();
+    	while (true){
+    		while (!dc.ready){
+        		try {Thread.sleep((long) 0.0001);} catch (InterruptedException e) {}
+        	}
+    		step();
+        	ready  = true;
+    	}
     }
 }

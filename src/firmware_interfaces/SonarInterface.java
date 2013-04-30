@@ -37,6 +37,7 @@ public class SonarInterface extends Thread implements SerialPortEventListener {
 	public boolean ready;
 
     public SonarInterface() {
+    	ready = false;
         CommPortIdentifier portId = null;
         Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
 
@@ -131,7 +132,8 @@ public class SonarInterface extends Thread implements SerialPortEventListener {
         Sonar internal;
         for (int i = 0; i < internalSonars.size(); i++) {
             internal = internalSonars.get(i);
-            sonars.get(i).setMeasurement(internal.meas, internal.time);
+            double meas = sonars.get(i).filter.update(internal.meas);
+            sonars.get(i).setMeasurement(meas, internal.time);
         }
     }
     

@@ -7,11 +7,13 @@ public class Sonar {
     
     public double meas;
     public long time;
+    public IIRFilter filter;
     
     public Sonar(double x, double y, double theta) {
         this.x = x;
         this.y = y;
         this.theta = theta;
+        filter = new IIRFilter(new double[] {.1, .1, .1}, new double[] {.7});
     }
     
     public Sonar(double[] positions){

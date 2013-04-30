@@ -12,21 +12,23 @@ public class DataCollection extends Thread {
 
     private EncoderPair encoders;
     private SonarInterface sonarInterface;
-    private ArrayList<Sonar> sonars;
     private ObjectPositionDetect vision;
     //public Vision vision;
+    public ArrayList<Sonar> sonars;
     public Delta delta;
     public ArrayList<Block> BlocksInVision;
 	public boolean ready;
 	public double dLeft;
-	public double dRight; 
+	public double dRight;
+	public int numSonars; 
     
     public DataCollection(Orc orc) {
         
         encoders = new EncoderPair(orc);
         sonarInterface = new SonarInterface();
     	vision = new ObjectPositionDetect();
-
+    	ready = false;
+    	numSonars = sonarInterface.numUlts;
         //vision = new Vision();
         //delta = new Delta();
         //BlocksInVision = new ArrayList<Block>;
