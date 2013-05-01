@@ -1,4 +1,4 @@
-package vision; 
+package Vision; 
 
 import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
 import static com.googlecode.javacv.cpp.opencv_core.cvGetSize;

@@ -1,4 +1,4 @@
-package vision;
+package Vision;
 
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.OpenCVFrameGrabber;

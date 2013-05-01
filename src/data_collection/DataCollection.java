@@ -10,7 +10,7 @@ import core.Delta;
 import firmware_interfaces.SonarInterface;
 
 import orc.Orc;
-import vision.ObjectPositionDetect;
+import Vision.ObjectPositionDetect;
 
 public class DataCollection {
 
