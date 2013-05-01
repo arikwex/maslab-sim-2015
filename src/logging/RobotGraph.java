@@ -245,7 +245,6 @@ public class RobotGraph extends JFrame {
             drawGrid(g);
             drawAxes(g);
 
-            paintWorldBounds(g);
             paintObstacles(g);
             paintBlocks(g);
             paintBot(g);
@@ -258,8 +257,12 @@ public class RobotGraph extends JFrame {
             for (Obstacle o : map.obstacles) {
                 g.setColor(o.color);
                 g.draw(o.getPath());
-                if (drawCSpace)
+                if (drawCSpace){
+                	if (o.getNaiveCSpace() == null){
+                		o.computeNaiveCSpace(Config.ROBOT_RADIUS);
+                	}
                     g.draw(o.getNaiveCSpace().getPath());
+                }
             }
         }
         

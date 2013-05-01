@@ -15,7 +15,6 @@ public class Polygon {
     protected boolean closed = false;
 
     public Color color = null;
-	private Rectangle bounds;
 
     public Polygon(ArrayList<Point> points) {
         for (Point p : points) {

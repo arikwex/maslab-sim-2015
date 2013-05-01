@@ -18,6 +18,7 @@ public class Map {
     private static Map instance;
     
     public java.awt.geom.Rectangle2D.Double worldRect = null;
+    public ArrayList<Obstacle> worldBounds = null; // world rect in obstacle format.
 
     public ArrayList<Obstacle> obstacles;
     public ArrayList<MapBlock> blocks;

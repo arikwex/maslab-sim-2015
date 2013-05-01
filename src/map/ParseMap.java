@@ -57,6 +57,25 @@ public class ParseMap {
 						     bottom_left.getY(),
 						     top_right.getX()-bottom_left.getX(),
 						     top_right.getY()-bottom_left.getY());
+    		m.worldBounds = new ArrayList<Obstacle>();
+    		Obstacle left = new Obstacle();
+    		left.addVertex(bottom_left);
+    		left.addVertex(new Point(bottom_left.x,top_right.y));
+    		m.worldBounds.add(left);
+    		Obstacle right = new Obstacle();
+    		right.addVertex(top_right);
+    		right.addVertex(new Point(top_right.x,bottom_left.y));
+    		m.worldBounds.add(right);
+    		Obstacle bottom = new Obstacle();
+    		bottom.addVertex(bottom_left);
+    		bottom.addVertex(new Point(top_right.x,bottom_left.y));
+    		m.worldBounds.add(bottom);
+    		Obstacle top = new Obstacle();
+    		top.addVertex(top_right);
+    		top.addVertex(new Point(bottom_left.x,top_right.y));
+    		m.worldBounds.add(top);
+    		
+    		m.obstacles.addAll(m.worldBounds);
     	}
     	m.throwAwayBadBlocks();
     	return m;
