@@ -16,16 +16,24 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import core.Config;
+
 import map.Map;
+import map.MapBlock;
 import map.Obstacle;
+import map.ParseMap;
 import map.Robot;
 
 public class RobotGraph extends JFrame {
@@ -60,6 +68,8 @@ public class RobotGraph extends JFrame {
     private boolean drawCSpace = true;
 
     private MyMouseListener ml = new MyMouseListener();
+
+	private Map map;
 
     private class MyMouseListener implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
         // TODO put in a thread to make this animation continuous
@@ -177,7 +187,7 @@ public class RobotGraph extends JFrame {
         setPreferredSize(new Dimension(501, 532));
 
         this.bot = m.bot;
-        
+        this.map = m;
         setWidgets();
         poseHistory.add(new double[] { 0, 0, 0 });
 
@@ -185,6 +195,7 @@ public class RobotGraph extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
         setVisible(true);
+        
     }
 
     private void setWidgets() {
@@ -234,19 +245,44 @@ public class RobotGraph extends JFrame {
             drawGrid(g);
             drawAxes(g);
 
+            paintWorldBounds(g);
             paintObstacles(g);
+            paintBlocks(g);
             paintBot(g);
         }
 
+        private void paintWorldBounds(Graphics2D g) {
+        	g.draw(map.worldRect);
+        }
         private void paintObstacles(Graphics2D g) {
-            for (Obstacle o : obstacles) {
+            for (Obstacle o : map.obstacles) {
                 g.setColor(o.color);
                 g.draw(o.getPath());
                 if (drawCSpace)
                     g.draw(o.getNaiveCSpace().getPath());
             }
         }
+        
+        private void paintBlocks(Graphics2D g) {
+            for (MapBlock b : map.blocks) {
+                g.setColor(Config.BlockColorToColor(b.getColor()));
+                double POINT_RADIUS = 0.05;
+                double xMin = b.x - POINT_RADIUS;
+                double yMin = b.y - POINT_RADIUS;
+
+                double xMax = b.x + POINT_RADIUS;
+                double yMax = b.y + POINT_RADIUS;
+
+                Shape[] shape = new Shape[2];
+                shape[0] = new Line2D.Double(xMin, yMin, xMax, yMax);
+                shape[1] = new Line2D.Double(xMin, yMax, xMax, yMin);
                 
+                for (int i = 0; i < shape.length; i++) {
+                  g.draw(shape[i]);
+                }
+            }
+        }
+        
         private void paintBot(Graphics2D g) {
             AffineTransform t = new AffineTransform();
             t.setToIdentity();
@@ -304,12 +340,14 @@ public class RobotGraph extends JFrame {
         p.paint((Graphics2D)p.getGraphics());
     }
     
-    public void addPolygon(Obstacle o) {
+    public void addObstacle(Obstacle o) {
         obstacles.add(o);
     }
 
-    public static void main(String[] args) {
-        //JFrame f = new RobotGraph();
-        //f.setPreferredSize(new Dimension(FRAME_WIDTH + 1, FRAME_HEIGHT + 32));
+    public static void main(String[] args) throws IOException, ParseException {
+    	Map m = ParseMap.parseFile("challenge_2013.txt");
+        RobotGraph f = new RobotGraph(m);
+        
+        f.setPreferredSize(new Dimension(FRAME_WIDTH + 1, FRAME_HEIGHT + 32));
     }
 }

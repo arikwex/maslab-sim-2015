@@ -17,10 +17,10 @@ import core.StateEstimator;
 public class Map {
     private static Map instance;
     
-    protected Rectangle2D.Double worldRect = new Rectangle2D.Double();
+    public java.awt.geom.Rectangle2D.Double worldRect = null;
 
-    protected ArrayList<Obstacle> obstacles;
-    protected ArrayList<MapBlock> blocks;
+    public ArrayList<Obstacle> obstacles;
+    public ArrayList<MapBlock> blocks;
     public Robot bot;
 
     protected Point robotStart;
@@ -28,8 +28,10 @@ public class Map {
 
 	public Point ShelterLocation;
 
+	public Fiducial[] fiducials;
+
     // takes bot +
-    private Map() {
+    Map() {
         this.bot = new Robot(0,0,0);
     }
     
@@ -76,7 +78,11 @@ public class Map {
 
         for (MapBlock b : blocks) {
             double d = b.distance(bot.pose);
-
+            for (Obstacle obs : obstacles){
+            	if (obs.naiveCSpace.contains(b)){
+            		continue;
+            	}
+            }
             if (d < minDist) {
                 minDist = d;
                 bestBlock = b;
@@ -171,4 +177,20 @@ public class Map {
         double y = Math.random()*(worldRect.height) + worldRect.y;
         return new Point(x,y);
     }
+
+	public void throwAwayBadBlocks() {
+		for (int i = blocks.size()-1; i >= 0; i--){
+			if ((blocks.get(i).x < worldRect.x ||blocks.get(i).x > (worldRect.x+worldRect.width))||
+					(blocks.get(i).y < worldRect.y ||blocks.get(i).y > (worldRect.y+worldRect.height))){
+				blocks.remove(i);
+				continue;
+			}
+			for (Obstacle obs : obstacles){
+				if (obs.contains(blocks.get(i))){
+					blocks.remove(i);
+					break;
+				}
+			}
+		}		
+	}
 }

@@ -59,7 +59,11 @@ public class PathPlanning {
     	Point p;	
     	TreeNode closest, newNode, goalNode;
     	Segment seg;
-    	
+    	if(map.checkSegment(new Segment(start,goal))){
+    		path = new LinkedList<Point>();
+        	path.add(start);
+    		path.add(goal);
+    	}
     	
     	while (true){
     		p = map.randomPoint();

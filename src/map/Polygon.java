@@ -3,6 +3,7 @@ package map;
 import java.awt.geom.*;
 import java.util.*;
 import java.awt.Color;
+import java.awt.Rectangle;
 
 public class Polygon {
 
@@ -14,6 +15,7 @@ public class Polygon {
     protected boolean closed = false;
 
     public Color color = null;
+	private Rectangle bounds;
 
     public Polygon(ArrayList<Point> points) {
         for (Point p : points) {
@@ -66,5 +68,9 @@ public class Polygon {
     
     public Path2D.Double getPath() {
         return path;
+    }
+    
+    public boolean contains(Point p) {
+    	return path.contains(p);
     }
 }
