@@ -25,7 +25,7 @@ public class Control {
     public Control(Map m, PathPlanning pp) {
 
     	
-    	//OrcController orc = new OrcController(new int[]{0,1});
+    	OrcController orc = new OrcController(new int[]{0,1});
         this.pp = pp;
         bot = m.bot;
         
@@ -35,8 +35,8 @@ public class Control {
         velPid = new PID(3, 0, 0, 0, .8);
         velPid.start(0, 0);
         
-        //leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
-        //rightController = new WheelVelocityController(orc, WheelVelocityController.RIGHT);
+        leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
+        rightController = new WheelVelocityController(orc, WheelVelocityController.RIGHT);
     }
     
     public static Control getInstance() {
