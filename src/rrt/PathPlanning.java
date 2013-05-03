@@ -49,15 +49,30 @@ public class PathPlanning {
     }
 
     public void step() {
-    	Point curLoc= new Point(map.bot.pose.x, map.bot.pose.y);
+    	Point curLoc= map.bot.pose;
     	if(sm.goal != goal || nextWaypoint == null || !map.checkSegment(new Segment(curLoc, nextWaypoint))){
 //    		System.out.println("finding path");
     		findPath();
     	}
+    	if (curLoc.distance(goal)==0){
+    		nextWaypoint = goal;
+    		path.clear();
+    		return;
+    	}
+    	
+    	if (curLoc.distance(nextWaypoint)==0){
+    		nextWaypoint = goal;
+    	}
+    	
 //		System.out.println("have path");
-    	for (Point p : path){
-    		if (curLoc.distance(p) < curLoc.distance(nextWaypoint) && map.checkSegment(new Segment(curLoc, p))){
-    			nextWaypoint = p;
+    	for (int p = path.size()-1; p>=0; p--){
+        	if (curLoc.distance(path.get(p))==0){
+        		path.remove(p);
+        		continue;
+        	}
+    		
+    		if (curLoc.distance(path.get(p)) < curLoc.distance(nextWaypoint) && map.checkSegment(new Segment(curLoc, path.get(p)))){
+    			nextWaypoint = path.get(p);
     		}
     	}
     }
