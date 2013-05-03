@@ -30,7 +30,7 @@ public class ParseMap {
     			m.fiducials = parseFiducials(br);
     		}
     		else if(token.equals("construction_objects")){
-    			m.blocks = parseBlocks(br);
+    			m.setBlocks(parseBlocks(br));
     		}
     		else if(token.equals("obstacles")){
     			m.obstacles = parseObstacles(br);

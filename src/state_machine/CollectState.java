@@ -5,8 +5,8 @@ import core.Config;
 public class CollectState extends State {
     boolean blockCollected;
 
-    public CollectState() {
-        super();
+    public CollectState(StateMachine sm) {
+        super(sm);
         tooLong = Config.COLLECT_TOO_LONG;
     }
 
@@ -14,9 +14,9 @@ public class CollectState extends State {
         if (blockCollected) {
             se.numCollectedBlocks++;
             if (se.numCollectedBlocks >= Config.BIN_CAPACITY) {
-                return new FindShelterState();
+                return new FindShelterState(sm);
             } else {
-                return new ExploreState();
+                return new ExploreState(sm);
             }
         }
         return this;

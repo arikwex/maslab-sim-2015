@@ -19,9 +19,15 @@ public class Control {
     private PID velPid;
 
     public Control() {
-        OrcController orc = new OrcController(new int[]{0,1});
-        this.pp = PathPlanning.getInstance();
-        bot = Map.getInstance().bot;
+    	this(Map.getInstance(),PathPlanning.getInstance());
+    }   
+    
+    public Control(Map m, PathPlanning pp) {
+
+    	
+    	//OrcController orc = new OrcController(new int[]{0,1});
+        this.pp = pp;
+        bot = m.bot;
         
         rotPid = new PID(.0035, 0, 0, 0, .3);
         rotPid.start(0, 0);
@@ -29,13 +35,19 @@ public class Control {
         velPid = new PID(3, 0, 0, 0, .8);
         velPid.start(0, 0);
         
-        leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
-        rightController = new WheelVelocityController(orc, WheelVelocityController.RIGHT);
+        //leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
+        //rightController = new WheelVelocityController(orc, WheelVelocityController.RIGHT);
     }
     
     public static Control getInstance() {
         if (instance == null)
             instance = new Control();
+        return instance;   
+    }
+    
+    public static Control getInstance(Map m, PathPlanning pp) {
+        if (instance == null)
+            instance = new Control(m, pp);
         return instance;   
     }
 

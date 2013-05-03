@@ -6,8 +6,8 @@ import core.Config;
 public class StopState extends State{
     
     
-    public StopState() {
-        super();
+    public StopState(StateMachine sm) {
+        super(sm);
         tooLong = Config.CHALLENGE_TIME;
     }
 
@@ -16,6 +16,6 @@ public class StopState extends State{
     }
     
     protected void run() {
-        sm.setGoal(Map.getInstance().bot.pose);
+        sm.setGoal(se.map.bot.pose);
     }
 }

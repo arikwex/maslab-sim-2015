@@ -41,7 +41,7 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvBoundingRect;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cvFindContours;
 import static com.googlecode.javacv.cpp.opencv_core.cvRectangle;
 
-public class ObjectPositionDetect extends Thread {
+public class ObjectPositionDetect{
 
 	private int posX;
 	private int posY;
@@ -53,7 +53,7 @@ public class ObjectPositionDetect extends Thread {
 	ArrayList<Block> blueBlocks = new ArrayList<Block>();
 	ArrayList<Block> greenBlocks = new ArrayList<Block>();
 	ArrayList<Block> yellowBlocks = new ArrayList<Block>();
-	CanvasFrame blocksCanvas = new CanvasFrame("Blocks Canvas");
+	//CanvasFrame blocksCanvas = new CanvasFrame("Blocks Canvas");
     long lastTime;
 
 	CanvasFrame canvas2 = new CanvasFrame("my image");
@@ -73,30 +73,41 @@ public class ObjectPositionDetect extends Thread {
 	private Block block;
 	private Dimension position;
 	public boolean ready;
+	CaptureImage capture;
 	
-    public void run() {
-    	lastTime = System.currentTimeMillis();
-    	CaptureImage capture = new CaptureImage();
-    	capture.start();
-		
+	public ObjectPositionDetect(){
+    	//lastTime = System.currentTimeMillis();
+    	capture = new CaptureImage();
+    	//capture.start();
+		/*
     	while (!capture.ready){
     		try {Thread.sleep((long) 0.0001);} catch (InterruptedException e) {}
     	}
     	ready = true;
+		*/
+	}
+	
+	
+    public void run() {
     	while (true){
-	    	if (capture.img != null){
+    		step();
+    	}
+    }
+    
+    public void step(){
+    	capture.step();
+	    if (capture.img != null){
 		        IplImage orgImg = capture.img.clone();
 		        lastTime = System.currentTimeMillis();
 		        orgImg = getBlocks(BlockColor.RED, orgImg);
 		        orgImg = getBlocks(BlockColor.BLUE, orgImg);
 		        orgImg = getBlocks(BlockColor.GREEN, orgImg);
 		        orgImg = getBlocks(BlockColor.YELLOW, orgImg);
-		        System.out.println(System.currentTimeMillis()-lastTime);
+		        //System.out.println(System.currentTimeMillis()-lastTime);
 		
 		        canvas2.showImage(orgImg);
 	        
-	    	}
-    	}
+	    }
     }
 private IplImage getBlocks(BlockColor color, IplImage orgImg) {
 
@@ -236,7 +247,7 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
 	
 	public static void main(String[] Args){
 		ObjectPositionDetect me = new ObjectPositionDetect();
-
-		me.start();
+		
+		me.run();
 	}
 }

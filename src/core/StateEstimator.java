@@ -22,34 +22,46 @@ public class StateEstimator {
 
     public int numBlocksLeft;
 
-    private Map map;
+    public Map map;
 
     private StateEstimator() {
         map = Map.getInstance();
         dc = DataCollection.getInstance();
     }
-
+    private StateEstimator(Map map, DataCollection dc) {
+        this.map = map;
+        this.dc = dc;
+    }
     public static StateEstimator getInstance() {
         if (instance == null)
             instance = new StateEstimator();
         return instance;
     }
+    public static StateEstimator getInstance(Map map,DataCollection dc) {
+        if (instance == null)
+            instance = new StateEstimator(map, dc);
+        return instance;
+    }
 
+    
     public StateEstimator(DataCollection dc) {
         this.dc = dc;
-        tooClose = new boolean[dc.getSonars().size()];
+        //tooClose = new boolean[dc.getSonars().size()];
         numCollectedBlocks = 0;
     }
 
     public void step() {
         updatePose();
         updateBlocks();
-        sonarCheck();
+        //sonarCheck();
 
         Log.log(this.toString());
     }
 
     public void updatePose() {
+    	if (dc.getEncoders() == null){
+    		return;
+    	}
         EncoderPair enc = dc.getEncoders();
 
         double dl = enc.dLeft * Config.METERS_PER_TICK;
@@ -60,32 +72,33 @@ public class StateEstimator {
 
         double dTheta = Math.toDegrees((dr - dl) / Config.WHEELBASE);
 
-        Robot bot = Map.getInstance().bot;
+        Robot bot = map.bot;
         bot.pose.theta += dTheta;
         bot.pose.x += (dl + dr) * Math.cos(Math.toRadians(bot.pose.theta)) / 2.0;
         bot.pose.y += (dl + dr) * Math.sin(Math.toRadians(bot.pose.theta)) / 2.0;
     }
 
     public void updateBlocks() {
-        DataCollection dc = DataCollection.getInstance();
 
         MapBlock tempBlock;
         for (Block b : dc.getBlocks()) {
-            tempBlock = new MapBlock(Map.getInstance().bot.getAbsolute(b.relX, b.relY), b.color);
+            tempBlock = new MapBlock(map.bot.getAbsolute(b.relX, b.relY), b.color);
 
             map.addBlock(tempBlock);
         }
     }
-
+/*
     public void sonarCheck() {
         anyTooClose = false;
+        if (tooClose == null)
+        	return;
         for (int i = 0; i < tooClose.length; i++) {
             tooClose[i] = (dc.getSonars().get(i).meas < Config.TOOCLOSE);
             if (tooClose[i])
                 anyTooClose = true;
         }
     }
-
+*/
     public MapBlock getClosestBlock() {
         return map.closestBlock();
     }

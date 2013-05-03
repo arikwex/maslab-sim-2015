@@ -4,35 +4,39 @@ import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.OpenCVFrameGrabber;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
-public class CaptureImage extends Thread {
+public class CaptureImage {
 
     public IplImage img,image;
-    public int i;
-	public boolean ready = false;
-    private void captureFrame(OpenCVFrameGrabber grabber, CanvasFrame canvas) {
+	final OpenCVFrameGrabber grabber;
+	final CanvasFrame canvas;
+	private void captureFrame(OpenCVFrameGrabber grabber, CanvasFrame canvas) {
         // 0-default camera, 1 - next...so on
         try {
     		img = grabber.grab();
     		if (img != null)
     			canvas.showImage(img);
-    		ready  = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
-	@Override
-	public synchronized void run() {
-		this.i = 1;
-		final OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(0);
+    public CaptureImage(){
+    	grabber = new OpenCVFrameGrabber(0);
 		grabber.setImageHeight(240);
 		grabber.setImageWidth(320);
-		CanvasFrame canvas = new CanvasFrame("canvas");
+		canvas = new CanvasFrame("raw image");
 		try {grabber.start();		} catch (com.googlecode.javacv.FrameGrabber.Exception e) {}       
+
+    }
+    
+	public synchronized void run() {
 		while (true){
-			i++;
-    		captureFrame(grabber, canvas);
-    	}
+			step();
+		}
+	}
+	
+	public synchronized void step() {
+		captureFrame(grabber, canvas);		
 	}
 	
 	public static void main(String[] Args){

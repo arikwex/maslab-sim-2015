@@ -31,9 +31,12 @@ public class Obstacle extends Polygon {
         return GeomUtils.convexHull(csoPoints);
     }
     
-    public boolean intersects(Segment seg, Robot bot) {
-        return naiveCSpace.intersects(seg);
-        
+    public boolean intersects(Segment seg) {
+    	return naiveCSpace.intersects(seg);
+        //boolean i = path.intersects(new Double(seg.start.x,seg.start.y,seg.end.x,seg.end.y));
+        //System.out.println("does it intersect? "+i);
+        //return i;
+    	
         //if (naiveCSpace.intersects(seg))
         //    if (getBotCSpace(bot).intersects(seg))
         //        return true;
@@ -42,5 +45,16 @@ public class Obstacle extends Polygon {
 
     public Polygon getNaiveCSpace() {
         return naiveCSpace;
+    }
+    
+    @Override
+    public String toString(){
+    	String s = "[";
+    	for (Point p : points){
+    		s += "("+p.x+", "+p.y+")";
+    	}
+    	s = s.substring(0,s.length()-1);
+    	s += "]";
+    	return s;
     }
 }

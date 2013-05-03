@@ -10,7 +10,7 @@ public class StateMachine {
     public Point goal;
     
     public StateMachine() {
-        state = new ExploreState();
+        state = new ExploreState(this);
     }
     
     public static StateMachine getInstance() {

@@ -29,44 +29,47 @@ public class DataCollection {
         Orc orc = Orc.makeOrc();
         
         encoders = new EncoderPair(orc);
-        sonarInterface = new SonarInterface();
-        sonars = sonarInterface.getSonars();
+        //sonarInterface = new SonarInterface();
+        //sonars = sonarInterface.getSonars();
 
         vision = new ObjectPositionDetect();
 
-
         //vision = new Vision();
-        //delta = new Delta();
-        //BlocksInVision = new ArrayList<Block>;
+        delta = new Delta();
+        blocksInVision = new ArrayList<Block>();
     }
     
     public static DataCollection getInstance() {
-        if (instance == null)
+    	if (instance == null)
             instance = new DataCollection();
         return instance;   
     }
     
     public void step() {
         encoders.sample();
-        sonarInterface.sample();
-        
+        //sonarInterface.sample();
+    	vision.step();
         blocksInVision = vision.blocks;
     }
     
     public EncoderPair getEncoders() {
         return encoders;
     }
-    
+/*    
     public ArrayList<Sonar> getSonars() {
         return sonars;
     }
-    
+*/  
     public ArrayList<Block> getBlocks() {
         return blocksInVision;
     }
     
     public void log() {
-        Log.getInstance().log(encoders.toString());
+    	if (encoders == null){
+    		Log.log("No encoders");
+    		return;
+    	}
+    	Log.log(encoders.toString());
     }
     
 }

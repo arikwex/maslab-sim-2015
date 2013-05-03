@@ -36,7 +36,7 @@ import map.Obstacle;
 import map.ParseMap;
 import map.Robot;
 
-public class RobotGraph extends JFrame {
+public class RobotGraph extends JFrame{
     private static final long serialVersionUID = -1299466487663318439L;
 
     private double[] pose = { 0, 0, 0 };
@@ -190,7 +190,6 @@ public class RobotGraph extends JFrame {
         this.map = m;
         setWidgets();
         poseHistory.add(new double[] { 0, 0, 0 });
-
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
@@ -248,12 +247,15 @@ public class RobotGraph extends JFrame {
             paintObstacles(g);
             paintBlocks(g);
             paintBot(g);
+            paintPath(g);
         }
 
         private void paintWorldBounds(Graphics2D g) {
         	g.draw(map.worldRect);
         }
         private void paintObstacles(Graphics2D g) {
+        	if (map.obstacles == null)
+        		return;
             for (Obstacle o : map.obstacles) {
                 g.setColor(o.color);
                 g.draw(o.getPath());
@@ -267,7 +269,9 @@ public class RobotGraph extends JFrame {
         }
         
         private void paintBlocks(Graphics2D g) {
-            for (MapBlock b : map.blocks) {
+        	if (map.getBlocks() == null || map.getBlocks().isEmpty())
+        		return;
+            for (MapBlock b : map.getBlocks()) {
                 g.setColor(Config.BlockColorToColor(b.getColor()));
                 double POINT_RADIUS = 0.05;
                 double xMin = b.x - POINT_RADIUS;
@@ -283,6 +287,15 @@ public class RobotGraph extends JFrame {
                 for (int i = 0; i < shape.length; i++) {
                   g.draw(shape[i]);
                 }
+            }
+        }
+        
+        private void paintPath(Graphics2D g) {
+        	if (map.path== null)
+        		return;
+        	g.setColor(Color.RED);
+            for (int i =0; i < map.path.size()-1; i++) {
+            	g.draw(new Line2D.Double(map.path.get(i).x,map.path.get(i).y,map.path.get(i+1).x,map.path.get(i+1).y));
             }
         }
         
@@ -347,10 +360,17 @@ public class RobotGraph extends JFrame {
         obstacles.add(o);
     }
 
+    public void run(){
+        
+        setPreferredSize(new Dimension(FRAME_WIDTH + 1, FRAME_HEIGHT + 32));
+        while (true){
+        	repaint();
+        }	
+    }
+    
     public static void main(String[] args) throws IOException, ParseException {
     	Map m = ParseMap.parseFile("challenge_2013.txt");
         RobotGraph f = new RobotGraph(m);
-        
-        f.setPreferredSize(new Dimension(FRAME_WIDTH + 1, FRAME_HEIGHT + 32));
+    	f.run();
     }
 }

@@ -2,8 +2,6 @@ package core;
 
 import java.awt.Color;
 
-import core.Config.BlockColor;
-
 public class Config {
     public static final double minDist = 0;
 
@@ -55,6 +53,8 @@ public class Config {
     public static final double TOOCLOSE = 0.1;
 	public static final int BIN_CAPACITY = 5;
 	public static final double CLOSE_ENOUGH = 0.5;
+
+    public static final double MAXLENGTH = 0.1;
 
     public static final String COMMENT = "#";
     public static final String SECTION_START = "{";

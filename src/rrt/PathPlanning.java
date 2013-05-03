@@ -2,6 +2,7 @@ package rrt;
 
 import java.util.LinkedList;
 
+import core.Config;
 import core.StateEstimator;
 
 import map.Map;
@@ -12,7 +13,6 @@ import state_machine.StateMachine;
 public class PathPlanning {
     private static PathPlanning instance;
     
-    private static final int MAXLENGTH = 5;
     
 	private StateMachine sm;
     private StateEstimator se;
@@ -20,25 +20,41 @@ public class PathPlanning {
     
     LinkedList<Point> path;
     Point nextWaypoint;
-    Point goal;
+    public Point goal;
 
     public PathPlanning() {
         this.sm = StateMachine.getInstance();
         this.se = StateEstimator.getInstance();
         this.map = Map.getInstance();
     }
+
+    public PathPlanning(StateMachine sm, StateEstimator se, Map map) {
+        this.sm = sm;
+        this.se = se;
+        this.map = map;
+        this.goal = sm.goal;
+    }
+
     
     public static PathPlanning getInstance() {
         if (instance == null)
             instance = new PathPlanning();
         return instance;   
     }
+    
+    public static PathPlanning getInstance(StateMachine sm, StateEstimator se, Map map) {
+        if (instance == null)
+            instance = new PathPlanning(sm,se,map);
+        return instance;   
+    }
 
     public void step() {
     	Point curLoc= new Point(map.bot.pose.x, map.bot.pose.y);
     	if(sm.goal != goal || nextWaypoint == null || !map.checkSegment(new Segment(curLoc, nextWaypoint))){
+//    		System.out.println("finding path");
     		findPath();
     	}
+//		System.out.println("have path");
     	for (Point p : path){
     		if (curLoc.distance(p) < curLoc.distance(nextWaypoint) && map.checkSegment(new Segment(curLoc, p))){
     			nextWaypoint = p;
@@ -67,6 +83,7 @@ public class PathPlanning {
     	
     	while (true){
     		p = map.randomPoint();
+
     		closest = root;
     		for (TreeNode node : rrt.nodes){
     			if (node.loc.distance(p) < closest.loc.distance(p)){
@@ -75,39 +92,42 @@ public class PathPlanning {
     		}
     		
     		seg = new Segment(closest.loc, p);
-    		seg = seg.trim(MAXLENGTH);
-    		
+    		seg = seg.trim(Config.MAXLENGTH);
+    		p = seg.end;
+    		if (!map.checkSegment(seg)){  	        
+//    			System.out.println("not valid");
+    			continue;
+    		}
+           
+    		newNode = new TreeNode(seg.end);
+    		closest.addChild(newNode);
+    		seg = new Segment(goal, p);
+    	
     		if (!map.checkSegment(seg)){
     			continue;
     		}
     		
-    		newNode = new TreeNode(goal);
-    		closest.addChild(newNode);
-    		closest = root;
-    		for (TreeNode node : rrt.nodes){
-    			if (node.loc.distance(goal) < closest.loc.distance(goal)){
-    				closest = node;
-    			}
-    		}
-    		
-    		seg = new Segment(closest.loc, p);
-    	
-    		if (!map.checkSegment(seg) || closest.loc.distance(goal) > MAXLENGTH){
-    			continue;
-    		}
-    		
     		goalNode = new TreeNode(goal);
-    		closest.addChild(goalNode);
+    		newNode.addChild(goalNode);
     		break;
     	}
     	
     	TreeNode curNode = goalNode;
     	Boolean pathcomplete = false;
     	path = new LinkedList<Point>();
+    	System.out.print("path = ");
     	while (!pathcomplete){
     		path.add(0, curNode.loc);
+    		if (curNode == rrt.root){
+    			pathcomplete = true;
+    			break;
+    		}
+    		System.out.print(new Segment(curNode.loc, curNode.parent.loc)+", ");
     		curNode = curNode.parent;
     	}
+    	map.path = path;
+    	nextWaypoint = path.get(0);
+    	System.out.println(path);
     	
     }
 }

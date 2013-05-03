@@ -66,10 +66,8 @@ public class Segment {
         
         if (ratio >= 1)
             return this;
-
         double dx = end.x - start.x;
         double dy = end.y - start.y;
-        
         return new Segment(start, new Point(start.x + dx * ratio, start.y + dy * ratio));
     }
     
@@ -95,5 +93,10 @@ public class Segment {
     
     public double length() {
         return start.distance(end);
+    }
+    
+    @Override
+    public String toString(){
+    	return "("+start.x+", "+start.y+") to ("+end.x+", "+end.y+")";
     }
 }

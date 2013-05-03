@@ -7,12 +7,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 import core.Config.BlockColor;
 import core.Config;
-import core.StateEstimator;
 
 public class Map {
     private static Map instance;
@@ -21,7 +21,7 @@ public class Map {
     public ArrayList<Obstacle> worldBounds = null; // world rect in obstacle format.
 
     public ArrayList<Obstacle> obstacles;
-    public ArrayList<MapBlock> blocks;
+    private ArrayList<MapBlock> blocks;
     public Robot bot;
 
     protected Point robotStart;
@@ -29,11 +29,14 @@ public class Map {
 
 	public Point ShelterLocation;
 
+    public LinkedList<Point> path;
 	public Fiducial[] fiducials;
 
     // takes bot +
     Map() {
         this.bot = new Robot(0,0,0);
+        this.worldRect = new Rectangle2D.Double();
+        this.blocks = new ArrayList<MapBlock>();
     }
     
     public static Map getInstance() {
@@ -52,11 +55,20 @@ public class Map {
     }
 
     public boolean checkSegment(Segment seg) {
+    	if (obstacles == null){
+    		return false;
+    	}
+ //   	System.out.println("Checking Segment "+seg );
         for (Obstacle o : obstacles) {
+        	//System.out.println("Checking obs "+o + " against seg " + seg);
             if (o.intersects(seg))
-                return false;
+            {
+//            	System.out.println("obs "+o + " intersects seg " + seg);
+
+            	return false;
+            }
         }
-        return false;
+        return true;
     }
 
     public void nearestIntersectingSegment(Segment seg) {
@@ -74,21 +86,29 @@ public class Map {
     }
 
     public MapBlock closestBlock() {
-        MapBlock bestBlock = blocks.get(0);
-        double minDist = bestBlock.distance(bot.pose);
+        MapBlock bestBlock = null;
+        double minDist = worldRect.height*worldRect.width;
 
         for (MapBlock b : blocks) {
+        	boolean bad = false;
             double d = b.distance(bot.pose);
             for (Obstacle obs : obstacles){
-            	if (obs.naiveCSpace.contains(b)){
-            		continue;
+            	if (obs.naiveCSpace == null)
+            		obs.computeNaiveCSpace(Config.ROBOT_RADIUS);
+            	if (obs.naiveCSpace.contains(b) || b.distance(new Point(bot.pose.x,bot.pose.y))<0.2){
+            		System.out.println(b.x+","+b.y+" is bad");
+            		bad = true;
+            		break;
             	}
             }
+            if (bad)
+            	continue;
             if (d < minDist) {
                 minDist = d;
                 bestBlock = b;
             }
         }
+        System.out.println("bestBlock = "+bestBlock.x+", "+bestBlock.y);
         return bestBlock;
     }
 
@@ -174,7 +194,7 @@ public class Map {
     }
     
     public Point randomPoint() {
-        double x = Math.random()*(worldRect.width) + worldRect.x;
+    	double x = Math.random()*(worldRect.width) + worldRect.x;
         double y = Math.random()*(worldRect.height) + worldRect.y;
         return new Point(x,y);
     }
@@ -194,4 +214,13 @@ public class Map {
 			}
 		}		
 	}
+
+	public synchronized ArrayList<MapBlock> getBlocks() {
+		return blocks;
+	}
+
+	public synchronized void setBlocks(ArrayList<MapBlock> blocks) {
+		this.blocks = blocks;
+	}
+
 }
