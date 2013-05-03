@@ -19,13 +19,11 @@ public class Control {
     private PID velPid;
 
     public Control() {
-    	this(Map.getInstance(),PathPlanning.getInstance());
+    	this(Map.getInstance(),PathPlanning.getInstance(),new OrcController(new int[]{0,1}));
     }   
     
-    public Control(Map m, PathPlanning pp) {
+    public Control(Map m, PathPlanning pp, OrcController orc) {
 
-    	
-    	OrcController orc = new OrcController(new int[]{0,1});
         this.pp = pp;
         bot = m.bot;
         
@@ -45,9 +43,9 @@ public class Control {
         return instance;   
     }
     
-    public static Control getInstance(Map m, PathPlanning pp) {
+    public static Control getInstance(Map m, PathPlanning pp, OrcController orc) {
         if (instance == null)
-            instance = new Control(m, pp);
+            instance = new Control(m, pp, orc);
         return instance;   
     }
 

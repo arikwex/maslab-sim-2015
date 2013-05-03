@@ -51,7 +51,7 @@ public class Overlord extends Thread{
 	        
 	        pp = PathPlanning.getInstance(sm,se,m);
 //	        System.out.println("made PathPlanning");
-	        c = Control.getInstance(m, pp);
+	        c = Control.getInstance(m, pp, orcControl);
 //	        System.out.println("made Control");
 	        
 			f = new RobotGraph(m);

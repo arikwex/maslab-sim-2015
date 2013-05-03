@@ -271,14 +271,15 @@ public class RobotGraph extends JFrame{
         private void paintBlocks(Graphics2D g) {
         	if (map.getBlocks() == null || map.getBlocks().isEmpty())
         		return;
-            for (MapBlock b : map.getBlocks()) {
-                g.setColor(Config.BlockColorToColor(b.getColor()));
+        	ArrayList<MapBlock> blocks = map.getBlocks();
+            for (int b = blocks.size()-1;b >= 0; b--) {  
+            	g.setColor(Config.BlockColorToColor(blocks.get(b).getColor()));
                 double POINT_RADIUS = 0.05;
-                double xMin = b.x - POINT_RADIUS;
-                double yMin = b.y - POINT_RADIUS;
+                double xMin = blocks.get(b).x - POINT_RADIUS;
+                double yMin = blocks.get(b).y - POINT_RADIUS;
 
-                double xMax = b.x + POINT_RADIUS;
-                double yMax = b.y + POINT_RADIUS;
+                double xMax = blocks.get(b).x + POINT_RADIUS;
+                double yMax = blocks.get(b).y + POINT_RADIUS;
 
                 Shape[] shape = new Shape[2];
                 shape[0] = new Line2D.Double(xMin, yMin, xMax, yMax);
