@@ -1,5 +1,9 @@
 package control;
 
+import MotorControlSolution.RobotBase;
+import MotorControlSolution.RobotVelocityController;
+import MotorControlSolution.RobotVelocityControllerBalanced;
+import orc.Orc;
 import rrt.PathPlanning;
 import map.Map;
 import map.Point;
@@ -12,8 +16,8 @@ public class Control {
     private PathPlanning pp;
     private Robot bot;
 
-    private WheelVelocityController leftController;
-    private WheelVelocityController rightController;
+    private MotorControlSolution.WheelVelocityController leftController;
+    private MotorControlSolution.WheelVelocityController rightController;
     
     private PID rotPid;
     private PID velPid;
@@ -23,7 +27,16 @@ public class Control {
     }   
     
     public Control(Map m, PathPlanning pp, OrcController orc) {
-
+    	RobotBase robot = new RobotBase();
+	    RobotVelocityController robotVelocityController = null;
+	    robotVelocityController = new RobotVelocityControllerBalanced();
+	    robot.setRobotVelocityController(robotVelocityController);
+	    robotVelocityController.setGain(1);
+	    for(int i = 0; i < 2; i++){
+		robotVelocityController.getWheelVelocityController(i).setGain(6);
+	    }
+	    robot.enableMotors(true);
+	    
         this.pp = pp;
         bot = m.bot;
         
@@ -32,9 +45,15 @@ public class Control {
 
         velPid = new PID(3, 0, 0, 0, .8);
         velPid.start(0, 0);
-        
+        /*
         leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
         rightController = new WheelVelocityController(orc, WheelVelocityController.RIGHT);
+        */
+        leftController = robotVelocityController.getWheelVelocityController(WheelVelocityController.LEFT);
+        rightController = robotVelocityController.getWheelVelocityController(WheelVelocityController.RIGHT);
+        
+        //--------------------------------------
+        
     }
     
     public static Control getInstance() {
@@ -54,8 +73,12 @@ public class Control {
     }
     
     private void setVelocity(double left, double right) {
-        leftController.setVelocity(left);
+    	leftController.setDesiredAngularVelocity(left);
+    	rightController.setDesiredAngularVelocity(right);
+    	/*
+    	leftController.setVelocity(left);
         rightController.setVelocity(right);
+    	 */
     }
     
     public void step() {
