@@ -56,7 +56,7 @@ public class ObjectPositionDetect{
 	//CanvasFrame blocksCanvas = new CanvasFrame("Blocks Canvas");
     long lastTime;
 
-	CanvasFrame canvas2 = new CanvasFrame("my image");
+	CanvasFrame canvas2 = new CanvasFrame("Block Detection");
 	private CvMemStorage mem;
 	private CvSeq contours;
 	private CvSeq ptr;
