@@ -40,7 +40,7 @@ public class Overlord extends Thread{
 //	        System.out.println("made orcController");
 	        orc = Orc.makeOrc();
 //	        System.out.println("made orc");
-	        dc = DataCollection.getInstance();
+	        dc = DataCollection.getInstance(orc);
 //	        System.out.println("made DataCollection");
 	        se = StateEstimator.getInstance(m, dc);
 	        se.numBlocksLeft = m.getBlocks().size();
