@@ -99,4 +99,18 @@ public class Segment {
     public String toString(){
     	return "("+start.x+", "+start.y+") to ("+end.x+", "+end.y+")";
     }
+
+	public Segment scale(double ratio) {        
+        double dx = end.x - start.x;
+        double dy = end.y - start.y;
+        return new Segment(start, new Point(start.x + dx * ratio, start.y + dy * ratio));
+    }
+
+	public Segment trimToLegal(Map map) {
+		Segment resp = scale(0.9);
+		while (!map.checkSegment(resp)){
+			resp = resp.scale(0.9);
+		}
+		return resp;
+	}
 }
