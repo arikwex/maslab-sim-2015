@@ -7,7 +7,9 @@ import data_collection.EncoderPair;
 import logging.Log;
 import map.Map;
 import map.MapBlock;
+import map.Pose;
 import map.Robot;
+import map.Segment;
 
 public class StateEstimator {
     private static StateEstimator instance;
@@ -62,11 +64,14 @@ public class StateEstimator {
             return; // we haven't moved at all
 
         double dTheta = Math.toDegrees((dr - dl) / Config.WHEELBASE);
-
         Robot bot = Map.getInstance().bot;
-        bot.pose.theta += dTheta;
-        bot.pose.x += (dl + dr) * Math.cos(Math.toRadians(bot.pose.theta)) / 2.0;
-        bot.pose.y += (dl + dr) * Math.sin(Math.toRadians(bot.pose.theta)) / 2.0;
+        
+        Pose nextPose = new Pose(bot.pose.x+(dl + dr) * Math.cos(Math.toRadians(bot.pose.theta)) / 2.0,
+        		bot.pose.y+ (dl + dr) * Math.sin(Math.toRadians(bot.pose.theta)) / 2.0,
+        		bot.pose.theta + dTheta);
+
+        if (map.checkSegment(new Segment(bot.pose,nextPose)))
+        	bot.pose = nextPose;
     }
 
     public void updateBlocks() {
