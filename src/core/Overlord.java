@@ -33,8 +33,8 @@ public class Overlord extends Thread{
     public Overlord() {
     	try {
     		Map m = Map.getInstance();
-			m.setMap(ParseMap.parseFile("challenge_2013.txt"));
-			
+			//m.setMap(ParseMap.parseFile("challenge_2013.txt"));
+    		m.setMap(ParseMap.parseFile("construction_map_2013.txt"));
 			
 //	        System.out.println("making stuff");
 	        orcControl = new OrcController(new int[]{0,1});
@@ -73,18 +73,19 @@ public class Overlord extends Thread{
         while (true) {    
     			startTime = System.currentTimeMillis();
             	dc.step();
-//        		System.out.println("justed stepped dc");
+//            	System.out.println("justed stepped dc");
                 
                 dc.log();
-//        		System.out.println("justed logged dc");
+//                System.out.println("justed logged dc");
                 se.step();
-//        		System.out.println("justed stepped se");
+//                System.out.println("justed stepped se");
                 l.updatePose();
-//       		System.out.println("justed updated pose");
+//                System.out.println("justed updated pose");
 
                 
     			sm.step();
-//      		System.out.println("justed updated sm");
+//    			System.out.println("justed updated sm");
+    			System.out.println("State is "+sm.state);
 
     			pp.step();
 //        		System.out.println("justed updated pp");
