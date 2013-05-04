@@ -26,6 +26,7 @@ public class PathPlanning {
         this.sm = StateMachine.getInstance();
         this.se = StateEstimator.getInstance();
         this.map = Map.getInstance();
+        this.goal = sm.goal;
     }
 
     public PathPlanning(StateMachine sm, StateEstimator se, Map map) {

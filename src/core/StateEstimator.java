@@ -28,18 +28,9 @@ public class StateEstimator {
         map = Map.getInstance();
         dc = DataCollection.getInstance();
     }
-    private StateEstimator(Map map, DataCollection dc) {
-        this.map = map;
-        this.dc = dc;
-    }
     public static StateEstimator getInstance() {
         if (instance == null)
             instance = new StateEstimator();
-        return instance;
-    }
-    public static StateEstimator getInstance(Map map,DataCollection dc) {
-        if (instance == null)
-            instance = new StateEstimator(map, dc);
         return instance;
     }
 
@@ -72,7 +63,7 @@ public class StateEstimator {
 
         double dTheta = Math.toDegrees((dr - dl) / Config.WHEELBASE);
 
-        Robot bot = map.bot;
+        Robot bot = Map.getInstance().bot;
         bot.pose.theta += dTheta;
         bot.pose.x += (dl + dr) * Math.cos(Math.toRadians(bot.pose.theta)) / 2.0;
         bot.pose.y += (dl + dr) * Math.sin(Math.toRadians(bot.pose.theta)) / 2.0;
@@ -82,7 +73,7 @@ public class StateEstimator {
 
         MapBlock tempBlock;
         for (Block b : dc.getBlocks()) {
-            tempBlock = new MapBlock(map.bot.getAbsolute(b.relX, b.relY), b.color);
+            tempBlock = new MapBlock(Map.getInstance().bot.getAbsolute(b.relX, b.relY), b.color);
 
             map.addBlock(tempBlock);
         }

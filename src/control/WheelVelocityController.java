@@ -1,7 +1,11 @@
 package control;
 
+import com.googlecode.javacv.cpp.dc1394;
+
+import orc.Orc;
 import uORCInterface.OrcController;
 import core.Config;
+import data_collection.DataCollection;
 import data_collection.EncoderPair;
 
 public class WheelVelocityController {
@@ -26,6 +30,7 @@ public class WheelVelocityController {
         this.wheel = wheel;
         this.pid = new PID(0, 0, 0, 0, 0);
         pid.start(0, 0);
+        enc = DataCollection.getInstance().getEncoders();
     }
     
     public void setVelocity(double v) {
@@ -35,6 +40,7 @@ public class WheelVelocityController {
     
     public void step() {
         int targetPwm = computeTargetPWM();
+        System.out.println("Setting PWM for wheel "+wheel+" to "+targetPwm);
         orc.motorSet(wheel, targetPwm);
     }
 
@@ -49,4 +55,16 @@ public class WheelVelocityController {
         
         return (int)Math.round(pid.step(actual) + ff);
     }
+    
+    public static void main(String[] args) {
+		OrcController orcCont = new OrcController(new int[]{0,1});
+		while (true) {
+			System.out.println(orcCont.readEncoder(RIGHT));
+
+			System.out.println(orcCont.readEncoder(LEFT));
+			orcCont.motorSet(RIGHT, 128);
+			orcCont.motorSet(LEFT, 0);
+			try {Thread.sleep(50);} catch (Exception e){};
+		}
+	}
 }

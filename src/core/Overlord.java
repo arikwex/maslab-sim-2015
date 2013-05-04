@@ -27,12 +27,13 @@ public class Overlord extends Thread{
     
     Log l;
 	private RobotGraph f;
+	private long startTime;
 
 
     public Overlord() {
     	try {
-    		Map m;
-			m = ParseMap.parseFile("challenge_2013.txt");
+    		Map m = Map.getInstance();
+			m.setMap(ParseMap.parseFile("challenge_2013.txt"));
 			
 			
 //	        System.out.println("making stuff");
@@ -40,18 +41,18 @@ public class Overlord extends Thread{
 //	        System.out.println("made orcController");
 	        orc = Orc.makeOrc();
 //	        System.out.println("made orc");
-	        dc = DataCollection.getInstance(orc);
+	        dc = DataCollection.getInstance();
 //	        System.out.println("made DataCollection");
-	        se = StateEstimator.getInstance(m, dc);
+	        se = StateEstimator.getInstance();
 	        se.numBlocksLeft = m.getBlocks().size();
 //	        System.out.println("made StateEstimator");
 	        sm = StateMachine.getInstance();
 	        sm.goal = m.closestBlock();
 //	        System.out.println("made StateMachine");
 	        
-	        pp = PathPlanning.getInstance(sm,se,m);
+	        pp = PathPlanning.getInstance();
 //	        System.out.println("made PathPlanning");
-	        c = Control.getInstance(m, pp, orcControl);
+	        c = Control.getInstance();
 //	        System.out.println("made Control");
 	        
 			f = new RobotGraph(m);
@@ -59,7 +60,8 @@ public class Overlord extends Thread{
 
 			l = Log.getInstance(f);
 //	        System.out.println("made Log");
-
+			//startTime = System.currentTimeMillis();
+        	
     	} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
@@ -69,6 +71,7 @@ public class Overlord extends Thread{
 
     public void start() {
         while (true) {    
+    			startTime = System.currentTimeMillis();
             	dc.step();
 //        		System.out.println("justed stepped dc");
                 
@@ -88,7 +91,9 @@ public class Overlord extends Thread{
     			c.step(); 	        
         		
         		f.repaint();
-			
+        		System.out.println("Step time is "+(System.currentTimeMillis()-startTime));
+    		    
+        		
         }
     }
 

@@ -10,7 +10,7 @@ import core.Delta;
 import firmware_interfaces.SonarInterface;
 
 import orc.Orc;
-import Vision.ObjectPositionDetect;
+import vision.ObjectPositionDetect;
 
 public class DataCollection {
 
@@ -44,22 +44,6 @@ public class DataCollection {
         return instance;   
     }
 
-    private DataCollection(Orc orc) {
-        
-        encoders = new EncoderPair(orc);
-        //sonarInterface = new SonarInterface();
-        //sonars = sonarInterface.getSonars();
-
-        vision = new ObjectPositionDetect();
-        delta = new Delta();
-        blocksInVision = new ArrayList<Block>();
-    }
-    
-    public static DataCollection getInstance(Orc orc) {
-    	if (instance == null)
-            instance = new DataCollection(orc);
-        return instance;   
-    }
     public void step() {
         encoders.sample();
         //sonarInterface.sample();

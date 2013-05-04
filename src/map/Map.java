@@ -223,4 +223,16 @@ public class Map {
 		this.blocks = blocks;
 	}
 
+	public void setMap(Map m){
+		this.blocks = m.blocks;
+		this.obstacles = m.obstacles;
+		this.bot = m.bot;
+		this.fiducials = m.fiducials;
+		this.worldBounds = m.worldBounds;
+		this.worldRect = m.worldRect;
+		this.robotGoal = m.robotGoal;
+		this.robotStart = m.robotStart;
+		this.ShelterLocation = m.ShelterLocation;
+		this.path = m.path;
+	}
 }
