@@ -43,6 +43,8 @@ public class ParseMap {
     		} 
     		else if(token.equals("robot_start")){
     			m.robotStart = parsePoint(br);
+    			m.bot.pose.x = m.robotStart.x;
+    			m.bot.pose.y = m.robotStart.y;
     		}
     		else if(token.equals("robot_goal")){
     			m.robotGoal = parsePoint(br);

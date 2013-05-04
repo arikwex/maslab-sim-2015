@@ -23,10 +23,10 @@ public class Control {
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
-        rotPid = new PID(.0001, 0, 0, 0, .3);
+        rotPid = new PID(.0035, 0, 0, 0, .3);
         rotPid.start(0, 0);
 
-        velPid = new PID(0.0001, 0, 0, 0, .8);
+        velPid = new PID(3, 0, 0, 0, .8);
         velPid.start(0, 0);
         
         leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);

@@ -1,5 +1,7 @@
 package core;
 
+import java.util.ArrayList;
+
 import com.googlecode.javacv.ImageTransformer.Data;
 
 import data_collection.DataCollection;
@@ -11,7 +13,7 @@ import map.Pose;
 import map.Robot;
 import map.Segment;
 
-public class StateEstimator {
+public class StateEstimator implements Runnable {
     private static StateEstimator instance;
 
     private DataCollection dc;
@@ -26,9 +28,12 @@ public class StateEstimator {
 
     public Map map;
 
+	boolean started;
+
     private StateEstimator() {
         map = Map.getInstance();
         dc = DataCollection.getInstance();
+        started = false;
     }
     public static StateEstimator getInstance() {
         if (instance == null)
@@ -36,12 +41,13 @@ public class StateEstimator {
         return instance;
     }
 
-    
+ /*
     public StateEstimator(DataCollection dc) {
         this.dc = dc;
         //tooClose = new boolean[dc.getSonars().size()];
         numCollectedBlocks = 0;
     }
+*/
 
     public void step() {
         updatePose();
@@ -77,8 +83,10 @@ public class StateEstimator {
     public void updateBlocks() {
 
         MapBlock tempBlock;
-        for (Block b : dc.getBlocks()) {
-            tempBlock = new MapBlock(Map.getInstance().bot.getAbsolute(b.relX, b.relY), b.color);
+//        for (Block b : dc.getBlocks()) {
+        ArrayList<Block> blocks = dc.getBlocks();
+        for (int b = blocks.size()-1;b>=0;b--){
+        	tempBlock = new MapBlock(Map.getInstance().bot.getAbsolute(blocks.get(b).relX, blocks.get(b).relY), blocks.get(b).color);
 
             map.addBlock(tempBlock);
         }
@@ -102,4 +110,11 @@ public class StateEstimator {
     public String toString() {
         return map.bot.pose.toString();
     }
+	@Override
+	public void run() {
+		while (true){
+			step();
+		}
+		
+	}
 }

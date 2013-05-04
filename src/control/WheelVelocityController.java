@@ -41,7 +41,7 @@ public class WheelVelocityController {
     public void step() {
         int targetPwm = computeTargetPWM();
         System.out.println("Setting PWM for wheel "+wheel+" to "+targetPwm);
-        orc.motorSet(wheel, targetPwm);
+        orc.motorSet(wheel, -targetPwm);
     }
 
     private int computeTargetPWM() {
@@ -58,12 +58,15 @@ public class WheelVelocityController {
     
     public static void main(String[] args) {
 		OrcController orcCont = new OrcController(new int[]{0,1});
+		Orc orc = Orc.makeOrc();
+		orc.verbose= true;
 		while (true) {
 			System.out.println(orcCont.readEncoder(RIGHT));
-
-			System.out.println(orcCont.readEncoder(LEFT));
-			orcCont.motorSet(RIGHT, 128);
-			orcCont.motorSet(LEFT, 0);
+			//System.out.println(orc.verbose);
+			//System.out.println(orcCont.readEncoder(LEFT));
+			System.out.println(orcCont.readVelocity(RIGHT));
+			orcCont.motorSet(RIGHT,128);
+			//orcCont.motorSet(LEFT, 128);
 			try {Thread.sleep(50);} catch (Exception e){};
 		}
 	}

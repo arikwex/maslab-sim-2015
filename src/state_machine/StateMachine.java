@@ -6,7 +6,7 @@ public class StateMachine {
 
     private static StateMachine instance;
     
-    private State state;
+    public State state;
     public Point goal;
     
     public StateMachine() {

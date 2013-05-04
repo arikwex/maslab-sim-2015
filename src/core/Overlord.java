@@ -44,6 +44,7 @@ public class Overlord extends Thread{
 	        dc = DataCollection.getInstance();
 //	        System.out.println("made DataCollection");
 	        se = StateEstimator.getInstance();
+//	        (new Thread(se)).start();
 	        se.numBlocksLeft = m.getBlocks().size();
 //	        System.out.println("made StateEstimator");
 	        sm = StateMachine.getInstance();
@@ -56,6 +57,7 @@ public class Overlord extends Thread{
 //	        System.out.println("made Control");
 	        
 			f = new RobotGraph(m);
+			(new Thread(f)).start();
 //	        System.out.println("made graph");
 
 			l = Log.getInstance(f);
@@ -73,22 +75,22 @@ public class Overlord extends Thread{
         while (true) {    
     			startTime = System.currentTimeMillis();
             	dc.step();
-//            	System.out.println("justed stepped dc");
+            	System.out.println("justed stepped dc");
                 
                 dc.log();
-//                System.out.println("justed logged dc");
+                System.out.println("justed logged dc");
                 se.step();
-//                System.out.println("justed stepped se");
+                System.out.println("justed stepped se");
                 l.updatePose();
-//                System.out.println("justed updated pose");
+                System.out.println("justed updated pose");
 
                 
     			sm.step();
-//    			System.out.println("justed updated sm");
+    			System.out.println("justed updated sm");
     			System.out.println("State is "+sm.state);
 
     			pp.step();
-//        		System.out.println("justed updated pp");
+        		System.out.println("justed updated pp");
     			c.step(); 	        
         		
         		f.repaint();

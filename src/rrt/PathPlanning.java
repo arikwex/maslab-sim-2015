@@ -52,7 +52,6 @@ public class PathPlanning {
     public void step() {
     	Point curLoc= map.bot.pose;
     	if(sm.goal != goal || nextWaypoint == null || !map.checkSegment(new Segment(curLoc, nextWaypoint))){
-//    		System.out.println("finding path");
     		findPath();
     	}
     	if (curLoc.distance(goal)==0){
@@ -83,6 +82,9 @@ public class PathPlanning {
     }
     
     public void findPath() {
+    	if (sm.goal == null){
+    		return;
+    	}
     	Point goal = sm.goal;
     	Point start = new Point(map.bot.pose.x, map.bot.pose.y);
     	TreeNode root = new TreeNode(start);

@@ -31,7 +31,7 @@ public class Log {
         graph.repaint();
     }
     
-    public static void log(String s) {
-        System.out.println(s);
+    public synchronized static void log(String s) {
+//    	System.out.println(s);
     }
 }

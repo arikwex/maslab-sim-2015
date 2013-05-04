@@ -36,7 +36,7 @@ import map.Obstacle;
 import map.ParseMap;
 import map.Robot;
 
-public class RobotGraph extends JFrame{
+public class RobotGraph extends JFrame implements Runnable{
     private static final long serialVersionUID = -1299466487663318439L;
 
     private double[] pose = { 0, 0, 0 };
@@ -72,7 +72,6 @@ public class RobotGraph extends JFrame{
 	private Map map;
 
     private class MyMouseListener implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
-        // TODO put in a thread to make this animation continuous
         private int[] start_drag = new int[2];
 
         public void mouseClicked(MouseEvent e) {
