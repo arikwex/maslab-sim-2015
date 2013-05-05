@@ -47,6 +47,7 @@ public class PathPlanning {
 			System.out.println("MOVE GOAL");
 			goal = newGoal;
 			findPath(newGoal);
+			System.out.println("NEW PATH?");
 			nextWaypoint = path.getFirst();
 		}
 		
@@ -69,7 +70,9 @@ public class PathPlanning {
 		}
 		
 		if (curLoc.distance(nextWaypoint) < .03) {
-			path.removeFirst();
+			if (path.size() > 1)
+				path.removeFirst();
+			nextWaypoint = path.getFirst();
 		}
 
 		// stop when we arrive at goal

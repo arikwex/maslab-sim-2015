@@ -63,12 +63,12 @@ public class Control {
         System.out.println("From: " + bot.pose + " to:" + wayPoint);
         
         double distance = bot.pose.distance(wayPoint);
-        double angle = bot.pose.angleTo(wayPoint);
+        double angle = Math.toDegrees(bot.pose.angleTo(wayPoint));
         
         System.out.println("a: " + angle);
         
         System.out.println("Distance: " + distance);
-        double thetaErr = angle - bot.pose.theta;
+        double thetaErr = angle - Math.toDegrees(bot.pose.theta);
         System.out.println("Theta Error: " + thetaErr);
         
         if (thetaErr > 180)
@@ -77,8 +77,9 @@ public class Control {
             thetaErr += 360;
 
         double vel = velPid.step(distance);
-        if (Math.abs(thetaErr) < 7)
-            vel *= Math.pow(7 - Math.abs(thetaErr), 2) / 49;
+        if (Math.abs(thetaErr) < 30)
+        	vel *= (30-Math.abs(thetaErr)) / 30;
+            //vel *= Math.pow(30 - Math.abs(thetaErr), 2) / 900;
         else
             vel = 0;
 

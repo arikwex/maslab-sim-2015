@@ -32,7 +32,13 @@ public class Point extends Point2D {
 	}
 	
 	public double angleTo(Point p) {
-        return Math.toDegrees(Math.atan2(p.y-this.y, p.x-this.x));
+        return Math.atan2(p.y-this.y, p.x-this.x);
+	}
+	
+	public Point getRotated(double theta) {
+		double newX = x - Math.sin(theta) * y;
+		double newY = y + Math.cos(theta) * x;
+		return new Point(newX, newY);
 	}
 
 	public String toString() {

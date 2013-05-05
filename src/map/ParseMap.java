@@ -298,7 +298,6 @@ public class ParseMap {
     	parseToken(br,Config.SECTION_END);
     	
     	po.close();
-    	po.computeNaiveCSpace(Config.ROBOT_RADIUS);
     	return po;
     }
     

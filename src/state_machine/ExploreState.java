@@ -15,6 +15,9 @@ public class ExploreState extends State{
     		return new StopState();
     	}
     	*/
+    	if (se.map.closestBlock() == null) {
+    		return new AssemblyState();
+    	}
     	if (se.map.bot.pose.distance(se.getClosestBlock())<Config.CLOSE_ENOUGH){
     		return new CollectState();	
     	}

@@ -4,9 +4,27 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Obstacle extends Polygon {
-    Polygon naiveCSpace;
+    private Polygon minCSpace = null;
+    private Polygon maxCSpace = null;
 
-    public void computeNaiveCSpace(double r) {
+	public Polygon getMaxCSpace() {
+		if (maxCSpace == null) {
+	    	double r = Map.getInstance().bot.getMaxRadius();
+			maxCSpace = computeNaiveCSpace(r);
+		}
+		return maxCSpace;
+	}
+	
+	public Polygon getMinCSpace() {
+		if (minCSpace == null) {
+	    	double r = Map.getInstance().bot.getMinRadius();
+			minCSpace = computeNaiveCSpace(r);
+		}
+		return minCSpace;
+	}
+	
+    private Polygon computeNaiveCSpace(double r) {
+    	
         List<Point> csoPoints = new LinkedList<Point>();
 
         List<Point> roVertices = this.getVertices();
@@ -16,10 +34,10 @@ public class Obstacle extends Polygon {
                 csoPoints.add(new Point(p.x + r*Math.cos(t), p.y + r*Math.sin(t)));
         }
 
-        naiveCSpace = GeomUtils.convexHull(csoPoints);
+        return GeomUtils.convexHull(csoPoints);
     }
 
-    private Polygon getBotCSpace(Robot bot) {
+    private Polygon getPolyCSpace(Polygon bot) {
         List<Point> csoPoints = new LinkedList<Point>();
 
         List<Point> roVertices = getVertices();
@@ -32,12 +50,14 @@ public class Obstacle extends Polygon {
     }
     
     public boolean intersects(Segment seg) {
-    	return naiveCSpace.intersects(seg);
-
-    }
-
-    public Polygon getNaiveCSpace() {
-        return naiveCSpace;
+    	//return getMaxCSpace().intersects(seg);
+    	if (getMinCSpace().intersects(seg)) {
+    		Polygon polyC = getPolyCSpace((Map.getInstance().bot.getRotated(seg.theta)));
+    		if (polyC.intersects(seg));
+    			return true;
+    	}
+    	
+    	return false;
     }
     
     @Override

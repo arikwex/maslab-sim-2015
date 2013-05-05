@@ -59,11 +59,11 @@ public class StateEstimator implements Runnable {
         if (dr == 0 && dl == 0)
             return; // we haven't moved at all
 
-        double dTheta = Math.toDegrees((dr - dl) / Config.WHEELBASE);
+        double dTheta = (dr - dl) / Config.WHEELBASE;
         Robot bot = Map.getInstance().bot;
         
-        double newX = bot.pose.x+(dl + dr) * Math.cos(Math.toRadians(bot.pose.theta)) / 2.0;
-        double newY = bot.pose.y+ (dl + dr) * Math.sin(Math.toRadians(bot.pose.theta)) / 2.0;
+        double newX = bot.pose.x+(dl + dr) * Math.cos(bot.pose.theta) / 2.0;
+        double newY = bot.pose.y+ (dl + dr) * Math.sin(bot.pose.theta) / 2.0;
         double newTheta = bot.pose.theta + dTheta;
         Pose nextPose = new Pose(newX, newY, newTheta);
         bot.pose = nextPose;

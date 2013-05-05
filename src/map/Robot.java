@@ -6,15 +6,29 @@ import core.Config;
 
 public class Robot extends Polygon {
     public Pose pose;
+    
+    private Polygon marginBot;
+    
+    private double maxRadius = 0;
+    private double minRadius = Double.POSITIVE_INFINITY;
 
     public Robot(double x, double y, double theta) {
         super();
         this.pose = new Pose(x, y, theta);
         this.color = Color.red;
         
+        marginBot = new Polygon();
+        
+        Point start = new Point(0,0);
+        Point p;
         for (int i = 0; i<Config.botPoly.length; i++) {
-            this.addVertex(new Point(Config.botPoly[i][0], Config.botPoly[i][1]));
+        	p = new Point(Config.botPoly[i][0], Config.botPoly[i][1]);
+            this.addVertex(p);
+            
+            
         }
+        
+        
         this.close();
     }
 
@@ -35,5 +49,39 @@ public class Robot extends Polygon {
         y = pose.y + r * Math.sin(phi + pose.theta);
 
         return new Point(x, y);
+    }
+    
+    public double getMaxRadius() {
+    	if (maxRadius == 0) {
+    		maxRadius = 0;
+    		Point orig = new Point(0,0);
+    		for (Point p : points) {
+    			if (p.distance(orig) > maxRadius)
+    				maxRadius = p.distance(orig);
+    		}
+    	}
+    	
+    	return maxRadius;
+    }
+    
+    public double getMinRadius() {
+    	if (minRadius == Double.POSITIVE_INFINITY) {
+    		Point orig = new Point(0,0);
+    		for (Point p : points) {
+    			if (p.distance(orig) < minRadius)
+    				minRadius = p.distance(orig);
+    		}
+    	}
+    	
+    	return minRadius;
+    }
+    
+    public Polygon getRotated(double theta) {
+    	Polygon rotated = new Polygon();
+    	for (Point p : points)
+    		rotated.addVertex(p.getRotated(theta));
+    	
+    	rotated.close();
+    	return rotated;
     }
 }

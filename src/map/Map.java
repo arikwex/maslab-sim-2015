@@ -88,9 +88,7 @@ public class Map {
         	boolean bad = false;
             double d = b.distance(bot.pose);
             for (Obstacle obs : obstacles){
-            	if (obs.naiveCSpace == null)
-            		obs.computeNaiveCSpace(Config.ROBOT_RADIUS);
-            	if (obs.naiveCSpace.contains(b)){
+            	if (obs.getMinCSpace().contains(b)){
             		bad = true;
             		break;
             	}

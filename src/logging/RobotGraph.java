@@ -47,8 +47,8 @@ public class RobotGraph extends JFrame implements Runnable{
 
     private PaintablePanel p;
 
-    private static final int FRAME_HEIGHT = 500;
-    private static final int FRAME_WIDTH = 500;
+    private static final int FRAME_HEIGHT = 600;
+    private static final int FRAME_WIDTH = 600;
     private static final double MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH = 1.05;
     private static final double X_MAX_INITIAL = 4.0;
     private static final double X_MIN_INITIAL = -4.0;
@@ -187,7 +187,7 @@ public class RobotGraph extends JFrame implements Runnable{
 
     public RobotGraph() {
         // visually bring up the frame
-        setPreferredSize(new Dimension(501, 532));
+        setPreferredSize(new Dimension(FRAME_WIDTH + 1, FRAME_HEIGHT + 32));
 
         map = Map.getInstance();
         bot = map.bot;
@@ -263,12 +263,10 @@ public class RobotGraph extends JFrame implements Runnable{
         		return;
             for (Obstacle o : map.obstacles) {
                 g.setColor(o.color);
-                g.draw(o.getPath());
+                g.fill(o.getPath());
                 if (drawCSpace){
-                	if (o.getNaiveCSpace() == null){
-                		o.computeNaiveCSpace(Config.ROBOT_RADIUS);
-                	}
-                    g.draw(o.getNaiveCSpace().getPath());
+                    g.draw(o.getMaxCSpace().getPath());
+                    g.draw(o.getMinCSpace().getPath());
                 }
             }
         }
@@ -317,7 +315,7 @@ public class RobotGraph extends JFrame implements Runnable{
             AffineTransform t = new AffineTransform();
             t.setToIdentity();
             t.translate(bot.pose.x, bot.pose.y);
-            t.rotate(Math.toRadians(bot.pose.theta));
+            t.rotate(bot.pose.theta);
 
             g.setColor(bot.color);
             g.draw(t.createTransformedShape(bot.getPath()));

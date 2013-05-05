@@ -62,7 +62,7 @@ public class Config {
     public static final String SECTION_START = "{";
     public static final String SECTION_END = "}";
 	
-    public static double[][] botPoly = new double[][] {{ -.3, -.2 }, { -.3, .2 }, { .1, .2 }, { .1, -.2 }};
+    public static double[][] botPoly = new double[][] {{ -.37, -.23 }, { -.37, .23 }, { .11, .23 }, { .11, -.23 }};
     //public static double[][] botPoly = new double[][] {{ -.3, -.2 }, { -.3, .2 }, { .2, 0 }};
 
 	public static final long ASSEMBLY_TOO_LONG = 60000;
@@ -71,4 +71,6 @@ public class Config {
 	public static final long CHALLENGE_TIME = 600000;
 
 	public static final double ROBOT_RADIUS = 0.2;
+
+	public static final double COLLISION_MARGIN = -0.00;
 }
