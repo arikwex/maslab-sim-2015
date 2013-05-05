@@ -8,22 +8,12 @@ public class Log {
     private RobotGraph graph;
     
     private Log() {
-        graph = new RobotGraph(Map.getInstance());
-    }
-    
-    private Log(RobotGraph graph) {
-        this.graph = graph;
+        graph = new RobotGraph();
     }
     
     public static Log getInstance() {
         if (instance == null)
             instance = new Log();
-        return instance;   
-    }
-    
-    public static Log getInstance(RobotGraph graph) {
-        if (instance == null)
-            instance = new Log(graph);
         return instance;   
     }
 

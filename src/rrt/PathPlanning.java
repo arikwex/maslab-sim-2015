@@ -17,8 +17,8 @@ public class PathPlanning {
 	private StateEstimator se;
 	private Map map;
 
-	LinkedList<Point> path;
-	Point nextWaypoint;
+	public LinkedList<Point> path;
+	public Point nextWaypoint;
 	public Point goal;
 
 	public PathPlanning() {
@@ -35,20 +35,23 @@ public class PathPlanning {
 
 	public void step() {
 		Point curLoc = map.bot.pose;
-		
 		Point newGoal = sm.getGoal();
 		
 		if (newGoal == null) {
 			nextWaypoint = curLoc;
+			return;
 		}
 		
-		if (newGoal != goal) {
+		System.out.println("New: " + newGoal + " Old: " + goal);
+		if (goal == null || newGoal.distance(goal) > .05) {
+			System.out.println("MOVE GOAL");
 			goal = newGoal;
 			findPath(newGoal);
 			nextWaypoint = path.getFirst();
 		}
 		
-		if (map.checkSegment(new Segment(curLoc, nextWaypoint))) {
+		if (!map.checkSegment(new Segment(curLoc, nextWaypoint))) {
+			System.out.println("BROKEN PATH");
 			findPath(newGoal);
 			nextWaypoint = path.getFirst();
 		}
@@ -56,15 +59,21 @@ public class PathPlanning {
 		// try to shortcut paths
 		for (int i = path.size()-1; i >= 0; i--) {
 			if (map.checkSegment(new Segment(curLoc, path.get(i)))) {
+				System.out.println("SHORTCUT AT " + i);
+
 				nextWaypoint = path.get(i);
 				i--;
 				for (; i>= 0; i--)
 					path.remove(i);
 			}
 		}
+		
+		if (curLoc.distance(nextWaypoint) < .03) {
+			path.removeFirst();
+		}
 
 		// stop when we arrive at goal
-		if (Math.abs(curLoc.distance(newGoal)) < .05) {
+		if (curLoc.distance(newGoal) < .05) {
 			nextWaypoint = curLoc;
 			path.clear();
 			return;
@@ -90,10 +99,7 @@ public class PathPlanning {
 		Segment seg;
 		if (map.checkSegment(new Segment(start, goal))) {
 			path = new LinkedList<Point>();
-
 			path.add(goal);
-			map.path = path;
-			nextWaypoint = path.get(0);
 		}
 
 		while (true) {
@@ -137,7 +143,5 @@ public class PathPlanning {
 			}
 			curNode = curNode.parent;
 		}
-		map.path = path;
-		nextWaypoint = path.get(0);
 	}
 }

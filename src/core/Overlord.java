@@ -26,7 +26,6 @@ public class Overlord extends Thread {
 	Control c;
 
 	Log l;
-	private RobotGraph f;
 	private long startTime;
 
 	public Overlord() {
@@ -45,9 +44,8 @@ public class Overlord extends Thread {
 			pp = PathPlanning.getInstance();
 			c = Control.getInstance();
 
-			f = new RobotGraph(m);
 
-			l = Log.getInstance(f);
+			l = Log.getInstance();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -64,14 +62,13 @@ public class Overlord extends Thread {
 
 			dc.log();
 			se.step();
-			l.updatePose();
 
 			sm.step();
 
 			pp.step();
 			c.step();
-
-			f.repaint();
+			
+			l.updatePose();
 			
 			try {Thread.sleep(50-(System.currentTimeMillis()-startTime));} catch (Exception e){};
 		}

@@ -12,12 +12,12 @@ public class ExploreState extends State{
     protected State transition() {
     	/*
     	if (se.numBlocksLeft == 0){
-    		return new StopState(sm);
-    	}
-    	else if (se.map.bot.pose.distance(sm.goal)<Config.CLOSE_ENOUGH){
-    		return new CollectState(sm);	
+    		return new StopState();
     	}
     	*/
+    	if (se.map.bot.pose.distance(se.getClosestBlock())<Config.CLOSE_ENOUGH){
+    		return new CollectState();	
+    	}
     	return this;
     }
     

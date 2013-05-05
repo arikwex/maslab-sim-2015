@@ -1,11 +1,13 @@
 package state_machine;
 
+import map.MapBlock;
 import map.Point;
+import map.Pose;
 import map.Segment;
 import core.Config;
 
 public class CollectState extends State {
-    boolean blockCollected;
+    boolean blockCollected = false;
 
     public CollectState() {
         tooLong = Config.COLLECT_TOO_LONG;
@@ -14,6 +16,7 @@ public class CollectState extends State {
     protected State transition() {
         if (blockCollected) {
             se.numCollectedBlocks++;
+            se.map.removeBlock(se.getClosestBlock());
             if (se.numCollectedBlocks >= Config.BIN_CAPACITY) {
                 return new FindShelterState();
             } else {
@@ -24,12 +27,10 @@ public class CollectState extends State {
     }
 
     protected void run() {
-    	Point goal = sm.getGoal();
-    	blockCollected = (se.map.bot.pose.distance(goal) == 0 || (se.map.bot.pose.angleTo(goal) - se.map.bot.pose.theta == 180));
-    	if (!blockCollected && Math.abs(se.map.bot.pose.angleTo(goal) - se.map.bot.pose.theta) > 30){
-    		Segment toGoal = new Segment(se.map.bot.pose,goal);
-    		toGoal = toGoal.scale(1.5).trimToLegal(se.map);
-    		sm.setGoal(se.getClosestBlock());
-    	}
+    	Point goal = se.getClosestBlock();
+    	Pose pose = se.map.bot.pose;
+    	
+    	sm.setGoal(goal);
+    	blockCollected = (Math.abs(pose.distance(goal)) < .05);
     }
 }

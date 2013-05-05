@@ -51,7 +51,7 @@ public class Config {
     public static final double MAX_VELOCITY = WHEEL_RADIUS * Math.PI * 2 * 1.183;
 
     public static final double TOOCLOSE = 0.1;
-	public static final int BIN_CAPACITY = 5;
+	public static final int BIN_CAPACITY = 50;
 	public static final double CLOSE_ENOUGH = 0.5;
 
     public static final double MAXLENGTH = 0.1;

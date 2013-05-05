@@ -28,6 +28,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import rrt.PathPlanning;
+
 import core.Config;
 
 import map.Map;
@@ -71,6 +73,7 @@ public class RobotGraph extends JFrame implements Runnable{
     private MyMouseListener ml = new MyMouseListener();
 
 	private Map map;
+	private PathPlanning pp;
 
     private class MyMouseListener implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
         private int[] start_drag = new int[2];
@@ -182,12 +185,14 @@ public class RobotGraph extends JFrame implements Runnable{
         }
     }
 
-    public RobotGraph(Map m) {
+    public RobotGraph() {
         // visually bring up the frame
         setPreferredSize(new Dimension(501, 532));
 
-        this.bot = m.bot;
-        this.map = m;
+        map = Map.getInstance();
+        bot = map.bot;
+        pp = PathPlanning.getInstance();
+        
         setWidgets();
         poseHistory.add(new double[] { 0, 0, 0 });
         setResizable(false);
@@ -297,12 +302,15 @@ public class RobotGraph extends JFrame implements Runnable{
         }
         
         private void paintPath(Graphics2D g) {
-        	if (map.path== null)
+        	if (pp.path == null || pp.path.size() < 1)
         		return;
         	g.setColor(Color.RED);
-            for (int i =0; i < map.path.size()-1; i++) {
-            	g.draw(new Line2D.Double(map.path.get(i).x,map.path.get(i).y,map.path.get(i+1).x,map.path.get(i+1).y));
-            }
+
+        	Point start = bot.pose;
+        	for (Point p : pp.path) {
+        		g.draw(new Line2D.Double(start, p));
+        		start = p;
+        	}
         }
         
         private void paintBot(Graphics2D g) {
@@ -377,7 +385,7 @@ public class RobotGraph extends JFrame implements Runnable{
     
     public static void main(String[] args) throws IOException, ParseException {
     	Map m = ParseMap.parseFile("challenge_2013.txt");
-        RobotGraph f = new RobotGraph(m);
+        RobotGraph f = new RobotGraph();
     	f.run();
     }
 }

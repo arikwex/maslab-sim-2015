@@ -29,7 +29,6 @@ public class Map {
 
 	public Point ShelterLocation;
 
-    public LinkedList<Point> path;
 	public Fiducial[] fiducials;
 
     Map() {
@@ -91,7 +90,7 @@ public class Map {
             for (Obstacle obs : obstacles){
             	if (obs.naiveCSpace == null)
             		obs.computeNaiveCSpace(Config.ROBOT_RADIUS);
-            	if (obs.naiveCSpace.contains(b) || b.distance(new Point(bot.pose.x,bot.pose.y))<0.2){
+            	if (obs.naiveCSpace.contains(b)){
             		bad = true;
             		break;
             	}
@@ -209,6 +208,10 @@ public class Map {
 			}
 		}		
 	}
+	
+	public void removeBlock(MapBlock b) {
+		blocks.remove(b);
+	}
 
 	public synchronized ArrayList<MapBlock> getBlocks() {
 		return blocks;
@@ -228,6 +231,5 @@ public class Map {
 		this.robotGoal = m.robotGoal;
 		this.robotStart = m.robotStart;
 		this.ShelterLocation = m.ShelterLocation;
-		this.path = m.path;
 	}
 }
