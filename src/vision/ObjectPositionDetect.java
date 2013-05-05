@@ -27,6 +27,7 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_imgproc.CvMoments;
 
 import core.Block;
+import core.Config;
 import core.Config.BlockColor;
 
 import static com.googlecode.javacpp.Loader.sizeof;
@@ -192,7 +193,13 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         posX = (int) (momX10 / area);
         posY = (int) (momY01 / area);
 
+        System.out.println("position of x is: " + posX);
+        System.out.println("position of y is: "+posY);
+        System.out.println("area of block is: "+area); 
+        
         return new Dimension(posX, posY);
+        
+
     }
 	
 	double getArea(IplImage image) {
@@ -203,6 +210,12 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         // where I(x,y) is the intensity of the pixel (x, y).
         area = cvGetCentralMoment(moments, 0, 0);
         return area;
+	}
+	
+	//fill out area to distance, knowing block size 
+	double areaToDistance(double area) {
+//	    Config.blockSize;
+	    return area; 
 	}
 	
 	double getRoundness(CvSeq ptr) {
@@ -228,16 +241,17 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
 
         if (color.equals(BlockColor.RED)){
     		// cvScalar : ( H , S , V, A)
-    		cvInRangeS(imgHSV, cvScalar(160, 125, 50, 0), cvScalar(180, 255, 255, 0), imgThreshold);
+    		cvInRangeS(imgHSV, cvScalar(180, 130, 100, 0), cvScalar(255, 255, 255, 0), imgThreshold);
+            cvInRangeS(imgHSV, cvScalar(0, 130, 100, 0), cvScalar(10, 255, 255, 0), imgThreshold);
     	} else if (color.equals(BlockColor.BLUE)){
             // cvScalar : ( H , S , V, A)
-            cvInRangeS(imgHSV, cvScalar(110, 120, 20, 0), cvScalar(130, 255, 180, 0), imgThreshold);
+            cvInRangeS(imgHSV, cvScalar(105, 100, 20, 0), cvScalar(135, 255, 180, 0), imgThreshold);
         } else if (color.equals(BlockColor.GREEN)){
             // cvScalar : ( H , S , V, A)
             cvInRangeS(imgHSV, cvScalar(60, 50, 50, 0), cvScalar(100, 255, 255, 0), imgThreshold);
         } else if (color.equals(BlockColor.YELLOW)){
             // cvScalar : ( H , S , V, A)
-            cvInRangeS(imgHSV, cvScalar(10, 60, 100, 0), cvScalar(35, 255, 255, 0), imgThreshold);
+            cvInRangeS(imgHSV, cvScalar(20, 100, 100, 0), cvScalar(40, 255, 255, 0), imgThreshold);
         }
     	cvReleaseImage(imgHSV);
         cvSmooth(imgThreshold, imgThreshold, CV_MEDIAN, 13);

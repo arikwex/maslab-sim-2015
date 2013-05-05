@@ -9,6 +9,8 @@ public class Config {
         RED, GREEN, BLUE, YELLOW, NONE
     }
 
+    public static final double blockSize = 0.05; //side of the block
+    
     public static BlockColor ColorToBlockColor(Color c) {
     	if (c.equals(Color.RED)){
     		return BlockColor.RED;
