@@ -1,8 +1,5 @@
 package control;
 
-import com.googlecode.javacv.cpp.dc1394;
-
-import orc.Orc;
 import uORCInterface.OrcController;
 import core.Config;
 import data_collection.DataCollection;
@@ -15,11 +12,11 @@ public class WheelVelocityController {
     private int wheel;
     private EncoderPair enc;
     
-    private double targetVel;
-    private int currPWM;
-    private int prevTime;
+    private double targetVel = 0;
+    private int currPwm = 0;
+    private long prevTime;
     
-    private static final int SLEW_LIM = 255;
+    private static final int SLEW_LIM = 2000; //pwm units per second
     private PID pid;
     
     private OrcController orc;
@@ -30,6 +27,7 @@ public class WheelVelocityController {
         this.wheel = wheel;
         this.pid = new PID(0, 0, 0, 0, 0);
         pid.start(0, 0);
+        prevTime = System.currentTimeMillis();
         enc = DataCollection.getInstance().getEncoders();
     }
     
@@ -40,8 +38,32 @@ public class WheelVelocityController {
     
     public void step() {
         int targetPwm = computeTargetPWM();
-        System.out.println("Setting PWM for wheel "+wheel+" to "+targetPwm);
-        orc.motorSet(wheel, -targetPwm);
+        if (wheel == LEFT)
+        	targetPwm*=-1;
+        
+        //applySlew(targetPwm);
+        currPwm = targetPwm;
+        
+        orc.motorSet(wheel, currPwm);
+    }
+    
+    private void applySlew(int targetPwm) {
+        long now = System.currentTimeMillis();
+        int cap = (int)((now-prevTime)/1000.0 * SLEW_LIM);
+        int dPwm = targetPwm - currPwm;
+        if (cap > 0) {
+        	prevTime = now;
+        	if (dPwm < 0) {
+        		currPwm -= cap;
+        		if (currPwm < targetPwm)
+        			currPwm = targetPwm;
+        	} else {
+        		currPwm += cap;
+        		if (currPwm > targetPwm)
+        			currPwm = targetPwm;
+        	}
+        	
+        }
     }
 
     private int computeTargetPWM() {
@@ -58,16 +80,16 @@ public class WheelVelocityController {
     
     public static void main(String[] args) {
 		OrcController orcCont = new OrcController(new int[]{0,1});
-		Orc orc = Orc.makeOrc();
-		orc.verbose= true;
+		orcCont.motorSet(RIGHT, 128);
+		//orcCont.motorSet(LEFT, 0);
 		while (true) {
 			System.out.println(orcCont.readEncoder(RIGHT));
 			//System.out.println(orc.verbose);
 			//System.out.println(orcCont.readEncoder(LEFT));
 			System.out.println(orcCont.readVelocity(RIGHT));
-			orcCont.motorSet(RIGHT,128);
-			//orcCont.motorSet(LEFT, 128);
-			try {Thread.sleep(50);} catch (Exception e){};
+			orcCont.motorSet(RIGHT, -128);
+			orcCont.motorSet(LEFT, 128);
+			try { Thread.sleep(50);} catch (Exception e){};
 		}
 	}
 }

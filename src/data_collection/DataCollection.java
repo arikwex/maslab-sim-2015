@@ -18,11 +18,11 @@ public class DataCollection {
     
     private EncoderPair encoders;
     private SonarInterface sonarInterface;
-    private ObjectPositionDetect vision;
+    //private ObjectPositionDetect vision;
     
     private ArrayList<Sonar> sonars;
     private Delta delta;
-    private ArrayList<Block> blocksInVision; 
+    //private ArrayList<Block> blocksInVision; 
     
     
     private DataCollection() {
@@ -32,10 +32,10 @@ public class DataCollection {
         //sonarInterface = new SonarInterface();
         //sonars = sonarInterface.getSonars();
 
-        vision = new ObjectPositionDetect();
+        //vision = new ObjectPositionDetect();
 
         delta = new Delta();
-        blocksInVision = new ArrayList<Block>();
+        //blocksInVision = new ArrayList<Block>();
     }
     
     public static DataCollection getInstance() {
@@ -47,8 +47,8 @@ public class DataCollection {
     public void step() {
         encoders.sample();
         //sonarInterface.sample();
-    	vision.step();
-        blocksInVision = vision.blocks;
+    	//vision.step();
+        //blocksInVision = vision.blocks;
     }
     
     public EncoderPair getEncoders() {
@@ -59,9 +59,10 @@ public class DataCollection {
         return sonars;
     }
 */  
+    /*
     public ArrayList<Block> getBlocks() {
         return blocksInVision;
-    }
+    }*/
     
     public void log() {
     	if (encoders == null){

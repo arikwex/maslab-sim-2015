@@ -60,8 +60,8 @@ public class Config {
     public static final String SECTION_START = "{";
     public static final String SECTION_END = "}";
 	
-    //public static double[][] botPoly = new double[][] {{ -.2, -.3 }, { -.2, .1 }, { .2, .1 }, { .2, -.3 }};
-    public static double[][] botPoly = new double[][] {{ -.3, -.2 }, { -.3, .2 }, { .2, 0 }};
+    public static double[][] botPoly = new double[][] {{ -.3, -.2 }, { -.3, .2 }, { .1, .2 }, { .1, -.2 }};
+    //public static double[][] botPoly = new double[][] {{ -.3, -.2 }, { -.3, .2 }, { .2, 0 }};
 
 	public static final long ASSEMBLY_TOO_LONG = 60000;
 	public static final long COLLECT_TOO_LONG = 60000;

@@ -32,7 +32,15 @@ public class Point extends Point2D {
 	}
 	
 	public double angleTo(Point p) {
-        return -Math.toDegrees(Math.atan2(p.y-this.y, p.x-this.x));
+        return Math.toDegrees(Math.atan2(p.y-this.y, p.x-this.x));
 	}
 
+	public String toString() {
+		return "(" + round(x,2) + " , " + round(y,2) + ")";
+	}
+	
+	protected double round(double v, int sigfig) {
+		return Math.round(v*Math.pow(10, sigfig))/Math.pow(10, sigfig);
+	}
+	
 }

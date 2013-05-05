@@ -9,20 +9,18 @@ public abstract class State {
     long startTime;
 	protected long tooLong;
     
-    public State(StateMachine sm) {
+    public State() {
         startTime = System.currentTimeMillis();
-        this.sm = sm;
+        sm = StateMachine.getInstance();
         se = StateEstimator.getInstance();
     }
     
     public State step() {
         State next = this.transition();
         if (System.currentTimeMillis() - startTime >= this.tooLong){
-        	System.out.println("Timeout State");
-        	return new TimeoutState(sm,next);
+        	return new TimeoutState();
         }
         else {
-//        	System.out.println(next.getClass());
         	next.run();
         }
         return next;

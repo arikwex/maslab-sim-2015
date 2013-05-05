@@ -1,13 +1,9 @@
 package state_machine;
 
-import map.Map;
 import core.Config;
 
 public class StopState extends State{
-    
-    
-    public StopState(StateMachine sm) {
-        super(sm);
+    public StopState() {
         tooLong = Config.CHALLENGE_TIME;
     }
 

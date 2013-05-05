@@ -32,7 +32,6 @@ public class Map {
     public LinkedList<Point> path;
 	public Fiducial[] fiducials;
 
-    // takes bot +
     Map() {
         this.bot = new Robot(0,0,0);
         this.worldRect = new Rectangle2D.Double();
@@ -58,13 +57,10 @@ public class Map {
     	if (obstacles == null){
     		return false;
     	}
- //   	System.out.println("Checking Segment "+seg );
+
         for (Obstacle o : obstacles) {
-        	//System.out.println("Checking obs "+o + " against seg " + seg);
             if (o.intersects(seg))
             {
-//            	System.out.println("obs "+o + " intersects seg " + seg);
-
             	return false;
             }
         }
@@ -87,7 +83,7 @@ public class Map {
 
     public MapBlock closestBlock() {
         MapBlock bestBlock = null;
-        double minDist = worldRect.height*worldRect.width;
+        double minDist = Double.POSITIVE_INFINITY;
 
         for (MapBlock b : blocks) {
         	boolean bad = false;
@@ -96,7 +92,6 @@ public class Map {
             	if (obs.naiveCSpace == null)
             		obs.computeNaiveCSpace(Config.ROBOT_RADIUS);
             	if (obs.naiveCSpace.contains(b) || b.distance(new Point(bot.pose.x,bot.pose.y))<0.2){
-            		System.out.println(b.x+","+b.y+" is bad");
             		bad = true;
             		break;
             	}
@@ -108,7 +103,7 @@ public class Map {
                 bestBlock = b;
             }
         }
-        System.out.println("bestBlock = "+bestBlock.x+", "+bestBlock.y);
+
         return bestBlock;
     }
 

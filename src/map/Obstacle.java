@@ -33,14 +33,7 @@ public class Obstacle extends Polygon {
     
     public boolean intersects(Segment seg) {
     	return naiveCSpace.intersects(seg);
-        //boolean i = path.intersects(new Double(seg.start.x,seg.start.y,seg.end.x,seg.end.y));
-        //System.out.println("does it intersect? "+i);
-        //return i;
-    	
-        //if (naiveCSpace.intersects(seg))
-        //    if (getBotCSpace(bot).intersects(seg))
-        //        return true;
-        //return false;
+
     }
 
     public Polygon getNaiveCSpace() {

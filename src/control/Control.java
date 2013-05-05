@@ -23,10 +23,10 @@ public class Control {
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
-        rotPid = new PID(.0035, 0, 0, 0, .3);
+        rotPid = new PID(.035, 0, 0, 0, .3);
         rotPid.start(0, 0);
 
-        velPid = new PID(3, 0, 0, 0, .8);
+        velPid = new PID(3, 0, 0, 0, .4);
         velPid.start(0, 0);
         
         leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
@@ -60,10 +60,16 @@ public class Control {
     public void goToWaypoint() {
         Point wayPoint = pp.getNextWaypoint();
         
+        System.out.println("From: " + bot.pose + " to:" + wayPoint);
+        
         double distance = bot.pose.distance(wayPoint);
         double angle = bot.pose.angleTo(wayPoint);
         
-        double thetaErr = bot.pose.theta - angle;
+        System.out.println("a: " + angle);
+        
+        System.out.println("Distance: " + distance);
+        double thetaErr = angle - bot.pose.theta;
+        System.out.println("Theta Error: " + thetaErr);
         
         if (thetaErr > 180)
             thetaErr -= 360;

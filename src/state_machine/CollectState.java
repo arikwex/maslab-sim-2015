@@ -1,13 +1,13 @@
 package state_machine;
 
+import map.Point;
 import map.Segment;
 import core.Config;
 
 public class CollectState extends State {
     boolean blockCollected;
 
-    public CollectState(StateMachine sm) {
-        super(sm);
+    public CollectState() {
         tooLong = Config.COLLECT_TOO_LONG;
     }
 
@@ -15,18 +15,19 @@ public class CollectState extends State {
         if (blockCollected) {
             se.numCollectedBlocks++;
             if (se.numCollectedBlocks >= Config.BIN_CAPACITY) {
-                return new FindShelterState(sm);
+                return new FindShelterState();
             } else {
-                return new ExploreState(sm);
+                return new ExploreState();
             }
         }
         return this;
     }
 
     protected void run() {
-    	blockCollected = (se.map.bot.pose.distance(sm.goal) == 0 || (se.map.bot.pose.angleTo(sm.goal) - se.map.bot.pose.theta == 180));
-    	if (!blockCollected && Math.abs(se.map.bot.pose.angleTo(sm.goal) - se.map.bot.pose.theta) > 30){
-    		Segment toGoal = new Segment(se.map.bot.pose,sm.goal);
+    	Point goal = sm.getGoal();
+    	blockCollected = (se.map.bot.pose.distance(goal) == 0 || (se.map.bot.pose.angleTo(goal) - se.map.bot.pose.theta == 180));
+    	if (!blockCollected && Math.abs(se.map.bot.pose.angleTo(goal) - se.map.bot.pose.theta) > 30){
+    		Segment toGoal = new Segment(se.map.bot.pose,goal);
     		toGoal = toGoal.scale(1.5).trimToLegal(se.map);
     		sm.setGoal(se.getClosestBlock());
     	}

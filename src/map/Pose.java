@@ -13,6 +13,6 @@ public class Pose extends Point{
     }
     
     public String toString() {
-        return "X: " + x + " Y: " + y + " Theta: " + theta; 
+        return "(" + round(x,2) + ", " + round(y,2) + ", " + round(theta, 2) + ")";
     }
 }

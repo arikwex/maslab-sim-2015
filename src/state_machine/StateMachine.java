@@ -6,11 +6,10 @@ public class StateMachine {
 
     private static StateMachine instance;
     
-    public State state;
-    public Point goal;
+    private State state;
+    private Point goal;
     
     public StateMachine() {
-        state = new ExploreState(this);
     }
     
     public static StateMachine getInstance() {
@@ -20,6 +19,9 @@ public class StateMachine {
     } 
     
     public void step() {
+    	if (state == null) {
+    		state = new ExploreState();
+    	}
         state = state.step();
     }
     

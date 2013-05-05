@@ -34,6 +34,7 @@ import map.Map;
 import map.MapBlock;
 import map.Obstacle;
 import map.ParseMap;
+import map.Point;
 import map.Robot;
 
 public class RobotGraph extends JFrame implements Runnable{
@@ -271,22 +272,27 @@ public class RobotGraph extends JFrame implements Runnable{
         	if (map.getBlocks() == null || map.getBlocks().isEmpty())
         		return;
         	ArrayList<MapBlock> blocks = map.getBlocks();
-            for (int b = blocks.size()-1;b >= 0; b--) {  
-            	g.setColor(Config.BlockColorToColor(blocks.get(b).getColor()));
-                double POINT_RADIUS = 0.05;
-                double xMin = blocks.get(b).x - POINT_RADIUS;
-                double yMin = blocks.get(b).y - POINT_RADIUS;
+            for (int i = blocks.size()-1;i >= 0; i--) {  
+            	MapBlock b = blocks.get(i);
+            	paintPoint(g, b, Config.BlockColorToColor(b.getColor()));
+            }
+        }
+        
+        private void paintPoint(Graphics2D g, Point p, Color c) {
+        	g.setColor(c);
+            double POINT_RADIUS = 0.05;
+            double xMin = p.x - POINT_RADIUS;
+            double yMin = p.y - POINT_RADIUS;
 
-                double xMax = blocks.get(b).x + POINT_RADIUS;
-                double yMax = blocks.get(b).y + POINT_RADIUS;
+            double xMax = p.x + POINT_RADIUS;
+            double yMax = p.y + POINT_RADIUS;
 
-                Shape[] shape = new Shape[2];
-                shape[0] = new Line2D.Double(xMin, yMin, xMax, yMax);
-                shape[1] = new Line2D.Double(xMin, yMax, xMax, yMin);
-                
-                for (int i = 0; i < shape.length; i++) {
-                  g.draw(shape[i]);
-                }
+            Shape[] shape = new Shape[2];
+            shape[0] = new Line2D.Double(xMin, yMin, xMax, yMax);
+            shape[1] = new Line2D.Double(xMin, yMax, xMax, yMin);
+            
+            for (int i = 0; i < shape.length; i++) {
+              g.draw(shape[i]);
             }
         }
         
@@ -307,6 +313,7 @@ public class RobotGraph extends JFrame implements Runnable{
 
             g.setColor(bot.color);
             g.draw(t.createTransformedShape(bot.getPath()));
+            paintPoint(g, bot.pose, bot.color);
         }
 
         private void eraseBot(Graphics2D g) {

@@ -14,98 +14,74 @@ import rrt.PathPlanning;
 import state_machine.StateMachine;
 import uORCInterface.OrcController;
 
-public class Overlord extends Thread{
-    
-    OrcController orcControl;
-    Orc orc;
+public class Overlord extends Thread {
 
-    DataCollection dc;
-    StateEstimator se;
-    StateMachine sm;
-    PathPlanning pp;
-    Control c;
-    
-    Log l;
+	OrcController orcControl;
+	Orc orc;
+
+	DataCollection dc;
+	StateEstimator se;
+	StateMachine sm;
+	PathPlanning pp;
+	Control c;
+
+	Log l;
 	private RobotGraph f;
 	private long startTime;
 
+	public Overlord() {
+		try {
+			Map m = Map.getInstance();
 
-    public Overlord() {
-    	try {
-    		Map m = Map.getInstance();
-			//m.setMap(ParseMap.parseFile("challenge_2013.txt"));
-    		m.setMap(ParseMap.parseFile("construction_map_2013.txt"));
-			
-//	        System.out.println("making stuff");
-	        orcControl = new OrcController(new int[]{0,1});
-//	        System.out.println("made orcController");
-	        orc = Orc.makeOrc();
-//	        System.out.println("made orc");
-	        dc = DataCollection.getInstance();
-//	        System.out.println("made DataCollection");
-	        se = StateEstimator.getInstance();
-//	        (new Thread(se)).start();
-	        se.numBlocksLeft = m.getBlocks().size();
-//	        System.out.println("made StateEstimator");
-	        sm = StateMachine.getInstance();
-	        sm.goal = m.closestBlock();
-//	        System.out.println("made StateMachine");
-	        
-	        pp = PathPlanning.getInstance();
-//	        System.out.println("made PathPlanning");
-	        c = Control.getInstance();
-//	        System.out.println("made Control");
-	        
+			m.setMap(ParseMap.parseFile("construction_map_2013.txt"));
+
+			orcControl = new OrcController(new int[] { 0, 1 });
+			orc = Orc.makeOrc();
+			dc = DataCollection.getInstance();
+			se = StateEstimator.getInstance();
+			se.numBlocksLeft = m.getBlocks().size();
+			sm = StateMachine.getInstance();
+
+			pp = PathPlanning.getInstance();
+			c = Control.getInstance();
+
 			f = new RobotGraph(m);
-			(new Thread(f)).start();
-//	        System.out.println("made graph");
 
 			l = Log.getInstance(f);
-//	        System.out.println("made Log");
-			//startTime = System.currentTimeMillis();
-        	
-    	} catch (IOException e) {
+
+		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-    }
+	}
 
-    public void start() {
-        while (true) {    
-    			startTime = System.currentTimeMillis();
-            	dc.step();
-            	System.out.println("justed stepped dc");
-                
-                dc.log();
-                System.out.println("justed logged dc");
-                se.step();
-                System.out.println("justed stepped se");
-                l.updatePose();
-                System.out.println("justed updated pose");
+	public void start() {
+		while (true) {
+			System.out.println("justed updated");
+			startTime = System.currentTimeMillis();
+			dc.step();
 
-                
-    			sm.step();
-    			System.out.println("justed updated sm");
-    			System.out.println("State is "+sm.state);
+			dc.log();
+			se.step();
+			l.updatePose();
 
-    			pp.step();
-        		System.out.println("justed updated pp");
-    			c.step(); 	        
-        		
-        		f.repaint();
-        		System.out.println("Step time is "+(System.currentTimeMillis()-startTime));
-    		    
-        		
-        }
-    }
+			sm.step();
 
-    
-    public static void main(String[] args) {
-        System.out.println("Main");
+			pp.step();
+			c.step();
 
-    	Overlord me = new Overlord();
-        System.out.println("About to start");
-        me.start();
-    }
+			f.repaint();
+			
+			try {Thread.sleep(50-(System.currentTimeMillis()-startTime));} catch (Exception e){};
+		}
+	}
+
+	public static void main(String[] args) {
+		System.out.println("Main");
+
+		Overlord me = new Overlord();
+		System.out.println("About to start");
+		me.start();
+	}
 }

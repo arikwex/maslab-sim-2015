@@ -1,9 +1,5 @@
 package core;
 
-import java.util.ArrayList;
-
-import com.googlecode.javacv.ImageTransformer.Data;
-
 import data_collection.DataCollection;
 import data_collection.EncoderPair;
 import logging.Log;
@@ -41,17 +37,9 @@ public class StateEstimator implements Runnable {
         return instance;
     }
 
- /*
-    public StateEstimator(DataCollection dc) {
-        this.dc = dc;
-        //tooClose = new boolean[dc.getSonars().size()];
-        numCollectedBlocks = 0;
-    }
-*/
-
     public void step() {
         updatePose();
-        updateBlocks();
+        //updateBlocks();
         //sonarCheck();
 
         Log.log(this.toString());
@@ -72,14 +60,17 @@ public class StateEstimator implements Runnable {
         double dTheta = Math.toDegrees((dr - dl) / Config.WHEELBASE);
         Robot bot = Map.getInstance().bot;
         
-        Pose nextPose = new Pose(bot.pose.x+(dl + dr) * Math.cos(Math.toRadians(bot.pose.theta)) / 2.0,
-        		bot.pose.y+ (dl + dr) * Math.sin(Math.toRadians(bot.pose.theta)) / 2.0,
-        		bot.pose.theta + dTheta);
+        double newX = bot.pose.x+(dl + dr) * Math.cos(Math.toRadians(bot.pose.theta)) / 2.0;
+        double newY = bot.pose.y+ (dl + dr) * Math.sin(Math.toRadians(bot.pose.theta)) / 2.0;
+        double newTheta = bot.pose.theta + dTheta;
+        Pose nextPose = new Pose(newX, newY, newTheta);
+        bot.pose = nextPose;
 
-        if (map.checkSegment(new Segment(bot.pose,nextPose)))
-        	bot.pose = nextPose;
+        //if (map.checkSegment(new Segment(bot.pose,nextPose)))
+        //	bot.pose = nextPose;
     }
 
+    /*
     public void updateBlocks() {
 
         MapBlock tempBlock;
@@ -91,6 +82,7 @@ public class StateEstimator implements Runnable {
             map.addBlock(tempBlock);
         }
     }
+    */
 /*
     public void sonarCheck() {
         anyTooClose = false;
