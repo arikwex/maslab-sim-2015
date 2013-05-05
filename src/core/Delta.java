@@ -26,4 +26,29 @@ public class Delta {
     public void goToPosition(double x, double y, double z) {
         
     }
+
+	public static Delta getInstance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void step() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void placeNextBlock() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void grabNextBlock() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void PutBlockInBin() {
+		// TODO Auto-generated method stub
+		
+	}
 }

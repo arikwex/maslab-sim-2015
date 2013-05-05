@@ -27,6 +27,7 @@ public class Overlord extends Thread {
 
 	Log l;
 	private long startTime;
+	private Delta delta;
 
 	public Overlord() {
 		try {
@@ -40,9 +41,9 @@ public class Overlord extends Thread {
 			se = StateEstimator.getInstance();
 			se.numBlocksLeft = m.getBlocks().size();
 			sm = StateMachine.getInstance();
-
 			pp = PathPlanning.getInstance();
 			c = Control.getInstance();
+			delta = Delta.getInstance();
 
 
 			l = Log.getInstance();
@@ -67,9 +68,9 @@ public class Overlord extends Thread {
 
 			pp.step();
 			c.step();
+			delta.step();
 			
 			l.updatePose();
-			
 			try {Thread.sleep(50-(System.currentTimeMillis()-startTime));} catch (Exception e){};
 		}
 	}
