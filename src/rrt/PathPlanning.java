@@ -7,6 +7,7 @@ import core.StateEstimator;
 
 import map.Map;
 import map.Point;
+import map.Pose;
 import map.Segment;
 import state_machine.StateMachine;
 
@@ -34,7 +35,7 @@ public class PathPlanning {
 	}
 
 	public void step() {
-		Point curLoc = map.bot.pose;
+		Pose curLoc = map.bot.pose;
 		Point newGoal = sm.getGoal();
 		
 		if (newGoal == null) {
@@ -51,7 +52,7 @@ public class PathPlanning {
 			nextWaypoint = path.getFirst();
 		}
 		
-		if (!map.checkSegment(new Segment(curLoc, nextWaypoint))) {
+		if (!map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta)) {
 			System.out.println("BROKEN PATH");
 			findPath(newGoal);
 			nextWaypoint = path.getFirst();
@@ -59,7 +60,7 @@ public class PathPlanning {
 
 		// try to shortcut paths
 		for (int i = path.size()-1; i >= 0; i--) {
-			if (map.checkSegment(new Segment(curLoc, path.get(i)))) {
+			if (map.checkSegment(new Segment(curLoc, path.get(i)), curLoc.theta)) {
 				System.out.println("SHORTCUT AT " + i);
 
 				nextWaypoint = path.get(i);
@@ -100,7 +101,7 @@ public class PathPlanning {
 		Point p;
 		TreeNode closest, newNode, goalNode;
 		Segment seg;
-		if (map.checkSegment(new Segment(start, goal))) {
+		if (map.checkSegment(new Segment(start, goal), map.bot.pose.theta)) {
 			path = new LinkedList<Point>();
 			path.add(goal);
 		}
@@ -118,15 +119,15 @@ public class PathPlanning {
 			seg = new Segment(closest.loc, p);
 			seg = seg.trim(Config.MAXLENGTH);
 			p = seg.end;
-			if (!map.checkSegment(seg)) {
+			if (!map.checkSegment(seg, closest.parent.loc.angleTo(closest.loc))) {
 				continue;
 			}
 
 			newNode = new TreeNode(seg.end);
 			closest.addChild(newNode);
-			seg = new Segment(goal, p);
+			seg = new Segment(p, goal);
 
-			if (!map.checkSegment(seg)) {
+			if (!map.checkSegment(seg, closest.loc.angleTo(p))) {
 				continue;
 			}
 

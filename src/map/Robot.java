@@ -1,6 +1,7 @@
 package map;
 
 import java.awt.Color;
+import java.util.ArrayList;
 
 import core.Config;
 
@@ -83,5 +84,26 @@ public class Robot extends Polygon {
     	
     	rotated.close();
     	return rotated;
+    }
+    
+    public ArrayList<Point> rotatedPoints(double start, double end, Point location) {
+        ArrayList<Point> rotatedPoints = new ArrayList<Point>();
+        
+        double diff = end - start;
+        
+        if (diff > Math.PI)
+            diff -= Math.PI*2;
+        else if (diff < -Math.PI)
+            diff += Math.PI*2;
+        
+        double steps = Math.ceil(Math.abs(diff)/(Math.PI/8))-1;
+        
+        for (int i = 0; i < steps; i++) {
+            start += diff/steps;
+            for (Point p : getVertices())
+                rotatedPoints.add(p.getRotated(start).getTranslated(location));
+        }
+        
+        return rotatedPoints;   
     }
 }

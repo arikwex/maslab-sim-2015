@@ -1,5 +1,6 @@
 package map;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,31 +8,31 @@ public class Obstacle extends Polygon {
     private Polygon minCSpace = null;
     private Polygon maxCSpace = null;
 
-	public Polygon getMaxCSpace() {
-		if (maxCSpace == null) {
-	    	double r = Map.getInstance().bot.getMaxRadius();
-			maxCSpace = computeNaiveCSpace(r);
-		}
-		return maxCSpace;
-	}
-	
-	public Polygon getMinCSpace() {
-		if (minCSpace == null) {
-	    	double r = Map.getInstance().bot.getMinRadius();
-			minCSpace = computeNaiveCSpace(r);
-		}
-		return minCSpace;
-	}
-	
+    public Polygon getMaxCSpace() {
+        if (maxCSpace == null) {
+            double r = Map.getInstance().bot.getMaxRadius();
+            maxCSpace = computeNaiveCSpace(r);
+        }
+        return maxCSpace;
+    }
+
+    public Polygon getMinCSpace() {
+        if (minCSpace == null) {
+            double r = Map.getInstance().bot.getMinRadius();
+            minCSpace = computeNaiveCSpace(r);
+        }
+        return minCSpace;
+    }
+
     private Polygon computeNaiveCSpace(double r) {
-    	
+
         List<Point> csoPoints = new LinkedList<Point>();
 
         List<Point> roVertices = this.getVertices();
-        
+
         for (Point p : roVertices) {
-            for (double t = 0; t <= Math.PI*2; t += Math.PI/4)
-                csoPoints.add(new Point(p.x + r*Math.cos(t), p.y + r*Math.sin(t)));
+            for (double t = 0; t <= Math.PI * 2; t += Math.PI / 4)
+                csoPoints.add(new Point(p.x + r * Math.cos(t), p.y + r * Math.sin(t)));
         }
 
         return GeomUtils.convexHull(csoPoints);
@@ -48,26 +49,31 @@ public class Obstacle extends Polygon {
 
         return GeomUtils.convexHull(csoPoints);
     }
-    
-    public boolean intersects(Segment seg) {
-    	//return getMaxCSpace().intersects(seg);
-    	if (getMinCSpace().intersects(seg)) {
-    		Polygon polyC = getPolyCSpace((Map.getInstance().bot.getRotated(seg.theta)));
-    		if (polyC.intersects(seg));
-    			return true;
-    	}
-    	
-    	return false;
+
+    public boolean intersects(Segment seg, double theta) {
+        if (getMinCSpace().intersects(seg)) {
+            Robot bot = Map.getInstance().bot;
+            Polygon polyC = getPolyCSpace((bot.getRotated(seg.theta)));
+            if (polyC.intersects(seg)) {
+                return true;
+            } else {
+                for (Point p : bot.rotatedPoints(theta, seg.theta, seg.start))
+                    if (this.contains(p))
+                        return true;
+            }
+        }
+
+        return false;
     }
-    
+
     @Override
-    public String toString(){
-    	String s = "[";
-    	for (Point p : points){
-    		s += "("+p.x+", "+p.y+")";
-    	}
-    	s = s.substring(0,s.length()-1);
-    	s += "]";
-    	return s;
+    public String toString() {
+        String s = "[";
+        for (Point p : points) {
+            s += "(" + p.x + ", " + p.y + ")";
+        }
+        s = s.substring(0, s.length() - 1);
+        s += "]";
+        return s;
     }
 }

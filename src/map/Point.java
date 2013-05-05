@@ -40,6 +40,10 @@ public class Point extends Point2D {
 		double newY = y + Math.cos(theta) * x;
 		return new Point(newX, newY);
 	}
+	
+	public Point getTranslated(Point p) {
+	    return new Point(x + p.x, y + p.y);
+	}
 
 	public String toString() {
 		return "(" + round(x,2) + " , " + round(y,2) + ")";

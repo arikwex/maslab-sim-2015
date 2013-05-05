@@ -52,13 +52,13 @@ public class Map {
         return false;
     }
 
-    public boolean checkSegment(Segment seg) {
+    public boolean checkSegment(Segment seg, double theta) {
     	if (obstacles == null){
     		return false;
     	}
-
+    	
         for (Obstacle o : obstacles) {
-            if (o.intersects(seg))
+            if (o.intersects(seg, theta))
             {
             	return false;
             }
