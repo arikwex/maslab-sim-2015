@@ -27,12 +27,14 @@ import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_imgproc.CvMoments;
 
 import core.Block;
+import core.Config;
 import core.Config.BlockColor;
 
 import static com.googlecode.javacpp.Loader.sizeof;
 import static com.googlecode.javacv.cpp.opencv_core.CV_FILLED;
 import static com.googlecode.javacv.cpp.opencv_core.CV_RGB;
 import static com.googlecode.javacv.cpp.opencv_core.cvCreateMemStorage;
+import static com.googlecode.javacv.cpp.opencv_core.cvReleaseMemStorage;
 import static com.googlecode.javacv.cpp.opencv_core.cvDrawContours;
 import static com.googlecode.javacv.cpp.opencv_core.cvPoint;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_CHAIN_APPROX_SIMPLE;
@@ -74,6 +76,8 @@ public class ObjectPositionDetect{
 	private Dimension position;
 	public boolean ready;
 	CaptureImage capture;
+	private IplImage orgImg;
+	private IplImage thresholdImage;
 	
 	public ObjectPositionDetect(){
     	//lastTime = System.currentTimeMillis();
@@ -97,22 +101,27 @@ public class ObjectPositionDetect{
     public void step(){
     	capture.step();
 	    if (capture.img != null){
-		        IplImage orgImg = capture.img.clone();
+		        //orgImg = capture.img.clone();
+	    		blocks.clear();
+	    		blueBlocks.clear();
+	    		redBlocks.clear();
+	    		yellowBlocks.clear();
+	    		greenBlocks.clear();
 		        lastTime = System.currentTimeMillis();
-		        orgImg = getBlocks(BlockColor.RED, orgImg);
-		        orgImg = getBlocks(BlockColor.BLUE, orgImg);
-		        orgImg = getBlocks(BlockColor.GREEN, orgImg);
-		        orgImg = getBlocks(BlockColor.YELLOW, orgImg);
-		        //System.out.println(System.currentTimeMillis()-lastTime);
-		
-		        canvas2.showImage(orgImg);
-	        
+		        capture.img = getBlocks(BlockColor.RED, capture.img);
+		        capture.img = getBlocks(BlockColor.BLUE, capture.img);
+		        capture.img = getBlocks(BlockColor.GREEN, capture.img);
+		        capture.img = getBlocks(BlockColor.YELLOW, capture.img);
+		        System.out.println(System.currentTimeMillis()-lastTime);
+		        
+		        canvas2.showImage(capture.img);
 	    }
     }
 private IplImage getBlocks(BlockColor color, IplImage orgImg) {
-
     
-    IplImage thresholdImage = hsvThreshold(orgImg, color);
+   thresholdImage = hsvThreshold(orgImg, color);
+   //canvas2.showImage(thresholdImage);
+   
 	//blocksCanvas.showImage(thresholdImage);
     //cvSaveImage("hsvthreshold2.jpg", thresholdImage);
     //System.out.println("Dimension of original Image : " + thresholdImage.width() + " , " + thresholdImage.height());
@@ -125,15 +134,20 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
 
     cvFindContours(thresholdImage, mem, contours, sizeof(CvContour.class) , CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE, cvPoint(0,0));
     
-    if(contours.isNull())
-    	   return orgImg;
+    if(contours.isNull()){
+    	cvReleaseMemStorage(mem);
+        cvReleaseImage(thresholdImage);
+    	
+    	return orgImg;
+	}
+    
     for (ptr = contours; ptr != null; ptr = ptr.h_next()) {
     	
     	round = getRoundness(ptr);
         if (round < 0.45 || getArea(ptr)<225){
         	continue;
         }
-
+        
         position = getCoordinates(thresholdImage, orgImg);
         block = new Block(position.width, position.height, ptr.total(), color);
         blocks.add(block);
@@ -166,9 +180,13 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         cvDrawContours(orgImg, ptr, sColor, CV_RGB(0,0,0), -1, CV_FILLED, 8, cvPoint(0,0));
     	boundbox = cvBoundingRect(ptr, 0);
         cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
-
+         	
         //System.out.println("Roundness of "+color.toString()+" spot    : " + round);
+    
     }
+    
+    cvReleaseMemStorage(mem);
+    cvReleaseImage(thresholdImage);
     return orgImg;
 }
 	private double getArea(CvSeq contour) {
@@ -192,7 +210,13 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         posX = (int) (momX10 / area);
         posY = (int) (momY01 / area);
 
+        System.out.println("position of x is: " + posX);
+        System.out.println("position of y is: "+posY);
+        System.out.println("area of block is: "+area); 
+        
         return new Dimension(posX, posY);
+        
+
     }
 	
 	double getArea(IplImage image) {
@@ -203,6 +227,12 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         // where I(x,y) is the intensity of the pixel (x, y).
         area = cvGetCentralMoment(moments, 0, 0);
         return area;
+	}
+	
+	//fill out area to distance, knowing block size 
+	double areaToDistance(double area) {
+//	    Config.blockSize;
+	    return area; 
 	}
 	
 	double getRoundness(CvSeq ptr) {
@@ -228,16 +258,17 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
 
         if (color.equals(BlockColor.RED)){
     		// cvScalar : ( H , S , V, A)
-    		cvInRangeS(imgHSV, cvScalar(160, 125, 50, 0), cvScalar(180, 255, 255, 0), imgThreshold);
+    		cvInRangeS(imgHSV, cvScalar(180, 130, 100, 0), cvScalar(255, 255, 255, 0), imgThreshold);
+            cvInRangeS(imgHSV, cvScalar(0, 130, 100, 0), cvScalar(10, 255, 255, 0), imgThreshold);
     	} else if (color.equals(BlockColor.BLUE)){
             // cvScalar : ( H , S , V, A)
-            cvInRangeS(imgHSV, cvScalar(110, 120, 20, 0), cvScalar(130, 255, 180, 0), imgThreshold);
+            cvInRangeS(imgHSV, cvScalar(105, 100, 20, 0), cvScalar(135, 255, 180, 0), imgThreshold);
         } else if (color.equals(BlockColor.GREEN)){
             // cvScalar : ( H , S , V, A)
             cvInRangeS(imgHSV, cvScalar(60, 50, 50, 0), cvScalar(100, 255, 255, 0), imgThreshold);
         } else if (color.equals(BlockColor.YELLOW)){
             // cvScalar : ( H , S , V, A)
-            cvInRangeS(imgHSV, cvScalar(10, 60, 100, 0), cvScalar(35, 255, 255, 0), imgThreshold);
+            cvInRangeS(imgHSV, cvScalar(20, 100, 100, 0), cvScalar(40, 255, 255, 0), imgThreshold);
         }
     	cvReleaseImage(imgHSV);
         cvSmooth(imgThreshold, imgThreshold, CV_MEDIAN, 13);
