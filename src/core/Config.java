@@ -73,4 +73,11 @@ public class Config {
 	public static final double ROBOT_RADIUS = 0.2;
 
 	public static final double COLLISION_MARGIN = -0.00;
+	
+	public static final int ONE_BLOCK_PIN = 0;
+	public static final int TWO_BLOCK_PIN = 1;
+
+	public static final double DELTA_CM_PER_STEP = 0.02673181188;
+	public static final double DELTA_STEPS_PER_CM = 37.4086127846;
+    public static final long DELTA_STEP_MAX = (long)(20*DELTA_STEPS_PER_CM);
 }

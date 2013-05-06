@@ -245,7 +245,7 @@ public class Map {
 
 	public void update() {
 		
-		for (Block b : DataCollection.getInstance().blocksInVision){
+		for (Block b : DataCollection.getInstance().getBlocks()) {
 			MapBlock block = new MapBlock(b);
 			MapBlock closest = isOnMap(block);
 			if (closest != null){
@@ -267,7 +267,7 @@ public class Map {
 		blocksIShouldSee = getBlocksIShouldSee();
 		for (MapBlock mb : blocksIShouldSee){
 			Block found = null;
-			for (Block b : DataCollection.getInstance().blocksInVision){
+			for (Block b : DataCollection.getInstance().getBlocks()){
 				if (isOnMap(new MapBlock(b)) == mb &&
 						(found == null || mb.distance(b)<mb.distance(found))){
 					found = b;

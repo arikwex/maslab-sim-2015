@@ -60,16 +60,16 @@ public class Overlord extends Thread {
 		while (true) {
 			System.out.println("justed updated");
 			startTime = System.currentTimeMillis();
+			
 			dc.step();
-
-			dc.log();
 			se.step();
-
 			sm.step();
+
 			map.update();
 			
 			pp.step();
 			c.step();
+			
 			delta.step();
 			
 			l.updatePose();
