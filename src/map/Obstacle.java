@@ -1,6 +1,5 @@
 package map;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,16 +50,30 @@ public class Obstacle extends Polygon {
     }
 
     public boolean intersects(Segment seg, double theta) {
-        if (getMinCSpace().intersects(seg)) {
+        if (getMaxCSpace().intersects(seg) || getMaxCSpace().contains(seg.start) || getMaxCSpace().contains(seg.end)) {
+
             Robot bot = Map.getInstance().bot;
             Polygon polyC = getPolyCSpace((bot.getRotated(seg.theta)));
+
             if (polyC.intersects(seg)) {
                 return true;
-            } else {
-                for (Point p : bot.rotatedPoints(theta, seg.theta, seg.start))
-                    if (this.contains(p))
-                        return true;
             }
+
+            if (polyC.contains(seg.start)) {
+                return true;
+            }
+
+            if (polyC.contains(seg.end)) {
+                return true;
+            }
+
+            for (Point p : bot.rotatedPoints(theta, seg.theta, seg.start)) {
+                if (this.contains(p)) {
+                    //System.out.println("theta: " + theta + " seg: " + seg.theta + " seg: " + seg);
+                    return true;
+                }
+            }
+
         }
 
         return false;

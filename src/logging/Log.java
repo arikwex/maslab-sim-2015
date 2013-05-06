@@ -1,5 +1,7 @@
 package logging;
 
+import javax.swing.SwingUtilities;
+
 import map.Map;
 
 public class Log {
@@ -18,7 +20,11 @@ public class Log {
     }
 
     public void updatePose() {
-        graph.repaint();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                graph.repaint();
+            }
+        });
     }
     
     public synchronized static void log(String s) {

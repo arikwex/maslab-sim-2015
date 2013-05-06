@@ -68,6 +68,12 @@ public class StateEstimator implements Runnable {
         double newX = bot.pose.x + (dl + dr) * Math.cos(bot.pose.theta) / 2.0;
         double newY = bot.pose.y + (dl + dr) * Math.sin(bot.pose.theta) / 2.0;
         double newTheta = bot.pose.theta + dTheta;
+        
+        if (newTheta > Math.PI)
+            newTheta -= Math.PI*2;
+        else if (newTheta < -Math.PI)
+            newTheta += Math.PI*2;
+        
         Pose nextPose = new Pose(newX, newY, newTheta);
         bot.pose = nextPose;
 

@@ -56,15 +56,19 @@ public class Config {
 	public static final int BIN_CAPACITY = 50;
 	public static final double CLOSE_ENOUGH = 0.5;
 
-    public static final double MAXLENGTH = 0.1;
+    public static final double MAXLENGTH = 1.5;
 
     public static final String COMMENT = "#";
     public static final String SECTION_START = "{";
     public static final String SECTION_END = "}";
 	
-    public static double[][] botPoly = new double[][] {{ -.37, -.23 }, { -.37, .23 }, { .11, .23 }, { .11, -.23 }};
+    public static double[][] botPoly = new double[][] {{ -.34, -.27 }, { -.34, .27 }, { .22, .27 }, {.34, 0}, { .22, -.27 }};
+    //public static double[][] botPoly = new double[][] {{ -.32, -.25 }, { -.32, .25 }, { .20, .25 }, { .20, -.25 }};
+    //public static double[][] botPoly = new double[][] {{ -.37, -.23 }, { -.37, .23 }, { .11, .23 }, { .11, -.23 }};
+    //public static double[][] botPoly = new double[][] {{ -.30, -.23 }, { -.30, .23 }, { .18, .23 }, { .18, -.23 }};
     //public static double[][] botPoly = new double[][] {{ -.3, -.2 }, { -.3, .2 }, { .2, 0 }};
-
+    //public static double[][] botPoly = new double[][] {{ -.32, -.22 }, { -.32, .22 }, { .12, .22 }, { .12, -.22 }};
+    
 	public static final long ASSEMBLY_TOO_LONG = 60000;
 	public static final long COLLECT_TOO_LONG = 60000;
 	public static final long EXPLORE_TOO_LONG = 60000;

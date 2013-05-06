@@ -22,7 +22,7 @@ public class Segment {
         this.m = getSlope();
         this.b = getIntersept();
 
-        this.theta = start.angleTo(start);
+        this.theta = start.angleTo(end);
     }
 
     private double getSlope() {
