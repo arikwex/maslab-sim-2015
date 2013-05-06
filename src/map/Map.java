@@ -286,6 +286,6 @@ public class Map {
 
 	private ArrayList<MapBlock> getBlocksIShouldSee() {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<MapBlock>();
 	}
 }
