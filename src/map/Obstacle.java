@@ -30,7 +30,7 @@ public class Obstacle extends Polygon {
         List<Point> roVertices = this.getVertices();
 
         for (Point p : roVertices) {
-            for (double t = 0; t <= Math.PI * 2; t += Math.PI / 4)
+            for (double t = 0; t <= Math.PI * 2; t += Math.PI / 8)
                 csoPoints.add(new Point(p.x + r * Math.cos(t), p.y + r * Math.sin(t)));
         }
 

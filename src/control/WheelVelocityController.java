@@ -25,7 +25,7 @@ public class WheelVelocityController {
     public WheelVelocityController(OrcController orc, int wheel) {
         this.orc = orc;
         this.wheel = wheel;
-        this.pid = new PID(2, 0, 0, 0, 0);
+        this.pid = new PID(5, 0, 0, 0, 128);
         pid.start(0, 0);
         prevTime = System.currentTimeMillis();
         enc = DataCollection.getInstance().getEncoders();

@@ -332,9 +332,9 @@ public class RobotGraph extends JFrame implements Runnable {
             g.draw(t.createTransformedShape(bot.getPath()));
             paintPoint(g, bot.pose, bot.color);
 
-            //paintPoint(g, new Point(0, 0), bot.color);
-            //for (Point p : bot.rotatedPoints(bot.pose.theta - Math.PI/4, bot.pose.theta + Math.PI / 4, bot.pose))
-                //paintPoint(g, p, bot.color);
+            paintPoint(g, new Point(0, 0), bot.color);
+            for (Point p : bot.rotatedPoints(bot.pose.theta - Math.PI/4, bot.pose.theta + Math.PI / 4, bot.pose))
+                paintPoint(g, p, bot.color);
         }
 
         private void eraseBot(Graphics2D g) {

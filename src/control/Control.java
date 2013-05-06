@@ -9,6 +9,7 @@ import map.Pose;
 import map.Robot;
 import map.Segment;
 import uORCInterface.OrcController;
+import utils.Utils;
 
 public class Control {
     private static Control instance;
@@ -27,10 +28,10 @@ public class Control {
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
-        rotPid = new PID(.05, 0, 0, 0, .22);
+        rotPid = new PID(.05, 0, 0, 0, .15);
         rotPid.start(0, 0);
 
-        velPid = new PID(3, 0, 0, 0, .3);
+        velPid = new PID(3, 0, 0, 0, .2);
         velPid.start(0, 0);
         
         leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
@@ -50,7 +51,7 @@ public class Control {
     
     private void setVelocity(double left, double right) {    	
     	leftController.setVelocity(left);
-        rightController.setVelocity(0.87*right);
+        rightController.setVelocity(right);
     }
     
     public void step() {
@@ -61,31 +62,11 @@ public class Control {
 
     public void goToWaypoint() {
         Point wayPoint = pp.getNextWaypoint();
-        Segment seg = new Segment(bot.pose,wayPoint);
-        if (!Map.getInstance().checkSegment(seg, bot.pose.theta)){
-        	System.out.println("GetNextWaypoint Gave a bad Waypoint !!! seg: "+seg);
-        	/*
-        	while (true){
-	        	try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        	}
-        	*/
-        }
         
-        System.out.println("From: " + bot.pose + " to:" + wayPoint);
+        System.out.println("From: " + bot.pose + " to:" + wayPoint + " with theta " + bot.pose.angleTo(wayPoint));
         
         double distance = bot.pose.distance(wayPoint);
-        double angle = Math.toDegrees(bot.pose.angleTo(wayPoint));
-        double thetaErr = angle - Math.toDegrees(bot.pose.theta);
-        
-        if (thetaErr > 180)
-            thetaErr -= 360;
-        else if (thetaErr < -180)
-            thetaErr += 360;
+        double thetaErr = Math.toDegrees(Utils.thetaDiff(bot.pose.theta, bot.pose.angleTo(wayPoint)));
 
         double vel = velPid.step(distance);
         if (Math.abs(thetaErr) < 7)

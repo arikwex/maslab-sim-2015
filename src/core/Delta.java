@@ -16,7 +16,7 @@ public class Delta {
     private boolean isZeroed = false;
     
     private Delta() {
-        di = new DeltaInterface();
+        //di = new DeltaInterface();
     }
     
     public static Delta getInstance() {
@@ -52,7 +52,7 @@ public class Delta {
 	
 	public void move(int[] steps) {
 	    midMove = true;
-	    DeltaInterface.move(steps);
+	    //DeltaInterface.move(steps);
 	    
 	    for (int i = 0; i < steps.length; i++) {
 	        position[i] += steps[i];
