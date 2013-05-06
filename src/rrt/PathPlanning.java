@@ -119,10 +119,16 @@ public class PathPlanning {
 			seg = new Segment(closest.loc, p);
 			seg = seg.trim(Config.MAXLENGTH);
 			p = seg.end;
-			if (!map.checkSegment(seg, closest.parent.loc.angleTo(closest.loc))) {
+			Point from;
+			if (closest != root){
+				from = closest.parent.loc;
+			}
+			else{
+				from = map.bot.pose;
+			}
+			if (!map.checkSegment(seg, from.angleTo(closest.loc))) {
 				continue;
 			}
-
 			newNode = new TreeNode(seg.end);
 			closest.addChild(newNode);
 			seg = new Segment(p, goal);

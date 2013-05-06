@@ -1,7 +1,8 @@
 package core;
 
 public class Delta {
-    long steps0, steps1, steps2;
+    private static Delta instance;
+	long steps0, steps1, steps2;
     
     public Delta() {
         
@@ -29,7 +30,9 @@ public class Delta {
 
 	public static Delta getInstance() {
 		// TODO Auto-generated method stub
-		return null;
+		if (instance == null)
+			instance = new Delta();
+		return instance;
 	}
 
 	public void step() {

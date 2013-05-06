@@ -38,7 +38,7 @@ public class Obstacle extends Polygon {
         return GeomUtils.convexHull(csoPoints);
     }
 
-    private Polygon getPolyCSpace(Polygon bot) {
+    public Polygon getPolyCSpace(Polygon bot) {
         List<Point> csoPoints = new LinkedList<Point>();
 
         List<Point> roVertices = getVertices();

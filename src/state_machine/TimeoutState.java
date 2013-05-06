@@ -3,7 +3,6 @@ package state_machine;
 import core.Config;
 
 public class TimeoutState extends State{
-    private State prev;
     
     
     public TimeoutState() {

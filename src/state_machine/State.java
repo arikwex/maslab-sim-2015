@@ -8,6 +8,7 @@ public abstract class State {
     
     long startTime;
 	protected long tooLong;
+	protected State prev;
     
     public State() {
         startTime = System.currentTimeMillis();
@@ -23,6 +24,7 @@ public abstract class State {
         else {
         	next.run();
         }
+        
         return next;
         
     }

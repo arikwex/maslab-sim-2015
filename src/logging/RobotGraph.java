@@ -265,8 +265,9 @@ public class RobotGraph extends JFrame implements Runnable{
                 g.setColor(o.color);
                 g.fill(o.getPath());
                 if (drawCSpace){
-                    g.draw(o.getMaxCSpace().getPath());
-                    g.draw(o.getMinCSpace().getPath());
+                    //g.draw(o.getMaxCSpace().getPath());
+                    //g.draw(o.getMinCSpace().getPath());
+                	g.draw(o.getPolyCSpace(bot.getRotated(bot.pose.theta)).getPath());
                 }
             }
         }
