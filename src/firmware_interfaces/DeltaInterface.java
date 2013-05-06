@@ -17,7 +17,7 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
         private static final String PORT_NAMES[] = {
                 "/dev/tty.usbserial-A9007UX1", // Mac OS X
                 "/dev/ttyUSB0", // Linux
-                "COM3", // Windows
+                "COM8", // Windows
                 };
         /** Buffered input stream from the port */
         private InputStream input;
@@ -93,7 +93,7 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
          */
         public synchronized void sendString(String msg){
             try {
-                msg +='\n';//add a newline character
+                //msg +='\n';//add a newline character
                 output.write(msg.getBytes());//write it to the serial
                 output.flush();//refresh the serial
                 System.out.print("<- "+msg);//output for debugging
@@ -117,11 +117,25 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
                 }
             }
         }
+        
+        public void move(int[] steps){
+        	String command = "";
+        	for(int i = 0; i < steps.length; i++){
+        		command += "S";
+        		command += Integer.toString(steps[1]);
+        	}
+        	command += "E";
+        	
+        	this.sendString(command);
+        }
  
         public static void main(String[] args) throws Exception {
         	DeltaInterface main = new DeltaInterface();
         	System.out.println("Started");
+        	
         	while(true){
+        		
+        		Thread.sleep(1000);
         	}
         	}
         	
