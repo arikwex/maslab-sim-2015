@@ -77,8 +77,8 @@ public class StateEstimator implements Runnable {
         Pose nextPose = new Pose(newX, newY, newTheta);
         bot.pose = nextPose;
 
-        // if (map.checkSegment(new Segment(bot.pose,nextPose)))
-        // bot.pose = nextPose;
+         if (map.checkSegment(new Segment(bot.pose,nextPose),bot.pose.theta))
+         bot.pose = nextPose;
     }
 
     public void updateBlocks() {

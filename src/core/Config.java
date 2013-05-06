@@ -46,7 +46,7 @@ public class Config {
     public static double[][] sonarPositions = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },
             { 0, 0, 0 }, { 0, 0, 0 } };
 
-    public static final double WHEELBASE = .4;
+    public static final double WHEELBASE = .435;
     public static final double TICKS_PER_REV = 133236;
     public static final double WHEEL_RADIUS = .0625;
     public static final double METERS_PER_TICK = (WHEEL_RADIUS * Math.PI * 2) / TICKS_PER_REV;

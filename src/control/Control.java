@@ -1,8 +1,11 @@
 package control;
 
+import core.Config;
+import data_collection.EncoderPair;
 import rrt.PathPlanning;
 import map.Map;
 import map.Point;
+import map.Pose;
 import map.Robot;
 import map.Segment;
 import uORCInterface.OrcController;
@@ -47,7 +50,7 @@ public class Control {
     
     private void setVelocity(double left, double right) {    	
     	leftController.setVelocity(left);
-        rightController.setVelocity(right);
+        rightController.setVelocity(0.87*right);
     }
     
     public void step() {
@@ -93,5 +96,48 @@ public class Control {
         double rot = rotPid.step(-thetaErr);
         
         setMotion(vel, rot);
+    }
+    
+    
+    public static void main(String[] Args){
+    	OrcController orc = new OrcController(new int[]{0,1});
+    	WheelVelocityController leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
+    	WheelVelocityController rightController = new WheelVelocityController(orc, WheelVelocityController.RIGHT);
+    	double theta = 0;
+    	double x = 0;
+    	double y = 0;
+    	EncoderPair enc = new EncoderPair();
+    	leftController.setVelocity(0.2);
+		rightController.setVelocity(0.2);
+		double l = 0;
+		double r = 0;
+		while (l < 1 || r < 1 ){
+    		System.out.println("l = "+ l);
+    		System.out.println("r = "+ r);
+    		leftController.step();
+    		rightController.step();
+    		enc.sample();
+    		/*
+    		double dl = enc.dLeft * Config.METERS_PER_TICK;
+    		double dr = enc.dRight * Config.METERS_PER_TICK;
+    		double dTheta = (dr - dl) / Config.WHEELBASE;
+    		double newTheta = theta + dTheta;
+    		x = x + (dl + dr) * Math.cos(theta) / 2.0;
+            y = y + (dl + dr) * Math.sin(theta) / 2.0;
+    		theta = newTheta;
+			*/
+    
+    		l = enc.left* Config.METERS_PER_TICK;
+    		r = enc.right*Config.METERS_PER_TICK;
+    		if (l >= 1){
+    			
+    			rightController.setVelocity(0);
+    		}
+    		if (r >= 1){
+    			leftController.setVelocity(0);
+    		}
+    	}
+    	
+		System.out.println(l);
     }
 }
