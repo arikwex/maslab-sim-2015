@@ -1,15 +1,7 @@
 package map;
 
-import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
-
-import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
 import core.Block;
 import core.Config.BlockColor;
@@ -21,7 +13,7 @@ public class Map {
     private static Map instance;
     
     public java.awt.geom.Rectangle2D.Double worldRect = null;
-    public ArrayList<Obstacle> worldBounds = null; // world rect in obstacle format.
+    private ArrayList<Obstacle> worldBounds = null; // world rect in obstacle format.
 
     public ArrayList<Obstacle> obstacles;
     private ArrayList<MapBlock> blocks;
@@ -40,6 +32,10 @@ public class Map {
         this.bot = new Robot(0,0,0);
         this.worldRect = new Rectangle2D.Double();
         this.blocks = new ArrayList<MapBlock>();
+    }
+    
+    public ArrayList<Obstacle> getObstacles() {
+        return obstacles;
     }
     
     public static Map getInstance() {
@@ -62,12 +58,10 @@ public class Map {
     		return false;
     	}
     	
-        for (Obstacle o : obstacles) {
+        for (Obstacle o : obstacles)
             if (o.intersects(seg, theta))
-            {
             	return false;
-            }
-        }
+        
         return true;
     }
 
@@ -114,87 +108,6 @@ public class Map {
         }
 
         return bestBlock;
-    }
-
-
-    private void parsePoint(Point point, BufferedReader br, String name, int lineNumber) throws IOException,
-            ParseException, NumberFormatException {
-
-        String line = br.readLine();
-        String[] tok = (line != null) ? line.split("\\s+") : null;
-
-        if ((tok == null) || (tok.length < 2)) {
-            throw new ParseException(name + " (line " + lineNumber + ")", lineNumber);
-        }
-
-        point.x = Double.parseDouble(tok[0]);
-        point.y = Double.parseDouble(tok[1]);
-    }
-
-    private void parseRect(Rectangle2D.Double rect, BufferedReader br, String name, int lineNumber) throws IOException,
-            ParseException, NumberFormatException {
-
-        String line = br.readLine();
-        String[] tok = (line != null) ? line.split("\\s+") : null;
-
-        if ((tok == null) || (tok.length < 4))
-            throw new ParseException(name + " (line " + lineNumber + ")", lineNumber);
-
-        rect.x = Double.parseDouble(tok[0]);
-        rect.y = Double.parseDouble(tok[1]);
-        rect.width = Double.parseDouble(tok[2]);
-        rect.height = Double.parseDouble(tok[3]);
-    }
-
-    private Obstacle parseObs(BufferedReader br, String name, int lineNumber) throws IOException, ParseException,
-            NumberFormatException {
-
-        String line = br.readLine();
-
-        if (line == null)
-            return null;
-
-        String[] tok = line.trim().split("\\s+");
-
-        if (tok.length == 0)
-            return null;
-
-        if (tok.length % 2 != 0)
-            throw new ParseException(name + " (line " + lineNumber + ")", lineNumber);
-
-        Obstacle poly = new Obstacle();
-
-        for (int i = 0; i < tok.length / 2; i++)
-            poly.addVertex(new Point(Double.parseDouble(tok[2 * i]), Double.parseDouble(tok[2 * i + 1])));
-
-        poly.close();
-
-        return poly;
-    }
-
-    protected void parse(File mapFile) throws IOException, ParseException {
-        int lineNumber = 1;
-        try {
-
-            BufferedReader br = new BufferedReader(new FileReader(mapFile));
-
-            parsePoint(robotStart, br, "robot start", lineNumber++);
-            parsePoint(robotGoal, br, "robot goal", lineNumber++);
-            parseRect(worldRect, br, "world rect", lineNumber++);
-
-            for (int obstacleNumber = 0;; obstacleNumber++) {
-
-                Obstacle obs = parseObs(br, "obstacle " + obstacleNumber, lineNumber++);
-                if (obs != null) {
-                    obs.color = Color.blue;
-                    obstacles.add(obs);
-                } else
-                    break;
-            }
-
-        } catch (NumberFormatException e) {
-            throw new ParseException("malformed number on line " + lineNumber, lineNumber);
-        }
     }
     
     public Point randomPoint() {
@@ -245,7 +158,7 @@ public class Map {
 
 	public void update() {
 		
-		for (Block b : DataCollection.getInstance().blocksInVision){
+		for (Block b : DataCollection.getInstance().getBlocks()) {
 			MapBlock block = new MapBlock(b);
 			MapBlock closest = isOnMap(block);
 			if (closest != null){
@@ -267,7 +180,7 @@ public class Map {
 		blocksIShouldSee = getBlocksIShouldSee();
 		for (MapBlock mb : blocksIShouldSee){
 			Block found = null;
-			for (Block b : DataCollection.getInstance().blocksInVision){
+			for (Block b : DataCollection.getInstance().getBlocks()){
 				if (isOnMap(new MapBlock(b)) == mb &&
 						(found == null || mb.distance(b)<mb.distance(found))){
 					found = b;

@@ -79,16 +79,14 @@ public class WheelVelocityController {
     }
     
     public static void main(String[] args) {
-		OrcController orcCont = new OrcController(new int[]{0,1});
-		orcCont.motorSet(RIGHT, 128);
-		//orcCont.motorSet(LEFT, 0);
+		OrcController orc = new OrcController(new int[]{0,1});
+        WheelVelocityController left = new WheelVelocityController(orc, 0);
+        WheelVelocityController right = new WheelVelocityController(orc, 1);
+        left.setVelocity(-.2);
+        right.setVelocity(-.2);
 		while (true) {
-			System.out.println(orcCont.readEncoder(RIGHT));
-			//System.out.println(orc.verbose);
-			//System.out.println(orcCont.readEncoder(LEFT));
-			System.out.println(orcCont.readVelocity(RIGHT));
-			orcCont.motorSet(RIGHT, -128);
-			orcCont.motorSet(LEFT, 128);
+			left.step();
+			right.step();
 			try { Thread.sleep(50);} catch (Exception e){};
 		}
 	}

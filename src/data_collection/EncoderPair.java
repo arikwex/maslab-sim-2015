@@ -1,5 +1,7 @@
 package data_collection;
 
+import com.sun.corba.se.spi.ior.MakeImmutable;
+
 import orc.Orc;
 import orc.QuadratureEncoder;
 
@@ -13,7 +15,8 @@ public class EncoderPair extends Thread {
     QuadratureEncoder rightEncoder;
 	boolean ready;
     
-    public EncoderPair(Orc orc) {
+    public EncoderPair() {
+        Orc orc = Orc.makeOrc();
         leftEncoder = new QuadratureEncoder(orc, 0, false);
         rightEncoder = new QuadratureEncoder(orc, 1, true);
         

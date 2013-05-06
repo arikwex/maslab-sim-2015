@@ -74,6 +74,7 @@ public class Robot extends Polygon {
     		}
     	}
     	
+    	//return .29;
     	return minRadius;
     }
     
@@ -96,7 +97,7 @@ public class Robot extends Polygon {
         else if (diff < -Math.PI)
             diff += Math.PI*2;
         
-        double steps = Math.ceil(Math.abs(diff)/(Math.PI/8))-1;
+        double steps = Math.ceil(Math.abs(diff)/(Math.PI/32))-1;
         
         for (int i = 0; i < steps; i++) {
             start += diff/steps;

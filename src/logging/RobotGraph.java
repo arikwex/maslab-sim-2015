@@ -38,8 +38,9 @@ import map.Obstacle;
 import map.ParseMap;
 import map.Point;
 import map.Robot;
+import map.Segment;
 
-public class RobotGraph extends JFrame implements Runnable{
+public class RobotGraph extends JFrame implements Runnable {
     private static final long serialVersionUID = -1299466487663318439L;
 
     private double[] pose = { 0, 0, 0 };
@@ -47,8 +48,8 @@ public class RobotGraph extends JFrame implements Runnable{
 
     private PaintablePanel p;
 
-    private static final int FRAME_HEIGHT = 600;
-    private static final int FRAME_WIDTH = 600;
+    private static final int FRAME_HEIGHT = 900;
+    private static final int FRAME_WIDTH = 900;
     private static final double MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH = 1.05;
     private static final double X_MAX_INITIAL = 4.0;
     private static final double X_MIN_INITIAL = -4.0;
@@ -67,13 +68,13 @@ public class RobotGraph extends JFrame implements Runnable{
 
     public ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
     public Robot bot;
-    
+
     private boolean drawCSpace = true;
 
     private MyMouseListener ml = new MyMouseListener();
 
-	private Map map;
-	private PathPlanning pp;
+    private Map map;
+    private PathPlanning pp;
 
     private class MyMouseListener implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
         private int[] start_drag = new int[2];
@@ -192,14 +193,14 @@ public class RobotGraph extends JFrame implements Runnable{
         map = Map.getInstance();
         bot = map.bot;
         pp = PathPlanning.getInstance();
-        
+
         setWidgets();
         poseHistory.add(new double[] { 0, 0, 0 });
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         pack();
         setVisible(true);
-        
+
     }
 
     private void setWidgets() {
@@ -253,37 +254,46 @@ public class RobotGraph extends JFrame implements Runnable{
             paintBlocks(g);
             paintBot(g);
             paintPath(g);
+
+            paintRrt(g);
         }
 
-        private void paintWorldBounds(Graphics2D g) {
-        	g.draw(map.worldRect);
+        private void paintRrt(Graphics2D g) {
+            PathPlanning pp = PathPlanning.getInstance();
+            g.setColor(Color.blue);
+            Segment s;
+            for (int i = 0; i<pp.rrtEdges.size(); i++) {
+                s = pp.rrtEdges.get(i);
+                g.draw(new Line2D.Double(s.start, s.end));
+            }
         }
+
         private void paintObstacles(Graphics2D g) {
-        	if (map.obstacles == null)
-        		return;
+            if (map.obstacles == null)
+                return;
             for (Obstacle o : map.obstacles) {
                 g.setColor(o.color);
                 g.fill(o.getPath());
-                if (drawCSpace){
-                    //g.draw(o.getMaxCSpace().getPath());
-                    //g.draw(o.getMinCSpace().getPath());
-                	g.draw(o.getPolyCSpace(bot.getRotated(bot.pose.theta)).getPath());
+                if (drawCSpace) {
+                    // g.draw(o.getMaxCSpace().getPath());
+                    g.draw(o.getMinCSpace().getPath());
+                    g.draw(o.getPolyCSpace(bot.getRotated(bot.pose.theta)).getPath());
                 }
             }
         }
-        
+
         private void paintBlocks(Graphics2D g) {
-        	if (map.getBlocks() == null || map.getBlocks().isEmpty())
-        		return;
-        	ArrayList<MapBlock> blocks = map.getBlocks();
-            for (int i = blocks.size()-1;i >= 0; i--) {  
-            	MapBlock b = blocks.get(i);
-            	paintPoint(g, b, Config.BlockColorToColor(b.getColor()));
+            if (map.getBlocks() == null || map.getBlocks().isEmpty())
+                return;
+            ArrayList<MapBlock> blocks = map.getBlocks();
+            for (int i = blocks.size() - 1; i >= 0; i--) {
+                MapBlock b = blocks.get(i);
+                paintPoint(g, b, Config.BlockColorToColor(b.getColor()));
             }
         }
-        
+
         private void paintPoint(Graphics2D g, Point p, Color c) {
-        	g.setColor(c);
+            g.setColor(c);
             double POINT_RADIUS = 0.05;
             double xMin = p.x - POINT_RADIUS;
             double yMin = p.y - POINT_RADIUS;
@@ -294,24 +304,24 @@ public class RobotGraph extends JFrame implements Runnable{
             Shape[] shape = new Shape[2];
             shape[0] = new Line2D.Double(xMin, yMin, xMax, yMax);
             shape[1] = new Line2D.Double(xMin, yMax, xMax, yMin);
-            
+
             for (int i = 0; i < shape.length; i++) {
-              g.draw(shape[i]);
+                g.draw(shape[i]);
             }
         }
-        
-        private void paintPath(Graphics2D g) {
-        	if (pp.path == null || pp.path.size() < 1)
-        		return;
-        	g.setColor(Color.RED);
 
-        	Point start = bot.pose;
-        	for (Point p : pp.path) {
-        		g.draw(new Line2D.Double(start, p));
-        		start = p;
-        	}
+        private void paintPath(Graphics2D g) {
+            if (pp.path == null || pp.path.size() < 1)
+                return;
+            g.setColor(Color.RED);
+
+            Point start = bot.pose;
+            for (Point p : pp.path) {
+                g.draw(new Line2D.Double(start, p));
+                start = p;
+            }
         }
-        
+
         private void paintBot(Graphics2D g) {
             AffineTransform t = new AffineTransform();
             t.setToIdentity();
@@ -321,6 +331,10 @@ public class RobotGraph extends JFrame implements Runnable{
             g.setColor(bot.color);
             g.draw(t.createTransformedShape(bot.getPath()));
             paintPoint(g, bot.pose, bot.color);
+
+            //paintPoint(g, new Point(0, 0), bot.color);
+            //for (Point p : bot.rotatedPoints(bot.pose.theta - Math.PI/4, bot.pose.theta + Math.PI / 4, bot.pose))
+                //paintPoint(g, p, bot.color);
         }
 
         private void eraseBot(Graphics2D g) {
@@ -367,24 +381,18 @@ public class RobotGraph extends JFrame implements Runnable{
     }
 
     public void paintBot() {
-        p.paint((Graphics2D)p.getGraphics());
+        p.paint((Graphics2D) p.getGraphics());
     }
-    
+
     public void addObstacle(Obstacle o) {
         obstacles.add(o);
     }
 
-    public void run(){
-        
+    public void run() {
+
         setPreferredSize(new Dimension(FRAME_WIDTH + 1, FRAME_HEIGHT + 32));
-        while (true){
-        	repaint();
-        }	
-    }
-    
-    public static void main(String[] args) throws IOException, ParseException {
-    	Map m = ParseMap.parseFile("challenge_2013.txt");
-        RobotGraph f = new RobotGraph();
-    	f.run();
+        while (true) {
+            repaint();
+        }
     }
 }

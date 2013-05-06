@@ -34,7 +34,9 @@ public class Overlord extends Thread {
 		try {
 			map = Map.getInstance();
 
-			map.setMap(ParseMap.parseFile("construction_map_2013.txt"));
+			map.setMap(ParseMap.parseFile("cheat_map.txt"));
+			//m.setMap(ParseMap.parseFile("construction_map_2013.txt"));
+            //m.setMap(ParseMap.parseFile("challenge_2013.txt"));
 
 			orcControl = new OrcController(new int[] { 0, 1 });
 			orc = Orc.makeOrc();
@@ -60,16 +62,16 @@ public class Overlord extends Thread {
 		while (true) {
 			System.out.println("justed updated");
 			startTime = System.currentTimeMillis();
+			
 			dc.step();
-
-			dc.log();
 			se.step();
-
 			sm.step();
+
 			map.update();
 			
 			pp.step();
 			c.step();
+			
 			delta.step();
 			
 			l.updatePose();

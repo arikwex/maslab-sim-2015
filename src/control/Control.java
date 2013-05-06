@@ -24,10 +24,10 @@ public class Control {
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
-        rotPid = new PID(.035, 0, 0, 0, .3);
+        rotPid = new PID(.05, 0, 0, 0, .22);
         rotPid.start(0, 0);
 
-        velPid = new PID(3, 0, 0, 0, .4);
+        velPid = new PID(3, 0, 0, 0, .3);
         velPid.start(0, 0);
         
         leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
@@ -45,9 +45,7 @@ public class Control {
         setVelocity(vel + rot, vel - rot);
     }
     
-    private void setVelocity(double left, double right) {
-    	System.out.println("Setting velocity to left "+left + " right "+ right);
-    	
+    private void setVelocity(double left, double right) {    	
     	leftController.setVelocity(left);
         rightController.setVelocity(right);
     }
@@ -79,12 +77,7 @@ public class Control {
         
         double distance = bot.pose.distance(wayPoint);
         double angle = Math.toDegrees(bot.pose.angleTo(wayPoint));
-        
-        System.out.println("a: " + angle);
-        
-        System.out.println("Distance: " + distance);
         double thetaErr = angle - Math.toDegrees(bot.pose.theta);
-        System.out.println("Theta Error: " + thetaErr);
         
         if (thetaErr > 180)
             thetaErr -= 360;
@@ -92,9 +85,8 @@ public class Control {
             thetaErr += 360;
 
         double vel = velPid.step(distance);
-        if (Math.abs(thetaErr) < 30)
-        	vel *= (30-Math.abs(thetaErr)) / 30;
-            //vel *= Math.pow(30 - Math.abs(thetaErr), 2) / 900;
+        if (Math.abs(thetaErr) < 7)
+        	vel *= (7-Math.abs(thetaErr)) / 7;
         else
             vel = 0;
 

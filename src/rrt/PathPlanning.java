@@ -1,15 +1,20 @@
 package rrt;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import core.Config;
 import core.StateEstimator;
 
+import logging.Log;
 import map.Map;
+import map.Obstacle;
 import map.Point;
+import map.Polygon;
 import map.Pose;
 import map.Segment;
 import state_machine.StateMachine;
+import uORCInterface.OrcController;
 
 public class PathPlanning {
 	private static PathPlanning instance;
@@ -21,6 +26,8 @@ public class PathPlanning {
 	public LinkedList<Point> path;
 	public Point nextWaypoint;
 	public Point goal;
+	
+	public ArrayList<Segment> rrtEdges = new ArrayList<Segment>();
 
 	public PathPlanning() {
 		this.sm = StateMachine.getInstance();
@@ -44,6 +51,7 @@ public class PathPlanning {
 		}
 		
 		System.out.println("New: " + newGoal + " Old: " + goal);
+		
 		if (goal == null || newGoal.distance(goal) > .05) {
 			System.out.println("MOVE GOAL");
 			goal = newGoal;
@@ -52,12 +60,27 @@ public class PathPlanning {
 			nextWaypoint = path.getFirst();
 		}
 		
+        Polygon rotBot = map.bot.getRotated(curLoc.theta);
+
+		for (Obstacle o : map.getObstacles()) {
+		    if (o.getPolyCSpace(rotBot).contains(curLoc)) {
+		        System.out.println("WTF?");
+		        System.out.println(map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta));
+		        //while(true);
+		    }
+		}
+		
 		if (!map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta)) {
 			System.out.println("BROKEN PATH");
+			
+			map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta);
+			System.out.println("Cur: " + curLoc + " next: " + nextWaypoint);
+			
 			findPath(newGoal);
 			nextWaypoint = path.getFirst();
 		}
 
+		/*
 		// try to shortcut paths
 		for (int i = path.size()-1; i >= 0; i--) {
 			if (map.checkSegment(new Segment(curLoc, path.get(i)), curLoc.theta)) {
@@ -68,12 +91,35 @@ public class PathPlanning {
 				for (; i>= 0; i--)
 					path.remove(i);
 			}
+		}*/
+
+		if (path.size() > 1) {
+		    if (map.checkSegment(new Segment(curLoc, path.get(1)), curLoc.theta)) {
+		        path.removeFirst();
+		        nextWaypoint = path.getFirst();
+		    }
 		}
 		
-		if (curLoc.distance(nextWaypoint) < .03) {
-			if (path.size() > 1)
-				path.removeFirst();
-			nextWaypoint = path.getFirst();
+		if (curLoc.distance(nextWaypoint) < .025) {
+		    
+		    double angle = curLoc.angleTo(nextWaypoint);
+	        double thetaErr = angle - curLoc.theta;
+	        
+	        if (thetaErr > Math.PI)
+	            thetaErr -= 2*Math.PI;
+	        else if (thetaErr < -Math.PI)
+	            thetaErr += 2*Math.PI;
+	        
+	        System.out.println("THETA ERROR!!! " + thetaErr);
+	        if (Math.abs(thetaErr) < Math.PI/16) {
+		    	if (path.size() > 1) {
+    				path.removeFirst();
+    				nextWaypoint = path.getFirst();
+		    	} else {
+		    	    findPath(newGoal);
+		            nextWaypoint = path.getFirst();
+		    	}
+	        }
 		}
 
 		// stop when we arrive at goal
@@ -94,6 +140,8 @@ public class PathPlanning {
 	}
 
 	public void findPath(Point goal) {
+	    rrtEdges.clear();
+	    
 		Point start = new Point(map.bot.pose.x, map.bot.pose.y);
 		TreeNode root = new TreeNode(start);
 		Tree rrt = new Tree(root);
@@ -104,12 +152,43 @@ public class PathPlanning {
 		if (map.checkSegment(new Segment(start, goal), map.bot.pose.theta)) {
 			path = new LinkedList<Point>();
 			path.add(goal);
+			return;
 		}
+		
+		OrcController orc = new OrcController(new int[] {0,1});
+		orc.motorSet(0, 0);
+		orc.motorSet(1, 0);
 
+		long count = 0;
 		while (true) {
+		    count++;
+		    if (count % 5000 == 0) {
+		        if (rrt.nodes.size() > 5000 || count % 50000 == 0) {
+		            rrtEdges.clear();
+		            start = new Point(map.bot.pose.x, map.bot.pose.y);
+		            root = new TreeNode(start);
+		            rrt = new Tree(root);
+		        }
+		        if (count > 100000 && rrt.nodes.size() > 5) {
+		            System.out.println("FUCK IT FIND CENTER");
+		            TreeNode furthest = root;
+		            double dist = Double.POSITIVE_INFINITY;
+		            for (TreeNode node : rrt.nodes) {
+		                if (node.loc.distance(root.loc) > dist  && node != root) {
+		                    furthest = node;
+		                    dist = node.loc.distance(root.loc);
+		                }
+		            }
+	                goalNode = furthest;
+	                break;		        
+		        }
+		        Log.getInstance().updatePose();
+		        System.out.println(count + " nodes " + rrt.nodes.size());
+		    }
+		    
 			p = map.randomPoint();
-
 			closest = root;
+			
 			for (TreeNode node : rrt.nodes) {
 				if (node.loc.distance(p) < closest.loc.distance(p)) {
 					closest = node;
@@ -118,28 +197,27 @@ public class PathPlanning {
 
 			seg = new Segment(closest.loc, p);
 			seg = seg.trim(Config.MAXLENGTH);
-			p = seg.end;
-			Point from;
-			if (closest != root){
-				from = closest.parent.loc;
-			}
-			else{
-				from = map.bot.pose;
-			}
-			if (!map.checkSegment(seg, from.angleTo(closest.loc))) {
+
+			double startAngle;
+			if (closest == root)
+				startAngle = map.bot.pose.theta;
+			else
+				startAngle = closest.parent.loc.angleTo(closest.loc);
+			
+			if (!map.checkSegment(seg, startAngle)) {
 				continue;
 			}
+			
 			newNode = new TreeNode(seg.end);
 			closest.addChild(newNode);
-			seg = new Segment(p, goal);
 
-			if (!map.checkSegment(seg, closest.loc.angleTo(p))) {
-				continue;
+            rrtEdges.add(seg);
+
+			if (p.distance(goal) < .1) {
+			    goalNode = new TreeNode(goal);
+	            newNode.addChild(goalNode);
+			    break;
 			}
-
-			goalNode = new TreeNode(goal);
-			newNode.addChild(goalNode);
-			break;
 		}
 
 		TreeNode curNode = goalNode;
