@@ -16,7 +16,7 @@ public class Delta {
     private boolean isZeroed = false;
     
     private Delta() {
-        di = new DeltaInterface();
+        //di = new DeltaInterface();
     }
     
     public static Delta getInstance() {

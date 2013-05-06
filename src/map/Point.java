@@ -2,6 +2,8 @@ package map;
 
 import java.awt.geom.Point2D;
 
+import utils.Utils;
+
 public class Point extends Point2D {
     public double x;
     public double y;
@@ -44,11 +46,6 @@ public class Point extends Point2D {
 	}
 
 	public String toString() {
-		return "(" + round(x,2) + " , " + round(y,2) + ")";
-	}
-	
-	protected double round(double v, int sigfig) {
-		return Math.round(v*Math.pow(10, sigfig))/Math.pow(10, sigfig);
-	}
-	
+		return "(" + Utils.round(x,2) + " , " + Utils.round(y,2) + ")";
+	}	
 }

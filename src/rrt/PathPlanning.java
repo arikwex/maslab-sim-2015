@@ -15,6 +15,7 @@ import map.Pose;
 import map.Segment;
 import state_machine.StateMachine;
 import uORCInterface.OrcController;
+import utils.Utils;
 
 public class PathPlanning {
 	private static PathPlanning instance;
@@ -100,18 +101,13 @@ public class PathPlanning {
 		    }
 		}
 		
-		if (curLoc.distance(nextWaypoint) < .025) {
+		
+		if (curLoc.distance(nextWaypoint) < .03) {
 		    
-		    double angle = curLoc.angleTo(nextWaypoint);
-	        double thetaErr = angle - curLoc.theta;
-	        
-	        if (thetaErr > Math.PI)
-	            thetaErr -= 2*Math.PI;
-	        else if (thetaErr < -Math.PI)
-	            thetaErr += 2*Math.PI;
-	        
+	        double thetaErr = Utils.thetaDiff(curLoc.theta, curLoc.angleTo(nextWaypoint));
+		    
 	        System.out.println("THETA ERROR!!! " + thetaErr);
-	        if (Math.abs(thetaErr) < Math.PI/16) {
+	        if (Math.abs(thetaErr) < Math.PI/8) {
 		    	if (path.size() > 1) {
     				path.removeFirst();
     				nextWaypoint = path.getFirst();
@@ -170,16 +166,9 @@ public class PathPlanning {
 		            rrt = new Tree(root);
 		        }
 		        if (count > 100000 && rrt.nodes.size() > 5) {
-		            System.out.println("FUCK IT FIND CENTER");
-		            TreeNode furthest = root;
-		            double dist = Double.POSITIVE_INFINITY;
-		            for (TreeNode node : rrt.nodes) {
-		                if (node.loc.distance(root.loc) > dist  && node != root) {
-		                    furthest = node;
-		                    dist = node.loc.distance(root.loc);
-		                }
-		            }
-	                goalNode = furthest;
+		            System.out.println("FUCK IT GO TO RANDOM NODE");
+		            
+	                goalNode = rrt.nodes.get((int)(Math.random()*rrt.nodes.size()));
 	                break;		        
 		        }
 		        Log.getInstance().updatePose();
