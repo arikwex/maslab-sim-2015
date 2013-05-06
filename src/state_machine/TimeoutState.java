@@ -1,5 +1,6 @@
 package state_machine;
 
+import map.Map;
 import core.Config;
 
 public class TimeoutState extends State{
@@ -10,10 +11,18 @@ public class TimeoutState extends State{
     }
 
     protected State transition() {
-    	if (prev.getClass() == AssemblyState.class || prev.getClass() == FindShelterState.class)
+    	Map map = Map.getInstance();
+    	if (prev.getClass() == ExploreState.class ||prev.getClass() == CollectState.class){
+    		map.removeBlock(map.closestBlock());
     		return new ExploreState();
-    	else if (prev.getClass() == CollectState.class || prev.getClass() == ExploreState.class)
-    		return new FindShelterState();
+    	}
+    	    	
+    	else if (prev.getClass() == FindShelterState.class){
+    		map.ShelterLocation = map.bot.pose;
+    		return new AssemblyState();
+    	}
+    	else if (prev.getClass() == AssemblyState.class )
+    		return new StopState();
         return this;
     }
     
