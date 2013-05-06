@@ -17,6 +17,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
+import map.Map;
+
 import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.cpp.opencv_core.CvContour;
 import com.googlecode.javacv.cpp.opencv_core.CvMemStorage;
@@ -45,6 +47,7 @@ import static com.googlecode.javacv.cpp.opencv_core.cvRectangle;
 
 public class ObjectPositionDetect{
 
+	private static ObjectPositionDetect instance;
 	private int posX;
 	private int posY;
 	private double momX10;
@@ -150,6 +153,8 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         
         position = getCoordinates(thresholdImage, orgImg);
         block = new Block(position.width, position.height, ptr.total(), color);
+        
+        block.setPosition(Map.getInstance().bot.pose);
         blocks.add(block);
 
         Color actualColor;
@@ -267,7 +272,7 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
             // cvScalar : ( H , S , V, A)
             cvInRangeS(imgHSV, cvScalar(60, 50, 50, 0), cvScalar(100, 255, 255, 0), imgThreshold);
         } else if (color.equals(BlockColor.YELLOW)){
-            // cvScalar : ( H , S , V, A)
+            // cvScalar : ( H , S , V, A)  
             cvInRangeS(imgHSV, cvScalar(20, 100, 100, 0), cvScalar(40, 255, 255, 0), imgThreshold);
         }
     	cvReleaseImage(imgHSV);
@@ -280,5 +285,13 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
 		ObjectPositionDetect me = new ObjectPositionDetect();
 		
 		me.run();
+	}
+
+
+	public static ObjectPositionDetect getInstance() {
+		// TODO Auto-generated method stub
+		 if (instance == null)
+	            instance = new ObjectPositionDetect();
+	        return instance;   
 	}
 }

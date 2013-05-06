@@ -28,18 +28,19 @@ public class Overlord extends Thread {
 	Log l;
 	private long startTime;
 	private Delta delta;
+	private Map map;
 
 	public Overlord() {
 		try {
-			Map m = Map.getInstance();
+			map = Map.getInstance();
 
-			m.setMap(ParseMap.parseFile("construction_map_2013.txt"));
+			map.setMap(ParseMap.parseFile("construction_map_2013.txt"));
 
 			orcControl = new OrcController(new int[] { 0, 1 });
 			orc = Orc.makeOrc();
 			dc = DataCollection.getInstance();
 			se = StateEstimator.getInstance();
-			se.numBlocksLeft = m.getBlocks().size();
+			se.numBlocksLeft = map.getBlocks().size();
 			sm = StateMachine.getInstance();
 			pp = PathPlanning.getInstance();
 			c = Control.getInstance();
@@ -65,7 +66,8 @@ public class Overlord extends Thread {
 			se.step();
 
 			sm.step();
-
+			map.update();
+			
 			pp.step();
 			c.step();
 			delta.step();

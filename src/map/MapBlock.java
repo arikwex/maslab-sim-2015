@@ -2,6 +2,7 @@ package map;
 
 import java.awt.Color;
 
+import core.Block;
 import core.Config;
 import core.Config.BlockColor;
 
@@ -24,6 +25,12 @@ public class MapBlock extends Point {
     	super();
     	this.color = BlockColor.NONE;
     	this.size = 1;
+	}
+
+	public MapBlock(Block b) {
+		super(b.x,b.y);
+		this.color = b.color;
+		this.size = 1;
 	}
 
 	public BlockColor getColor() {

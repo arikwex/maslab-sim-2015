@@ -2,6 +2,7 @@ package core;
 
 
 import map.Point;
+import map.Pose;
 import core.Config.BlockColor;
 
 public class Block extends Point{
@@ -40,6 +41,10 @@ public class Block extends Point{
         y = botY + r * Math.sin(phi + botTheta);
     }
     
+    public void setPosition(Pose bot) {
+    	setPosition(bot.x,bot.y,bot.theta);
+    }
+        
     public BlockColor getColor(){
     	return this.color;
     }

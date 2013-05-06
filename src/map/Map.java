@@ -11,8 +11,11 @@ import java.util.LinkedList;
 
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.ParseException;
 
+import core.Block;
 import core.Config.BlockColor;
 import core.Config;
+import core.StateEstimator;
+import data_collection.DataCollection;
 
 public class Map {
     private static Map instance;
@@ -31,6 +34,8 @@ public class Map {
 
 	public Fiducial[] fiducials;
 
+	private ArrayList<MapBlock> blocksIShouldSee;
+
     Map() {
         this.bot = new Robot(0,0,0);
         this.worldRect = new Rectangle2D.Double();
@@ -44,7 +49,7 @@ public class Map {
     }
     
     public boolean addBlock(MapBlock b) {        
-        if (!this.isOnMap(b)) {
+        if (this.isOnMap(b)== null) {
             blocks.add(b);
             return true;
         }
@@ -70,23 +75,30 @@ public class Map {
 
     }
 
-    public boolean isOnMap(MapBlock block) {
+    public MapBlock isOnMap(MapBlock block) {
+    	MapBlock closest = null;
         for (MapBlock b : blocks) {
             BlockColor color = b.getColor();
             if (b.distance(block) < Config.minDist && color == block.getColor()) {
-                return true;
+                if (closest == null || block.distance(b)<block.distance(closest)){
+                	closest = b;
+                }
             }
         }
-        return false;
+        return closest;
     }
 
     public MapBlock closestBlock() {
+    	return closestBlock(bot.pose);
+    }
+    
+    public MapBlock closestBlock(Point from) {
         MapBlock bestBlock = null;
         double minDist = Double.POSITIVE_INFINITY;
 
         for (MapBlock b : blocks) {
         	boolean bad = false;
-            double d = b.distance(bot.pose);
+            double d = b.distance(from);
             for (Obstacle obs : obstacles){
             	if (obs.getMinCSpace().contains(b)){
             		bad = true;
@@ -229,5 +241,51 @@ public class Map {
 		this.robotGoal = m.robotGoal;
 		this.robotStart = m.robotStart;
 		this.ShelterLocation = m.ShelterLocation;
+	}
+
+	public void update() {
+		
+		for (Block b : DataCollection.getInstance().blocksInVision){
+			MapBlock block = new MapBlock(b);
+			MapBlock closest = isOnMap(block);
+			if (closest != null){
+				closest.setLocation(block);
+			}
+			else{
+				boolean duplicate = false;
+				for (int i = blocks.size()-1; i>=0;i--){
+					 
+					if (blocks.get(i)==block){
+						duplicate = true;
+						break;
+					}
+				}
+				if (!duplicate)
+					addBlock(block);
+			}
+		}
+		blocksIShouldSee = getBlocksIShouldSee();
+		for (MapBlock mb : blocksIShouldSee){
+			Block found = null;
+			for (Block b : DataCollection.getInstance().blocksInVision){
+				if (isOnMap(new MapBlock(b)) == mb &&
+						(found == null || mb.distance(b)<mb.distance(found))){
+					found = b;
+				}
+			}
+			if (found == null){
+				blocks.remove(mb);
+			}
+			else {
+				mb.setLocation(found);
+			}
+		}
+		
+		
+	}
+
+	private ArrayList<MapBlock> getBlocksIShouldSee() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

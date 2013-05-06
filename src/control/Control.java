@@ -4,6 +4,7 @@ import rrt.PathPlanning;
 import map.Map;
 import map.Point;
 import map.Robot;
+import map.Segment;
 import uORCInterface.OrcController;
 
 public class Control {
@@ -59,6 +60,20 @@ public class Control {
 
     public void goToWaypoint() {
         Point wayPoint = pp.getNextWaypoint();
+        Segment seg = new Segment(bot.pose,wayPoint);
+        if (!Map.getInstance().checkSegment(seg, bot.pose.theta)){
+        	System.out.println("GetNextWaypoint Gave a bad Waypoint !!! seg: "+seg);
+        	/*
+        	while (true){
+	        	try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        	*/
+        }
         
         System.out.println("From: " + bot.pose + " to:" + wayPoint);
         
