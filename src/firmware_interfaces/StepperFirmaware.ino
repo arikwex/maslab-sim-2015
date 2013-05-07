@@ -8,7 +8,9 @@ int tsteps[3] = {600,700,-900};
 int const numSteppers = 3;
 int const stepPins[numSteppers] = {2,4,6};
 int const dirPins[numSteppers] = {3,5,7};
+int const limitPins[numSteppers] = {8,9,10};
 float const speed = 0.1;
+int limit[3] = {0,0,0};
 int counter;
 
 void getCommand(){
@@ -52,6 +54,7 @@ void setup() {
   for(int i = 0; i < numSteppers; i++){
     pinMode(dirPins[i], OUTPUT); 
     pinMode(stepPins[i], OUTPUT);
+    pinMode(limitPins[i], INPUT);
   } 
 }
 
@@ -61,7 +64,7 @@ void loop() {
   if(Serial.available()>0){
     
     getCommand();
-    //moveDelta(steps[0],steps[1],steps[2],speed);
+    moveDelta(steps[0],steps[1],steps[2],speed);
     } 
   }
   
@@ -77,7 +80,7 @@ void moveDelta(int steps1, int steps2, int steps3, float s){
    
    float usDelay = (1/s) * 70;
    
-   while(numSteps[0] > 0 || numSteps[1] > 0 || numSteps[1] > 0){
+   while(numSteps[0] > 0 || numSteps[1] > 0 || numSteps[2] > 0){
      
      for(int i = 0; i < numSteppers; i++){
        
@@ -100,5 +103,34 @@ void moveDelta(int steps1, int steps2, int steps3, float s){
    }
 }
   
+void topDelta(float s){
+   for (int i = 0; i < numSteppers; i++){
+     limit[i] = digitalRead(limitPins[i]);
+     digitalWrite(dirPins[i], LOW);
+   }
+   
+   float usDelay = (1/s) * 70;
+   
+   while(!limit[0] || !limit[1] || !limit[2] ){
+     
+     for(int i = 0; i < numSteppers; i++){
+       limit[i] = digitalRead(limitPins[i]);
+       if (!limit[i] > 0){
+         digitalWrite(stepPins[i], HIGH);
+       }   
+     }
+     
+     delayMicroseconds(usDelay);
+     
+     for(int i = 0; i < numSteppers; i++){
+       
+       if (!limit[i] > 0){
+         digitalWrite(stepPins[i], LOW);
+       }     
+     }
+     
+     delayMicroseconds(usDelay);
+   }
+}
 
 
