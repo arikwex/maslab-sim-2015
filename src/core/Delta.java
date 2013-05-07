@@ -101,4 +101,14 @@ public class Delta {
 
 	public void PutBlockInBin() {
 	}
+	public static void main(String[] args) throws Exception {
+    	Delta main = new Delta();
+        System.out.println("Started");
+        while(true){
+        	main.goToPosition(3, 3, 0);
+        	Thread.sleep(5000);
+        	main.goToPosition(0, 0, 0);
+        	Thread.sleep(5000);
+        }
+ 	}
 }
