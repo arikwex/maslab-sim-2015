@@ -27,6 +27,8 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
     private static final int DATA_RATE = 9600;
 
     private String inputBuffer="";
+    
+    public boolean ready;
 
     public DeltaInterface() {
 
@@ -103,6 +105,7 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
     public synchronized void serialEvent (SerialPortEvent oEvent) {
     	if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
         	try {
+        		ready = true;
             	int in = input.read();
                 System.out.println("received: ");
                 System.out.println(in);
@@ -113,6 +116,7 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
   	}
         
     public void move(int[] steps){
+    	ready = false;
     	String command = "";
     	for(int i = 0; i < steps.length; i++){
     		command += "S";
@@ -122,6 +126,11 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
         	
         this.sendString(command);
  	}
+    public void run(){
+    	while (true){
+    		
+    	}
+    }
  
    	public static void main(String[] args) throws Exception {
     	DeltaInterface main = new DeltaInterface();
