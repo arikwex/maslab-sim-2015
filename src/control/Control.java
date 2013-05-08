@@ -46,7 +46,7 @@ public class Control {
     }
     
     private void setMotion(double vel, double rot) {
-        setVelocity(vel + rot, vel - rot);
+        setVelocity(-vel + rot, -vel - rot);
     }
     
     private void setVelocity(double left, double right) {    	

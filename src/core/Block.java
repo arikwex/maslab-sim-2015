@@ -1,18 +1,22 @@
 package core;
 
 
+import java.util.ArrayList;
+
 import map.Point;
 import map.Pose;
 import core.Config.BlockColor;
 
 public class Block extends Point{
 
-	public double relX;
-	public double relY;
+	public double i;
+	public double j;
     public double x;
     public double y;
     public int sizeP; 
     public BlockColor color;
+	public double relX;
+	public double relY;
 
     /*
     public Block(double x, double y,int sizeP, BlockColor color) {
@@ -22,9 +26,9 @@ public class Block extends Point{
     }
     */
     
-    public Block(double relx, double rely,int sizeP, BlockColor color) {
-    	this.relX = relx;
-    	this.relY = rely;
+    public Block(double i, double j,int sizeP, BlockColor color) {
+    	this.i= i;
+    	this.j = j;
         this.color= color;
         this.sizeP = sizeP;
     }
@@ -33,9 +37,9 @@ public class Block extends Point{
 // Taking into account the angle of the robot to the world. 
 
     public void setPosition(double botX, double botY, double botTheta) {
-        double r =Math.sqrt( Math.pow(this.relX,2) + Math.pow(this.relY,2));
+        double r =Math.sqrt( Math.pow(this.i,2) + Math.pow(this.j,2));
 
-        double phi = Math.atan(this.relX/this.relY);
+        double phi = Math.atan(this.i/this.j);
 
         x = botX + r * Math.cos(phi + botTheta);
         y = botY + r * Math.sin(phi + botTheta);
@@ -44,7 +48,15 @@ public class Block extends Point{
     public void setPosition(Pose bot) {
     	setPosition(bot.x,bot.y,bot.theta);
     }
-        
+    
+	//compute distance of robot from current 
+	public void updateRelXY(double width) {
+			double targetRange = (0.05*2 /Math.sqrt((sizeP))*(width/Config.fieldOfViewHoriz)); 
+			double targetBearing = (i-(width/2))*(Config.fieldOfViewHoriz/width);
+			relY = ((targetRange*Math.cos(targetBearing)-2)*10);
+			relX = targetRange*Math.sin(targetBearing);
+	}
+	
     public BlockColor getColor(){
     	return this.color;
     }
