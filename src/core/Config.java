@@ -79,8 +79,15 @@ public class Config {
 	public static final double fieldOfViewVert = 0.6597; // in radians
 	public static final double camHeight = 0.56;
 	public static final double CAMYMAXDIST = 1.26;
-	public static final double CAMYMINDIST = 0.21;
-
+	public static final double CAMYDIST = 1.15;
+	public static final double CAMYFROMBOT = 21;
+	public static final double CAMYQUAD = 0.001797;// to cm
+	public static final double CAMYLIN = -0.01893;// to cm
+	public static final double CAMYC = 38.07;// to cm
+	public static final double CAMXLIN = -0.25904;// to cm
+	public static final double CAMXC = 1.36346;// to cm
+	
+	//+
 	public static final double CAMXDIST = 0.48;
 	
 	public static final long ASSEMBLY_TOO_LONG = 60000;

@@ -54,11 +54,13 @@ public class Block extends Point{
 			double targetRange = (0.05*2 /Math.sqrt((sizeP))*(width/Config.fieldOfViewHoriz)); 
 			double targetBearing = (i-(width/2))*(Config.fieldOfViewHoriz/width);
 
-			System.out.println("CamMin = "+Config.CAMYMINDIST+", CamMax "+Config.CAMYMAXDIST);
+//			System.out.println("CamMin = "+Config.CAMYMINDIST+", CamMax "+Config.CAMYMAXDIST);
+			System.out.println("X Pos = "+i);
+			System.out.println("Y Pos = "+j);
 			
-			relY = (Config.PIXELHEIGHT-j) * ((Config.CAMYMAXDIST-Config.CAMYMINDIST)/Config.PIXELHEIGHT);
-			relX = (i-(Config.PIXELWIDTH/2)) * ((Config.CAMXDIST)/Config.PIXELWIDTH);
-			System.out.println("rely = "+relY+", relx = "+relX);
+			//relY = Math.pow(j,2)*Config.CAMYQUAD+j*Config.CAMYLIN+Config.CAMYC+Config.CAMYFROMBOT;// * ((Config.CAMYDIST)/Config.PIXELHEIGHT);
+			//relX = ((i*Config.CAMXLIN+Config.CAMXC)*((relY-Config.CAMYFROMBOT)/59)) *  11/((relY-Config.CAMYFROMBOT)/20+10)*(10/9); //-(relY-Config.CAMYFROMBOT)/20
+			//System.out.println("rely = "+relY+", relx = "+relX);
 			//relY = ((targetRange*Math.cos(targetBearing)-2)*10);
 			//relX = targetRange*Math.sin(targetBearing);
 	}

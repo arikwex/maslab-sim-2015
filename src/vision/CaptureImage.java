@@ -15,8 +15,8 @@ public class CaptureImage {
         // 0-default camera, 1 - next...so on
         try {
     		img = grabber.grab();
-    		if (img != null)
-    			canvas.showImage(img);
+    		//if (img != null)
+    			//canvas.showImage(img);
         } catch (Exception e) {
             e.printStackTrace();
         }

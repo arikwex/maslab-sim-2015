@@ -189,8 +189,8 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         	continue;
         }
         
-        position = getCoordinates(thresholdImage, orgImg);
-        block = new Block(position.width, position.height, ptr.total(), color);
+        position = getCoordinates(ptr);
+        block = new Block(Config.PIXELWIDTH/2-position.width, Config.PIXELHEIGHT-position.height, ptr.total(), color);
         System.out.println("Dimension of original Image : " + thresholdImage.width() + " , " + thresholdImage.height());
         System.out.println("Position of  spot    : x : " + position.width + " , y : " + position.height);
         
@@ -249,10 +249,10 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
 	    return cvGetCentralMoment(moments, 0, 0);
 	
 	}
-	Dimension getCoordinates(IplImage thresholdImage, IplImage orgImg) {
+	Dimension getCoordinates(CvSeq contour) {
 
         CvMoments moments = new CvMoments();
-        cvMoments(thresholdImage, moments, 1);
+        cvMoments(contour, moments, 1);
         // cv Spatial moment : Mji=sumx,y(I(x,y)¥xj¥yi)
         // where I(x,y) is the intensity of the pixel (x, y).
         momX10 = cvGetSpatialMoment(moments, 1, 0); // (x,y)
