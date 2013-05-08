@@ -2,6 +2,8 @@ package core;
 
 import java.awt.Color;
 
+import map.Point;
+
 public class Config {
     public static final double minDist = 0;
 
@@ -68,7 +70,19 @@ public class Config {
     //public static double[][] botPoly = new double[][] {{ -.30, -.23 }, { -.30, .23 }, { .18, .23 }, { .18, -.23 }};
     //public static double[][] botPoly = new double[][] {{ -.3, -.2 }, { -.3, .2 }, { .2, 0 }};
     //public static double[][] botPoly = new double[][] {{ -.32, -.22 }, { -.32, .22 }, { .12, .22 }, { .12, -.22 }};
-    
+
+    //constants for distance vs sizeP 
+	public static int c;
+	public static int m; 
+	public static int CANVAS_CENTER;
+	public static final double fieldOfViewHoriz = 0.8796; // in radians
+	public static final double fieldOfViewVert = 0.6597; // in radians
+	public static final double camHeight = 0.56;
+	public static final double camYMaxDist = 1.26;
+	public static final double camYMinDist = 0.21;
+
+	public static final double camXDist = 0.48;
+	
 	public static final long ASSEMBLY_TOO_LONG = 60000;
 	public static final long COLLECT_TOO_LONG = 60000;
 	public static final long EXPLORE_TOO_LONG = 60000;
@@ -84,4 +98,10 @@ public class Config {
 	public static final double DELTA_CM_PER_STEP = 0.02673181188;
 	public static final double DELTA_STEPS_PER_CM = 37.4086127846;
     public static final long DELTA_STEP_MAX = (long)(20*DELTA_STEPS_PER_CM);
+
+	public static final String CAMERA_CONFIG_FILE = "camera_config.txt";
+    public static final double DELTA_MICROSTEPS_PER_CM = DELTA_STEPS_PER_CM/8;
+    public static final double DELTA_LINK_LENGTH = 15;
+    public static final Point[] DELTA_POSITION = {new Point(-7.5,-4.33),new Point(7.5,-4.33),new Point(0,8.0829)};
+    
 }

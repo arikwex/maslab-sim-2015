@@ -38,6 +38,8 @@ public class Overlord extends Thread {
 			//m.setMap(ParseMap.parseFile("construction_map_2013.txt"));
             //m.setMap(ParseMap.parseFile("challenge_2013.txt"));
 
+			try {Thread.sleep(5000);} catch (InterruptedException e) {}
+			
 			orcControl = new OrcController(new int[] { 0, 1 });
 			orc = Orc.makeOrc();
 			dc = DataCollection.getInstance();
