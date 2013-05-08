@@ -25,7 +25,7 @@ public class WheelVelocityController {
     public WheelVelocityController(OrcController orc, int wheel) {
         this.orc = orc;
         this.wheel = wheel;
-        this.pid = new PID(5, 0, 0, 0, 128);
+        this.pid = new PID(0, 5, 0, 0, 128);
         pid.start(0, 0);
         prevTime = System.currentTimeMillis();
         enc = DataCollection.getInstance().getEncoders();
@@ -67,7 +67,7 @@ public class WheelVelocityController {
     }
 
     private int computeTargetPWM() {
-        double ff = 255 * targetVel/Config.MAX_VELOCITY;
+        double ff = .75 * 255 * targetVel/Config.MAX_VELOCITY;
         
         double actual = Config.METERS_PER_TICK;
         if (wheel == LEFT)

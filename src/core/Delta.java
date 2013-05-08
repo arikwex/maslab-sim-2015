@@ -13,9 +13,9 @@ public class Delta {
     public static double[][] PICK_LEFT = new double[][] {Config.DELTA_TOP_OUT, {18.7, -1, 20}, {19, -4, 20}, {18.7, -4, 13.5}, {18.7, -3.2, 13.5}, {18.7, -3.2, 13}, {2,1}, {18.7, -3.2, 12.5}, {2,1}, {18.7, -3.2, 17.5}, {18.7, -4.5, 17.5}, {18.7, -4.5, 25}, {18.7, -1, 25}, Config.DELTA_TOP_OUT};
     public static double[][] DELIVER_LEFT = new double[][] {Config.DELTA_TOP_OUT, {9.5, 15, 25.6}, {11.5, 16, 26.3}, {11.5, 16, 23}, {0,-1}, {11.5, 16, 26.3}, {9.5, 15, 25.6}, Config.DELTA_TOP_OUT};  
     
-    public static double[][] PICK_SINGLE = new double[][] {Config.DELTA_TOP_OUT, {-1, 8.5, 20}, {-1, 8.5, -1.2}, {2,1}, {-1, 8.5, -1.4}, {2,1}, {-1, 8.5, 20}, Config.DELTA_TOP_OUT};
-    public static double[][] DISPOSE_DOUBLE = new double[][] {Config.DELTA_TOP_OUT, {-.7, 10.5, 20}, {-.7, 10.5, -1.2}, {2,1}, {-.7, 10.5, -1.4}, {2,1}, {-.7, 10.5, 6}, {-1, -10, 10}, {0,-1}, Config.DELTA_TOP_OUT};
-
+    public static double[][] PICK_SINGLE = new double[][] {Config.DELTA_TOP_OUT, {-1, 8.5, 20}, {-1, 8.5, -1.2}, {2,1}, {-1, 8.5, -1.4}, {2,1}, {-1, 8.5, 10}};
+    public static double[][] DISPOSE_DOUBLE = new double[][] {Config.DELTA_TOP_OUT, {-.7, 10.5, 20}, {-.7, 10.5, -1.2}, {2,1}, {-.7, 10.5, -1.4}, {2,1}, {-.7, 10.5, 6}, {-1, -10, 10}, {0,-1}};
+    public static double[][] TOP_OUT = new double[][] {Config.DELTA_TOP_OUT};
     
     private static Delta instance;
 

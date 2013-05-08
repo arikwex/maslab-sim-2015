@@ -38,7 +38,7 @@ public class Overlord extends Thread {
 			//m.setMap(ParseMap.parseFile("construction_map_2013.txt"));
             //m.setMap(ParseMap.parseFile("challenge_2013.txt"));
 
-			try {Thread.sleep(5000);} catch (InterruptedException e) {}
+			try {Thread.sleep(2000);} catch (InterruptedException e) {}
 			
 			orcControl = new OrcController(new int[] { 0, 1 });
 			orc = Orc.makeOrc();
@@ -51,8 +51,9 @@ public class Overlord extends Thread {
 			pp = PathPlanning.getInstance();
 			c = Control.getInstance();
 			delta = Delta.getInstance();
-
-
+			
+			try {Thread.sleep(2000);} catch (InterruptedException e) {}
+			
 			l = Log.getInstance();
 
 		} catch (IOException e) {

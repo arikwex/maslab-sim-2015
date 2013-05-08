@@ -64,6 +64,11 @@ public class Control {
     public void goToWaypoint() {
         Point wayPoint = pp.getNextWaypoint();
         
+        if (wayPoint == null) {
+        	setMotion(0,0);
+        	return;
+        }
+        
         System.out.println("From: " + bot.pose + " to:" + wayPoint + " with theta " + bot.pose.angleTo(wayPoint));
         
         double distance = bot.pose.distance(wayPoint);

@@ -56,7 +56,7 @@ public class Config {
 
     public static final double TOOCLOSE = 0.1;
 	public static final int BIN_CAPACITY = 50;
-	public static final double CLOSE_ENOUGH = 0.5;
+	public static final double CLOSE_ENOUGH = 0.05;
 
     public static final double MAXLENGTH = 1.5;
 
@@ -91,7 +91,7 @@ public class Config {
 	public static final double CAMXDIST = 0.48;
 	
 	public static final long ASSEMBLY_TOO_LONG = 60000;
-	public static final long COLLECT_TOO_LONG = 60000;
+	public static final long COLLECT_TOO_LONG = 600000;
 	public static final long EXPLORE_TOO_LONG = 60000;
 	public static final long CHALLENGE_TIME = 600000;
 
@@ -105,7 +105,7 @@ public class Config {
 	public static final String DELTA_PORT_NAMES[] = {
         "/dev/tty.usbserial-A9007UX1", // Mac OS X
         "/dev/ttyUSB0", // Linux
-        "COM14", // Windows
+        "COM8", // Windows
     };
 	public static final double DELTA_CM_PER_STEP = 0.02673181188;
 	public static final double DELTA_STEPS_PER_CM = 37.4086127846;

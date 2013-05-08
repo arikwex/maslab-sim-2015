@@ -47,13 +47,13 @@ public class PathPlanning {
 		Point newGoal = sm.getGoal();
 		
 		if (newGoal == null) {
-			nextWaypoint = curLoc;
+			nextWaypoint = null;
 			return;
 		}
 		
 		System.out.println("New: " + newGoal + " Old: " + goal);
 		
-		if (goal == null || newGoal.distance(goal) > .05) {
+		if (nextWaypoint == null || goal == null || newGoal.distance(goal) > .05) {
 			System.out.println("MOVE GOAL");
 			goal = newGoal;
 			findPath(newGoal);

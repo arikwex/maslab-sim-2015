@@ -21,11 +21,13 @@ public class CollectState extends State {
         if (!delta.isDone())
             return this;
         
-        if (disposed) {
+        if (disposed) {    	    
+        	delta.performSequence(Delta.TOP_OUT);
             return new ExploreState();
         }
         if (blockCollected) {
             se.numCollectedBlocks++;
+    	    delta.performSequence(Delta.DELIVER_LEFT);
             return new ExploreState();
             /*
             if (se.numCollectedBlocks >= Config.BIN_CAPACITY) {
@@ -38,7 +40,7 @@ public class CollectState extends State {
     }
 
     protected void run() {
-    	sm.setGoal(Map.getInstance().bot.pose);
+    	sm.setGoal(null);
     	if (disposed || blockCollected)
     	    return;
     	
@@ -48,7 +50,6 @@ public class CollectState extends State {
     	    
     	} else if (se.getCaptureStatus() == 1) {
     	    delta.performSequence(Delta.PICK_SINGLE);
-    	    delta.performSequence(Delta.DELIVER_LEFT);
     	    blockCollected = true;
     	}
     }
