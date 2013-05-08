@@ -4,6 +4,8 @@ import com.googlecode.javacv.CanvasFrame;
 import com.googlecode.javacv.OpenCVFrameGrabber;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
+import core.Config;
+
 public class CaptureImage {
 
     public IplImage img,image;
@@ -22,8 +24,8 @@ public class CaptureImage {
     
     public CaptureImage(){
     	grabber = new OpenCVFrameGrabber(0);
-		grabber.setImageHeight(240);
-		grabber.setImageWidth(320);
+		grabber.setImageHeight(Config.PIXELHEIGHT);
+		grabber.setImageWidth(Config.PIXELWIDTH);
 		canvas = new CanvasFrame("raw image");
 		try {grabber.start();		} catch (com.googlecode.javacv.FrameGrabber.Exception e) {}       
 

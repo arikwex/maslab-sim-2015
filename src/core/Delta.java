@@ -1,5 +1,7 @@
 package core;
 
+import java.util.ArrayList;
+
 import map.Point;
 import firmware_interfaces.DeltaInterface;
 
@@ -9,7 +11,7 @@ public class Delta {
     private DeltaInterface di;
     
     private long[] position = new long[3];
-    
+    private ArrayList<int[]> moves;
     
     private int heldBlock = 0;
     private boolean pneumaticOut = false;
@@ -70,7 +72,7 @@ public class Delta {
         System.out.println("Delta 1: " + deltas[0] + " Delta 2: " + deltas[1] + " Delta 3: " + deltas[2]);
         System.out.println("Steps 1: " + steps[0] + " Steps 2: " + steps[1] + " Steps 3: " + steps[2]);
         this.move(steps);
-     
+
     }
 
     public static double getMaxValue(double[] numbers){
@@ -93,7 +95,11 @@ public class Delta {
     	return minValue;
     	}
 	public void step() {
-		
+		midMove = di.ready;
+		if (!moves.isEmpty() && !midMove){
+			this.move(moves.get(0));
+			moves.remove(0);
+		}
 	}
 	
 	public void move(int[] steps) {

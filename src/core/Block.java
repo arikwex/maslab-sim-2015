@@ -53,8 +53,14 @@ public class Block extends Point{
 	public void updateRelXY(double width) {
 			double targetRange = (0.05*2 /Math.sqrt((sizeP))*(width/Config.fieldOfViewHoriz)); 
 			double targetBearing = (i-(width/2))*(Config.fieldOfViewHoriz/width);
-			relY = ((targetRange*Math.cos(targetBearing)-2)*10);
-			relX = targetRange*Math.sin(targetBearing);
+
+			System.out.println("CamMin = "+Config.CAMYMINDIST+", CamMax "+Config.CAMYMAXDIST);
+			
+			relY = (Config.PIXELHEIGHT-j) * ((Config.CAMYMAXDIST-Config.CAMYMINDIST)/Config.PIXELHEIGHT);
+			relX = (i-(Config.PIXELWIDTH/2)) * ((Config.CAMXDIST)/Config.PIXELWIDTH);
+			System.out.println("rely = "+relY+", relx = "+relX);
+			//relY = ((targetRange*Math.cos(targetBearing)-2)*10);
+			//relX = targetRange*Math.sin(targetBearing);
 	}
 	
     public BlockColor getColor(){

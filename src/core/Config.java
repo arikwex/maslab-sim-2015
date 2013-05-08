@@ -78,10 +78,10 @@ public class Config {
 	public static final double fieldOfViewHoriz = 0.8796; // in radians
 	public static final double fieldOfViewVert = 0.6597; // in radians
 	public static final double camHeight = 0.56;
-	public static final double camYMaxDist = 1.26;
-	public static final double camYMinDist = 0.21;
+	public static final double CAMYMAXDIST = 1.26;
+	public static final double CAMYMINDIST = 0.21;
 
-	public static final double camXDist = 0.48;
+	public static final double CAMXDIST = 0.48;
 	
 	public static final long ASSEMBLY_TOO_LONG = 60000;
 	public static final long COLLECT_TOO_LONG = 60000;
@@ -104,4 +104,8 @@ public class Config {
     public static final double DELTA_POST_HEIGHT = 63.5;
 	public static final String CAMERA_CONFIG_FILE = "camera_config.txt";
     public static final Point[] DELTA_POSITION = {new Point(-7.5,-4.33),new Point(7.5,-4.33),new Point(0,8.0829)};
+
+	public static final int PIXELHEIGHT = 240;
+
+	public static final int PIXELWIDTH = 320;
 }
