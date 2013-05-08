@@ -9,16 +9,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 
-import uORCInterface.OrcController;
+import core.Config;
 
 public class DeltaInterface implements SerialPortEventListener{
 	SerialPort serialPort;
 	/** The port we're normally going to use. */
-	private static final String PORT_NAMES[] = {
-		"/dev/tty.usbserial-A9007UX1", // Mac OS X
-		"/dev/ttyUSB0", // Linux
-		"COM8", // Windows
-	};
+	
 	/** Buffered input stream from the port */
 	private InputStream input;
     /** The output stream to the port */
@@ -30,7 +26,7 @@ public class DeltaInterface implements SerialPortEventListener{
 
     private String inputBuffer="";
     
-    public boolean ready;
+    public boolean ready = true;
 
     public DeltaInterface() {
 
@@ -40,7 +36,7 @@ public class DeltaInterface implements SerialPortEventListener{
     	// iterate through, looking for the port
     	while (portEnum.hasMoreElements()) {
 			CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-        	for (String portName : PORT_NAMES) {
+        	for (String portName : Config.DELTA_PORT_NAMES) {
         		if (currPortId.getName().equals(portName)) {
         			portId = currPortId;
                 	break;
@@ -60,7 +56,7 @@ public class DeltaInterface implements SerialPortEventListener{
         	serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
 
         	// set port parameters
-        	serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+            serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
                 	SerialPort.PARITY_NONE);
 
         	// open the streams
@@ -94,7 +90,7 @@ public class DeltaInterface implements SerialPortEventListener{
     public synchronized void sendString(String msg) {
         try {
             //msg += '\n';// add a newline character
-            output.write(msg.getBytes());// write it to the serial
+            output.write(msg.getBytes("ASCII"));// write it to the serial
             output.flush();// refresh the serial
             System.out.print("<- " + msg);// output for debugging
             System.out.println();
@@ -137,12 +133,16 @@ public class DeltaInterface implements SerialPortEventListener{
         System.out.println("Started");
         int[] steps = {5000,5000,5000};
         int[] isteps = {-1000,-1000,-1000};
-        Thread.sleep(7000);
-        
         main.move(isteps);
-		
-        //main.move(isteps);
-
  	}
+
+    public void setPneumatic(boolean extend) {
+        ready = false;
+        if (extend) {
+            sendString("P");
+        } else {
+            sendString("p");
+        }
+    }
 
 }

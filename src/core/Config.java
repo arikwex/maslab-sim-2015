@@ -102,16 +102,24 @@ public class Config {
 	public static final int ONE_BLOCK_PIN = 0;
 	public static final int TWO_BLOCK_PIN = 1;
 
+	public static final String DELTA_PORT_NAMES[] = {
+        "/dev/tty.usbserial-A9007UX1", // Mac OS X
+        "/dev/ttyUSB0", // Linux
+        "COM14", // Windows
+    };
 	public static final double DELTA_CM_PER_STEP = 0.02673181188;
 	public static final double DELTA_STEPS_PER_CM = 37.4086127846;
     public static final long DELTA_STEP_MAX = (long)(20*DELTA_STEPS_PER_CM);
     public static final double DELTA_MICROSTEPS_PER_CM = DELTA_STEPS_PER_CM*8;
     public static final double DELTA_LINK_LENGTH = 34.29;
     public static final double DELTA_SIDE = 25.654;
-    public static final double DELTA_POST_HEIGHT = 63.5;
+    public static final double DELTA_ZERO_OFFSET = -(70.6 - 7 - 5); //height to top pivot - height to end effector pivot - block
 	public static final String CAMERA_CONFIG_FILE = "camera_config.txt";
     public static final Point[] DELTA_POSITION = {new Point(-7.5,-4.33),new Point(7.5,-4.33),new Point(0,8.0829)};
 
+    public static final double[] DELTA_TOP_OUT = new double[] {0,0,-1.5 * DELTA_ZERO_OFFSET};
+    
+    
 	public static final int PIXELHEIGHT = 240;
 
 	public static final int PIXELWIDTH = 320;

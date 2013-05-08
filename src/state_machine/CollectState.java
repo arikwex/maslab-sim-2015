@@ -16,7 +16,7 @@ public class CollectState extends State {
 
     protected State transition() {
         if (blockCollected) {
-        	delta.PutBlockInBin();
+        	//delta.PutBlockInBin();
             se.numCollectedBlocks++;
             se.map.removeBlock(se.getClosestBlock());
             if (se.numCollectedBlocks >= Config.BIN_CAPACITY) {

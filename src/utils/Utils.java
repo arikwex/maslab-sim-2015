@@ -18,4 +18,25 @@ public class Utils {
 
         return angle;
     }
+    
+
+    public static double getMaxValue(double[] numbers) {
+        double maxValue = numbers[0];
+        for (int i = 1; i < numbers.length; i++) {
+            if (numbers[i] > maxValue) {
+                maxValue = numbers[i];
+            }
+        }
+        return maxValue;
+    }
+
+    public static double getMinValue(double[] numbers) {
+        double minValue = numbers[0];
+        for (int i = 1; i < numbers.length; i++) {
+            if (numbers[i] < minValue) {
+                minValue = numbers[i];
+            }
+        }
+        return minValue;
+    }
 }
