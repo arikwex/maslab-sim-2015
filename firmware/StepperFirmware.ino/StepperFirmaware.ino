@@ -4,7 +4,7 @@ String start = String("F");
 String temp;
 String n;
 int steps[3];
-int tsteps[3] = {600,700,-900};
+int tsteps[3] = {-1000,-1000,-1000};
 int const numSteppers = 3;
 int const stepPins[numSteppers] = {2,4,6};
 int const dirPins[numSteppers] = {3,5,7};
@@ -14,19 +14,18 @@ int limit[3] = {0,0,0};
 int counter;
 
 void getCommand(){
-  
-  //temp = String(serialRead());
-  
-  while(Serial.available() > 0){
+  while(true){
       temp = String((char)serialRead());
        
       if (temp.equals(split)){
+        //Serial.print("s");
         steps[counter] = n.toInt();
-        Serial.print(steps[counter]==tsteps[counter]);
+        //Serial.print(steps[counter]==tsteps[counter]);
         n = "";
         counter += 1;
       }
       else if (temp.equals(start)){
+        //Serial.print("f");
         counter =0;
         n = "";
       }
@@ -37,6 +36,7 @@ void getCommand(){
         n.concat(temp);
       }
     }
+    Serial.print("z");
 }
 
 char serialRead()
@@ -60,21 +60,29 @@ void setup() {
 
 void loop() {
   
-  
-  if(Serial.available()>0){
-    
-    getCommand();
-    moveDelta(steps[0],steps[1],steps[2],speed);
+    if(Serial.available()>0){    
+      //Serial.print("a");
+      getCommand(); 
+      //Serial.print(steps[0]);
+      //Serial.print("b");
+      //Serial.print(steps[1]);
+      //Serial.print("c");
+      //Serial.print(steps[2]);
+      Serial.print("d");
+
+      moveDelta(steps[0],steps[1],steps[2],speed);
     } 
+    
   }
   
 void moveDelta(int steps1, int steps2, int steps3, float s){
-   int numSteps[numSteppers] = {steps1, steps2, steps3};
+   int numSteps1[numSteppers] = {steps1, steps2, steps3};
+   int numSteps[numSteppers];
    
    for (int i = 0; i < numSteppers; i++){
      
-     int dir = (numSteps[i] < 0)? HIGH:LOW;
-     numSteps[i] = abs(numSteps[i]);
+     int dir = (numSteps1[i] < 0)? HIGH:LOW;
+     numSteps[i] = abs(numSteps1[i]);
      digitalWrite(dirPins[i], dir);
    }
    
@@ -82,6 +90,15 @@ void moveDelta(int steps1, int steps2, int steps3, float s){
    
    while(numSteps[0] > 0 || numSteps[1] > 0 || numSteps[2] > 0){
      
+     for (int i = 0; i<numSteppers; i++){
+       limit[i] = digitalRead(limitPins[i]);
+       if (limit[i] && (numSteps1[i] >0)){
+         numSteps[i]=0;
+         digitalWrite(stepPins[i], LOW);
+         
+       }
+     }
+   
      for(int i = 0; i < numSteppers; i++){
        
        if (numSteps[i] > 0){
@@ -102,35 +119,3 @@ void moveDelta(int steps1, int steps2, int steps3, float s){
      delayMicroseconds(usDelay);
    }
 }
-  
-void topDelta(float s){
-   for (int i = 0; i < numSteppers; i++){
-     limit[i] = digitalRead(limitPins[i]);
-     digitalWrite(dirPins[i], LOW);
-   }
-   
-   float usDelay = (1/s) * 70;
-   
-   while(!limit[0] || !limit[1] || !limit[2] ){
-     
-     for(int i = 0; i < numSteppers; i++){
-       limit[i] = digitalRead(limitPins[i]);
-       if (!limit[i] > 0){
-         digitalWrite(stepPins[i], HIGH);
-       }   
-     }
-     
-     delayMicroseconds(usDelay);
-     
-     for(int i = 0; i < numSteppers; i++){
-       
-       if (!limit[i] > 0){
-         digitalWrite(stepPins[i], LOW);
-       }     
-     }
-     
-     delayMicroseconds(usDelay);
-   }
-}
-
-
