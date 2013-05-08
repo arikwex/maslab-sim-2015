@@ -16,6 +16,9 @@ import static com.googlecode.javacv.cpp.opencv_imgproc.cvMoments;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.prefs.Preferences;
+
+import javax.swing.JFrame;
 
 import map.Map;
 
@@ -27,6 +30,7 @@ import com.googlecode.javacv.cpp.opencv_core.CvScalar;
 import com.googlecode.javacv.cpp.opencv_core.CvSeq;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 import com.googlecode.javacv.cpp.opencv_imgproc.CvMoments;
+import static com.googlecode.javacv.cpp.opencv_core.cvFlip;
 
 import core.Block;
 import core.Config;
@@ -62,6 +66,7 @@ public class ObjectPositionDetect{
     long lastTime;
 
 	CanvasFrame canvas2 = new CanvasFrame("Block Detection");
+	JFrame listener; 
 	private CvMemStorage mem;
 	private CvSeq contours;
 	private CvSeq ptr;
@@ -81,11 +86,45 @@ public class ObjectPositionDetect{
 	CaptureImage capture;
 	private IplImage orgImg;
 	private IplImage thresholdImage;
+	private Preferences configs;
+
+	private int redHueMax;
+	private int redHueMin;
+	private int redSatMin;
+	private int redSatMax;
+	private int redValMin;
+	private int redValMax;
+	private int blueHueMin;
+	private int blueHueMax;
+	private int blueSatMin;
+	private int blueSatMax;
+	private int blueValMin;
+	private int blueValMax;
+	private int greenHueMin;
+	private int greenHueMax;
+	private int greenSatMin;
+	private int greenSatMax;
+	private int greenValMin;
+	private int greenValMax;
+	private int yellowHueMin;
+	private int yellowHueMax;
+	private int yellowSatMin;
+	private int yellowSatMax;
+	private int yellowValMin;
+	private int yellowValMax;
 	
 	public ObjectPositionDetect(){
     	//lastTime = System.currentTimeMillis();
     	capture = new CaptureImage();
-    	//capture.start();
+    	listener = new JFrame();
+    	//KeyConfigs keyConfigs = new KeyConfigs();
+    	listener.addKeyListener(new KeyConfigs());
+        //listener.setPreferredSize(new Dimension(9000 + 1, 9000 + 32));
+        listener.setVisible(true);
+		//canvas2.addKeyListener(new KeyConfigs());
+    	configs = Preferences.userRoot();	
+		updateConfig();
+     	//capture.start();
 		/*
     	while (!capture.ready){
     		try {Thread.sleep((long) 0.0001);} catch (InterruptedException e) {}
@@ -105,6 +144,8 @@ public class ObjectPositionDetect{
     	capture.step();
 	    if (capture.img != null){
 		        //orgImg = capture.img.clone();
+	    		cvFlip(capture.img,capture.img,0);
+	    		cvFlip(capture.img,capture.img,1);
 	    		blocks.clear();
 	    		blueBlocks.clear();
 	    		redBlocks.clear();
@@ -112,10 +153,10 @@ public class ObjectPositionDetect{
 	    		greenBlocks.clear();
 		        lastTime = System.currentTimeMillis();
 		        capture.img = getBlocks(BlockColor.RED, capture.img);
-		        capture.img = getBlocks(BlockColor.BLUE, capture.img);
-		        capture.img = getBlocks(BlockColor.GREEN, capture.img);
-		        capture.img = getBlocks(BlockColor.YELLOW, capture.img);
-		        System.out.println(System.currentTimeMillis()-lastTime);
+		        //capture.img = getBlocks(BlockColor.BLUE, capture.img);
+		        //capture.img = getBlocks(BlockColor.GREEN, capture.img);
+		        //capture.img = getBlocks(BlockColor.YELLOW, capture.img);
+//		        /System.out.println(System.currentTimeMillis()-lastTime);
 		        
 		        canvas2.showImage(capture.img);
 	    }
@@ -123,12 +164,9 @@ public class ObjectPositionDetect{
 private IplImage getBlocks(BlockColor color, IplImage orgImg) {
     
    thresholdImage = hsvThreshold(orgImg, color);
-   //canvas2.showImage(thresholdImage);
    
 	//blocksCanvas.showImage(thresholdImage);
     //cvSaveImage("hsvthreshold2.jpg", thresholdImage);
-    //System.out.println("Dimension of original Image : " + thresholdImage.width() + " , " + thresholdImage.height());
-    //System.out.println("Position of  spot    : x : " + position.width + " , y : " + position.height);
     
     contours = new CvSeq();
 
@@ -147,14 +185,23 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
     for (ptr = contours; ptr != null; ptr = ptr.h_next()) {
     	
     	round = getRoundness(ptr);
-        if (round < 0.45 || getArea(ptr)<225){
+        if (round < 0.3 || getArea(ptr)<100){
         	continue;
         }
         
         position = getCoordinates(thresholdImage, orgImg);
         block = new Block(position.width, position.height, ptr.total(), color);
+        System.out.println("Dimension of original Image : " + thresholdImage.width() + " , " + thresholdImage.height());
+        System.out.println("Position of  spot    : x : " + position.width + " , y : " + position.height);
         
         block.setPosition(Map.getInstance().bot.pose);
+        block.updateRelXY(orgImg.width());
+        
+        //print out the i,j,relx,rely 
+//        System.out.println("position of i: "+block.i); 
+//        System.out.println("position of j: "+block.j);
+//        System.out.println("relx : "+block.relX);
+//        System.out.println("rely : "+block.relY);
         blocks.add(block);
 
         Color actualColor;
@@ -184,7 +231,7 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         sColor = CV_RGB( actualColor.getRed(), actualColor.getGreen(), actualColor.getBlue());
         cvDrawContours(orgImg, ptr, sColor, CV_RGB(0,0,0), -1, CV_FILLED, 8, cvPoint(0,0));
     	boundbox = cvBoundingRect(ptr, 0);
-        cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
+       // cvRectangle( orgImg, cvPoint( boundbox.x(), boundbox.y() ), cvPoint( boundbox.x() + boundbox.width(), boundbox.y() + boundbox.height()),cvScalar( 0, 255, 255, 0 ), 3, 0, 0 ); 
          	
         //System.out.println("Roundness of "+color.toString()+" spot    : " + round);
     
@@ -215,14 +262,20 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         posX = (int) (momX10 / area);
         posY = (int) (momY01 / area);
 
-        System.out.println("position of x is: " + posX);
-        System.out.println("position of y is: "+posY);
-        System.out.println("area of block is: "+area); 
-        
+//        System.out.println("position of x is: " + posX);
+//        System.out.println("position of y is: "+posY);
+//        System.out.println("area of block is: "+area); 
+//        
         return new Dimension(posX, posY);
         
 
     }
+	
+
+	//CHANGE THE CONSTANTS IN THIS
+	int sizePtoDistance(int sizeP) {
+		return Config.m*sizeP + Config.c; 
+	}
 	
 	double getArea(IplImage image) {
 
@@ -260,20 +313,25 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         cvCvtColor(orgImg, imgHSV, CV_BGR2HSV);
         // 8-bit 1- color = monochrome
         imgThreshold = cvCreateImage(cvGetSize(orgImg), 8, 1);
-
         if (color.equals(BlockColor.RED)){
     		// cvScalar : ( H , S , V, A)
-    		cvInRangeS(imgHSV, cvScalar(180, 130, 100, 0), cvScalar(255, 255, 255, 0), imgThreshold);
-            cvInRangeS(imgHSV, cvScalar(0, 130, 100, 0), cvScalar(10, 255, 255, 0), imgThreshold);
+//    		/System.out.println("RED RANGE: "+redHueMin+" "+redHueMax+" "+redSatMin+" "+redSatMax+" "+redValMin+" "+redValMax+" ");
+    		cvInRangeS(imgHSV, cvScalar(0, 80, 100, 0), cvScalar(10, 255, 255, 0), imgThreshold);
+    		cvInRangeS(imgHSV, cvScalar(redHueMin, redSatMin, redValMin, 0), cvScalar(redHueMax, redSatMax, redValMax, 0), imgThreshold);
+    		
     	} else if (color.equals(BlockColor.BLUE)){
             // cvScalar : ( H , S , V, A)
-            cvInRangeS(imgHSV, cvScalar(105, 100, 20, 0), cvScalar(135, 255, 180, 0), imgThreshold);
+    		cvInRangeS(imgHSV, cvScalar(blueHueMin, blueSatMin, blueValMin, 0), cvScalar(blueHueMax, blueSatMax, blueValMax, 0), imgThreshold);
+    		//System.out.println("BLUE RANGE: "+blueHueMin+" "+blueHueMax +" "+blueSatMin+" "+blueSatMax+" "+blueValMin+" "+blueValMax+" ");
+    		 
         } else if (color.equals(BlockColor.GREEN)){
             // cvScalar : ( H , S , V, A)
-            cvInRangeS(imgHSV, cvScalar(60, 50, 50, 0), cvScalar(100, 255, 255, 0), imgThreshold);
+    		cvInRangeS(imgHSV, cvScalar(greenHueMin, greenSatMin, greenValMin, 0), cvScalar(greenHueMax, greenSatMax, greenValMax, 0), imgThreshold);
+    		//System.out.println("GREEN RANGE: "+greenHueMin+" "+greenHueMax+" "+greenSatMin+" "+greenSatMax+" "+greenValMin+" "+greenValMax+" ");
         } else if (color.equals(BlockColor.YELLOW)){
             // cvScalar : ( H , S , V, A)  
-            cvInRangeS(imgHSV, cvScalar(20, 100, 100, 0), cvScalar(40, 255, 255, 0), imgThreshold);
+    		cvInRangeS(imgHSV, cvScalar(yellowHueMin, yellowSatMin, yellowValMin, 0), cvScalar(yellowHueMax, yellowSatMax, yellowValMax, 0), imgThreshold);
+    		//System.out.println("YELLOW RANGE: "+yellowHueMin+" "+yellowHueMax+" "+yellowSatMin+" "+yellowSatMax+" "+yellowValMin+" "+yellowValMax+" ");
         }
     	cvReleaseImage(imgHSV);
         cvSmooth(imgThreshold, imgThreshold, CV_MEDIAN, 13);
@@ -281,8 +339,37 @@ private IplImage getBlocks(BlockColor color, IplImage orgImg) {
         return imgThreshold;
     }
 	
+	void updateConfig(){
+			redHueMin = configs.getInt("RedHueMin", 180);
+			redHueMax = configs.getInt("RedHueMax", 255);
+			redSatMin = configs.getInt("RedSatMin", 180);
+			redSatMax = configs.getInt("RedSatMax", 255);
+			redValMin = configs.getInt("RedValMin", 180);
+			redValMax = configs.getInt("RedValMax", 255);
+			blueHueMin = configs.getInt("BlueHueMin", 0);
+			blueHueMax = configs.getInt("BlueHueMax", 10);
+			blueSatMin = configs.getInt("BlueSatMin", 180);
+			blueSatMax = configs.getInt("BlueSatMax", 255);
+			blueValMin = configs.getInt("BlueValMin", 180);
+			blueValMax = configs.getInt("BlueValMax", 255);
+			greenHueMin = configs.getInt("GreenHueMin", 105);
+			greenHueMax = configs.getInt("GreenHueMax", 140);
+			greenSatMin = configs.getInt("GreenSatMin", 180);
+			greenSatMax = configs.getInt("GreenSatMax", 255);
+			greenValMin = configs.getInt("GreenValMin", 180);
+			greenValMax = configs.getInt("GreenValMax", 255);
+			yellowHueMin = configs.getInt("YellowHueMin", 20);
+			yellowHueMax = configs.getInt("YellowHueMax", 40);
+			yellowSatMin = configs.getInt("YellowSatMin", 180);
+			yellowSatMax = configs.getInt("YellowSatMax", 255);
+			yellowValMin = configs.getInt("YellowValMin", 180);
+			yellowValMax = configs.getInt("YellowValMax", 255);
+	}
+	
+
+
 	public static void main(String[] Args){
-		ObjectPositionDetect me = new ObjectPositionDetect();
+		ObjectPositionDetect me = getInstance();
 		
 		me.run();
 	}
