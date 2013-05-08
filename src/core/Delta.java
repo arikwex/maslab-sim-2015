@@ -1,5 +1,7 @@
 package core;
 
+import java.util.ArrayList;
+
 import map.Point;
 import firmware_interfaces.DeltaInterface;
 
@@ -9,7 +11,7 @@ public class Delta {
     private DeltaInterface di;
     
     private long[] position = new long[3];
-    
+    private ArrayList<int[]> moves;
     
     private int heldBlock = 0;
     private boolean pneumaticOut = false;
@@ -54,12 +56,16 @@ public class Delta {
         	steps[i] = (int) Math.round(deltas[i]*Config.DELTA_MICROSTEPS_PER_CM);
         }
         
-        this.move(steps);
+        moves.add(steps);
      
     }
 
 	public void step() {
-		
+		midMove = di.ready;
+		if (!moves.isEmpty() && !midMove){
+			this.move(moves.get(0));
+			moves.remove(0);
+		}
 	}
 	
 	public void move(int[] steps) {
