@@ -50,7 +50,7 @@ public class Overlord extends Thread {
 			sm = StateMachine.getInstance();
 			pp = PathPlanning.getInstance();
 			c = Control.getInstance();
-			//delta = Delta.getInstance();
+			delta = Delta.getInstance();
 
 
 			l = Log.getInstance();
@@ -74,9 +74,10 @@ public class Overlord extends Thread {
 			map.update();
 			
 			pp.step();
+			System.out.println(se.getCaptureStatus());
 			c.step();
 			
-			//delta.step();
+			delta.step();
 			
 			l.updatePose();
 			try {Thread.sleep(50-(System.currentTimeMillis()-startTime));} catch (Exception e){};

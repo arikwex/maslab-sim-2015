@@ -30,8 +30,6 @@ public class StateEstimator implements Runnable {
 
     boolean started;
 
-    public boolean deltaHoldingBlock;
-
     private StateEstimator() {
         map = Map.getInstance();
         dc = DataCollection.getInstance();

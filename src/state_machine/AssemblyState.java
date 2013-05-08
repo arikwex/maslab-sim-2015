@@ -7,7 +7,7 @@ public class AssemblyState extends State {
 
     private Delta delta;
 
-	public AssemblyState() {
+    public AssemblyState() {
         tooLong = Config.ASSEMBLY_TOO_LONG;
         delta = Delta.getInstance();
     }
@@ -20,11 +20,7 @@ public class AssemblyState extends State {
     }
 
     protected void run() {
-    	if (!se.deltaHoldingBlock) {
-    		//delta.grabNextBlock();
-    	}
-    	else{
-    		se.numCollectedBlocks--;
-    	}
+
+        se.numCollectedBlocks--;
     }
 }
