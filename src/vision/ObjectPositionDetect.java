@@ -153,9 +153,9 @@ public class ObjectPositionDetect{
 	    		greenBlocks.clear();
 		        lastTime = System.currentTimeMillis();
 		        capture.img = getBlocks(BlockColor.RED, capture.img);
-		        //capture.img = getBlocks(BlockColor.BLUE, capture.img);
-		        //capture.img = getBlocks(BlockColor.GREEN, capture.img);
-		        //capture.img = getBlocks(BlockColor.YELLOW, capture.img);
+		        capture.img = getBlocks(BlockColor.BLUE, capture.img);
+		        capture.img = getBlocks(BlockColor.GREEN, capture.img);
+		        capture.img = getBlocks(BlockColor.YELLOW, capture.img);
 //		        /System.out.println(System.currentTimeMillis()-lastTime);
 		        
 		        canvas2.showImage(capture.img);

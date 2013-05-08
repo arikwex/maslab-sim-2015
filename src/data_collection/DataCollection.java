@@ -58,7 +58,7 @@ public class DataCollection {
         sampleDigitalPins();
         
         //sonarInterface.sample();
-    	//vision.step();
+    	vision.step();
         blocksInVision = vision.blocks;
     }
     

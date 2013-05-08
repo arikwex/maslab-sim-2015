@@ -16,7 +16,7 @@ public class WheelVelocityController {
     private int currPwm = 0;
     private long prevTime;
     
-    private static final int SLEW_LIM = 2000; //pwm units per second
+    private static final int SLEW_LIM = 1000; //pwm units per second
     private PID pid;
     
     private OrcController orc;
@@ -41,8 +41,8 @@ public class WheelVelocityController {
         if (wheel == LEFT)
         	targetPwm*=-1;
         
-        //applySlew(targetPwm);
-        currPwm = targetPwm;
+        applySlew(targetPwm);
+        //currPwm = targetPwm;
         
         orc.motorSet(wheel, currPwm);
     }
