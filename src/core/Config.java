@@ -99,8 +99,8 @@ public class Config {
 
 	public static final double COLLISION_MARGIN = -0.00;
 	
-	public static final int ONE_BLOCK_PIN = 0;
-	public static final int TWO_BLOCK_PIN = 1;
+	public static final int ONE_BLOCK_PIN = 6;
+	public static final int TWO_BLOCK_PIN = 7;
 
 	public static final String DELTA_PORT_NAMES[] = {
         "/dev/tty.usbserial-A9007UX1", // Mac OS X

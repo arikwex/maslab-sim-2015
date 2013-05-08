@@ -10,6 +10,13 @@ import map.Point;
 import firmware_interfaces.DeltaInterface;
 
 public class Delta {
+    public static double[][] PICK_LEFT = new double[][] {Config.DELTA_TOP_OUT, {18.7, -1, 20}, {19, -4, 20}, {18.7, -4, 13.5}, {18.7, -3.2, 13.5}, {18.7, -3.2, 13}, {2,1}, {18.7, -3.2, 12.5}, {2,1}, {18.7, -3.2, 17.5}, {18.7, -4.5, 17.5}, {18.7, -4.5, 25}, {18.7, -1, 25}, Config.DELTA_TOP_OUT};
+    public static double[][] DELIVER_LEFT = new double[][] {Config.DELTA_TOP_OUT, {9.5, 15, 25.6}, {11.5, 16, 26.3}, {11.5, 16, 23}, {0,-1}, {11.5, 16, 26.3}, {9.5, 15, 25.6}, Config.DELTA_TOP_OUT};  
+    
+    public static double[][] PICK_SINGLE = new double[][] {Config.DELTA_TOP_OUT, {-1, 8.5, 20}, {-1, 8.5, -1.2}, {2,1}, {-1, 8.5, -1.4}, {2,1}, {-1, 8.5, 20}, Config.DELTA_TOP_OUT};
+    public static double[][] DISPOSE_DOUBLE = new double[][] {Config.DELTA_TOP_OUT, {-.7, 10.5, 20}, {-.7, 10.5, -1.2}, {2,1}, {-.7, 10.5, -1.4}, {2,1}, {-.7, 10.5, 6}, {-1, -10, 10}, {0,-1}, Config.DELTA_TOP_OUT};
+
+    
     private static Delta instance;
 
     private DeltaInterface di;
@@ -47,11 +54,15 @@ public class Delta {
         return instance;
     }
     
-    public void setPneumatic(boolean extend) {
+    public boolean isDone() {
+        return moves.size() == 0 && di.ready;
+    }
+    
+    private void setPneumatic(boolean extend) {
         di.setPneumatic(extend);
     }
 
-    public void queueMove(double[] move) {
+    private void queueMove(double[] move) {
         moves.add(move);
     }
 
@@ -71,7 +82,7 @@ public class Delta {
         }
     }
 
-    public void move(double[] move) {
+    private void move(double[] move) {
         double z = move[2];
         Point pos = new Point(move[0], move[1]);
 
@@ -125,13 +136,15 @@ public class Delta {
         
         
         // pick up block from left
-        double[][] sequence = new double[][] {Config.DELTA_TOP_OUT, {20, 0, 20}, {19, -4, 20}, {18.7, -4, 13.5}, {18.7, -3.2, 13.5}, {18.7, -3.2, 12.8}, {2,1}, {18.7, -3.2, 25}, {20, 0, 25}, Config.DELTA_TOP_OUT};
-        delta.performSequence(sequence);
+       
+        //delta.performSequence(DISPOSE_DOUBLE);
+        delta.performSequence(PICK_SINGLE);
+        delta.performSequence(DELIVER_LEFT);
+        delta.performSequence(PICK_LEFT);
+        delta.performSequence(DELIVER_LEFT);
         
-        
-        // pick up single block from ground
-        //double[][] sequence = new double[][] {Config.DELTA_TOP_OUT, {-1, 8, 20}, {-1, 8, -1.2}, {4,0}, {-1, 8, 20}, Config.DELTA_TOP_OUT};
-        //delta.performSequence(sequence);
+        //delta.performSequence(PICK_SINGLE);
+        //delta.performSequence(DELIVER_LEFT);
         
         // deliver block to left container
         //sequence = new double[][] {Config.DELTA_TOP_OUT, {9.5, 15, 25.6}, {11.5, 16, 26.3}, {11.5, 16, 23}, {11.5, 16, 26.3}, {9.5, 15, 25.6}, Config.DELTA_TOP_OUT};

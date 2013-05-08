@@ -1,5 +1,6 @@
 package state_machine;
 
+import map.Map;
 import map.Point;
 import map.Pose;
 import core.Config;
@@ -7,6 +8,7 @@ import core.Delta;
 
 public class CollectState extends State {
     boolean blockCollected = false;
+    boolean disposed = false;
 	private Delta delta;
 
     public CollectState() {
@@ -15,24 +17,39 @@ public class CollectState extends State {
     }
 
     protected State transition() {
+        System.out.println("Done? " + delta.isDone());
+        if (!delta.isDone())
+            return this;
+        
+        if (disposed) {
+            return new ExploreState();
+        }
         if (blockCollected) {
-        	//delta.PutBlockInBin();
             se.numCollectedBlocks++;
-            se.map.removeBlock(se.getClosestBlock());
+            return new ExploreState();
+            /*
             if (se.numCollectedBlocks >= Config.BIN_CAPACITY) {
                 return new FindShelterState();
             } else {
                 return new ExploreState();
-            }
+            }*/
         }
         return this;
     }
 
     protected void run() {
-    	Point goal = se.getClosestBlock();
-    	Pose pose = se.map.bot.pose;
+    	sm.setGoal(Map.getInstance().bot.pose);
+    	if (disposed || blockCollected)
+    	    return;
     	
-    	sm.setGoal(goal);
-    	blockCollected = (Math.abs(pose.distance(goal)) < .05);
+    	if (se.getCaptureStatus() == 2) {
+    	    delta.performSequence(Delta.DISPOSE_DOUBLE);
+    	    disposed = true;
+    	    
+    	} else if (se.getCaptureStatus() == 1) {
+    	    delta.performSequence(Delta.PICK_SINGLE);
+    	    delta.performSequence(Delta.DELIVER_LEFT);
+    	    blockCollected = true;
+    	}
     }
 }
