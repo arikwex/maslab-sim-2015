@@ -17,8 +17,8 @@ public abstract class State {
     }
     
     public State step() {
-        State next = this.transition();
         prev = this;
+        State next = this.transition();
         if (System.currentTimeMillis() - startTime >= this.tooLong){
         	return new TimeoutState();
         }

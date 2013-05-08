@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 
+import uORCInterface.OrcController;
+
 public class DeltaInterface implements SerialPortEventListener{
 	SerialPort serialPort;
 	/** The port we're normally going to use. */
@@ -131,14 +133,14 @@ public class DeltaInterface implements SerialPortEventListener{
   
  
    	public static void main(String[] args) throws Exception {
-    	DeltaInterface main = new DeltaInterface();
+   		DeltaInterface main = new DeltaInterface();
         System.out.println("Started");
         int[] steps = {5000,5000,5000};
         int[] isteps = {-1000,-1000,-1000};
         Thread.sleep(7000);
         
         main.move(isteps);
-        //Thread.sleep(6000);
+		
         //main.move(isteps);
 
  	}

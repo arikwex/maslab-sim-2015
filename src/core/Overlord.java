@@ -42,6 +42,8 @@ public class Overlord extends Thread {
 			
 			orcControl = new OrcController(new int[] { 0, 1 });
 			orc = Orc.makeOrc();
+			
+			
 			dc = DataCollection.getInstance();
 			se = StateEstimator.getInstance();
 			se.numBlocksLeft = map.getBlocks().size();
