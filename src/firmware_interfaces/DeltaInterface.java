@@ -27,6 +27,8 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
     private static final int DATA_RATE = 9600;
 
     private String inputBuffer="";
+    
+    public boolean ready;
 
     public DeltaInterface() {
 
@@ -88,7 +90,7 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
      */
     public synchronized void sendString(String msg) {
         try {
-            msg += '\n';// add a newline character
+            //msg += '\n';// add a newline character
             output.write(msg.getBytes());// write it to the serial
             output.flush();// refresh the serial
             System.out.print("<- " + msg);// output for debugging
@@ -103,7 +105,8 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
     public synchronized void serialEvent (SerialPortEvent oEvent) {
     	if (oEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
         	try {
-            	int in = input.read();
+        		ready = true;
+            	char in = (char)input.read();
                 System.out.println("received: ");
                 System.out.println(in);
          	} catch (Exception e) {
@@ -113,23 +116,32 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
   	}
         
     public void move(int[] steps){
+    	ready = false;
     	String command = "";
+    	command += "F";
     	for(int i = 0; i < steps.length; i++){
-    		command += "S";
-        	command += Integer.toString(steps[1]);
+        	command += Integer.toString(steps[i]);
+        	command += "S";
         }
-        command += "E";
         	
         this.sendString(command);
  	}
+    public void run(){
+    	while (true){
+    		
+    	}
+    }
  
    	public static void main(String[] args) throws Exception {
     	DeltaInterface main = new DeltaInterface();
         System.out.println("Started");
-        	
+        int[] steps = {-1600,700,-900};
+        int[] isteps = {1600,-700,900};
         while(true){
-        		
-        	Thread.sleep(1000);
+        	main.move(steps);
+        	Thread.sleep(5000);
+        	main.move(isteps);
+        	Thread.sleep(5000);
         }
  	}
 
