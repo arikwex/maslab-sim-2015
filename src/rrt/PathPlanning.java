@@ -176,7 +176,10 @@ public class PathPlanning {
 		    }
 		    
 			p = map.randomPoint();
-			closest = root;
+			if (Math.random() < Config.RRT_GOAL_BIAS)
+			    p = new Point(map.bot.pose); 
+			
+		    closest = root;
 			
 			for (TreeNode node : rrt.nodes) {
 				if (node.loc.distance(p) < closest.loc.distance(p)) {

@@ -12,6 +12,11 @@ public class Point extends Point2D {
         this(coords[0], coords[1]);
     }
     
+    public Point(Point p) {
+        this.x = p.x;
+        this.y = p.y;
+    }
+    
     public Point(double x, double y){
     	this.x = x;
     	this.y = y;

@@ -123,4 +123,6 @@ public class Config {
 	public static final int PIXELHEIGHT = 240;
 
 	public static final int PIXELWIDTH = 320;
+
+    public static final double RRT_GOAL_BIAS = .05;
 }
