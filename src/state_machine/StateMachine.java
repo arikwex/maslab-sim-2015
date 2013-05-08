@@ -20,7 +20,8 @@ public class StateMachine {
     
     public void step() {
     	if (state == null) {
-    		state = new ExploreState();
+    	    state = new ExploreState();
+    	    //state = new AssemblyState();
     	}
         state = state.step();
     }

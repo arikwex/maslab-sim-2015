@@ -55,14 +55,18 @@ public class Config {
     public static final double MAX_VELOCITY = WHEEL_RADIUS * Math.PI * 2 * 1.183;
 
     public static final double TOOCLOSE = 0.1;
-	public static final int BIN_CAPACITY = 50;
-	public static final double CLOSE_ENOUGH = 0.05;
+
+	public static final int BIN_CAPACITY = 5;
+	public static final double CLOSE_ENOUGH = 0.5;
 
     public static final double MAXLENGTH = 1.5;
 
     public static final String COMMENT = "#";
     public static final String SECTION_START = "{";
     public static final String SECTION_END = "}";
+    
+    public static double[][] ASSEMBLY_CROSS = new double[][] {{0,0,-1}, {-6,-6,-1}, {0,-6,-1}, {6,-6,-1}, {0,-12,-1}};
+    public static double[][] ASSEMBLY_PYRAMID = new double[][] {{0,0,-1}, {-2.5, -6, -1}, {2.5, -6, -1}, {0,-3.5, 4}, {0, -3.5, 9}};
 	
     public static double[][] botPoly = new double[][] {{ -.34, -.27 }, { -.34, .27 }, { .22, .27 }, {.34, 0}, { .22, -.27 }};
     //public static double[][] botPoly = new double[][] {{ -.32, -.25 }, { -.32, .25 }, { .20, .25 }, { .20, -.25 }};
@@ -105,7 +109,7 @@ public class Config {
 	public static final String DELTA_PORT_NAMES[] = {
         "/dev/tty.usbserial-A9007UX1", // Mac OS X
         "/dev/ttyUSB0", // Linux
-        "COM8", // Windows
+        "COM14", // Windows
     };
 	public static final double DELTA_CM_PER_STEP = 0.02673181188;
 	public static final double DELTA_STEPS_PER_CM = 37.4086127846;

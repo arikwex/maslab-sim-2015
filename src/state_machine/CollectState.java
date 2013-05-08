@@ -9,7 +9,7 @@ import core.Delta;
 public class CollectState extends State {
     boolean blockCollected = false;
     boolean disposed = false;
-	private Delta delta;
+    private Delta delta;
 
     public CollectState() {
         tooLong = Config.COLLECT_TOO_LONG;
@@ -20,37 +20,37 @@ public class CollectState extends State {
         System.out.println("Done? " + delta.isDone());
         if (!delta.isDone())
             return this;
-        
-        if (disposed) {    	    
-        	delta.performSequence(Delta.TOP_OUT);
+
+        if (disposed) {
+            delta.performSequence(Delta.TOP_OUT);
             return new ExploreState();
         }
         if (blockCollected) {
+            delta.performSequence(Delta.DELIVER_LEFT);
             se.numCollectedBlocks++;
-    	    delta.performSequence(Delta.DELIVER_LEFT);
-            return new ExploreState();
-            /*
+
             if (se.numCollectedBlocks >= Config.BIN_CAPACITY) {
-                return new FindShelterState();
+                return new AssemblyState();
             } else {
                 return new ExploreState();
-            }*/
+            }
         }
+        
         return this;
     }
 
     protected void run() {
-    	sm.setGoal(null);
-    	if (disposed || blockCollected)
-    	    return;
-    	
-    	if (se.getCaptureStatus() == 2) {
-    	    delta.performSequence(Delta.DISPOSE_DOUBLE);
-    	    disposed = true;
-    	    
-    	} else if (se.getCaptureStatus() == 1) {
-    	    delta.performSequence(Delta.PICK_SINGLE);
-    	    blockCollected = true;
-    	}
+        sm.setGoal(null);
+        if (disposed || blockCollected)
+            return;
+
+        if (se.getCaptureStatus() == 2) {
+            delta.performSequence(Delta.DISPOSE_DOUBLE);
+            disposed = true;
+
+        } else if (se.getCaptureStatus() == 1) {
+            delta.performSequence(Delta.PICK_SINGLE);
+            blockCollected = true;
+        }
     }
 }

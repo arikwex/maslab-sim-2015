@@ -67,7 +67,7 @@ public class WheelVelocityController {
     }
 
     private int computeTargetPWM() {
-        double ff = .75 * 255 * targetVel/Config.MAX_VELOCITY;
+        double ff = 1.0 * 255 * targetVel/Config.MAX_VELOCITY;
         
         double actual = Config.METERS_PER_TICK;
         if (wheel == LEFT)
