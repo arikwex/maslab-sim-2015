@@ -1,5 +1,6 @@
 package core;
 
+import map.Point;
 import firmware_interfaces.DeltaInterface;
 
 public class Delta {
@@ -16,7 +17,8 @@ public class Delta {
     private boolean isZeroed = false;
     
     private Delta() {
-        //di = new DeltaInterface();
+        di = new DeltaInterface();
+        di.run();
     }
     
     public static Delta getInstance() {
@@ -43,7 +45,17 @@ public class Delta {
     }
     
     public void goToPosition(double x, double y, double z) {
+        double[] deltas = {0,0,0};
+        Point pos = new Point(x,y);
+        int[] steps= {0,0,0};
+        for (int i = 0; i< deltas.length; i++){
+        	double d = pos.distance(Config.DELTA_POSITION[i]);
+        	deltas[i] = Math.sqrt(Math.pow(Config.DELTA_STEP_MAX, 2)-Math.pow(d, 2));
+        	steps[i] = (int) Math.round(deltas[i]*Config.DELTA_MICROSTEPS_PER_CM);
+        }
         
+        this.move(steps);
+     
     }
 
 	public void step() {
@@ -52,7 +64,7 @@ public class Delta {
 	
 	public void move(int[] steps) {
 	    midMove = true;
-	    //DeltaInterface.move(steps);
+	    di.move(steps);
 	    
 	    for (int i = 0; i < steps.length; i++) {
 	        position[i] += steps[i];
@@ -89,4 +101,14 @@ public class Delta {
 
 	public void PutBlockInBin() {
 	}
+	public static void main(String[] args) throws Exception {
+    	Delta main = new Delta();
+        System.out.println("Started");
+        while(true){
+        	main.goToPosition(3, 3, 0);
+        	Thread.sleep(5000);
+        	main.goToPosition(0, 0, 0);
+        	Thread.sleep(5000);
+        }
+ 	}
 }

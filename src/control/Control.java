@@ -52,6 +52,7 @@ public class Control {
     private void setVelocity(double left, double right) {    	
     	leftController.setVelocity(left);
         rightController.setVelocity(right);
+        System.out.println("Set left controller to "+left+" Set right controller to "+right);
     }
     
     public void step() {
