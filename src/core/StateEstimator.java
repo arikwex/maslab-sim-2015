@@ -2,6 +2,8 @@ package core;
 
 import java.util.ArrayList;
 
+import utils.Utils;
+
 import data_collection.DataCollection;
 import data_collection.EncoderPair;
 import logging.Log;
@@ -69,10 +71,7 @@ public class StateEstimator implements Runnable {
         double newY = bot.pose.y + (dl + dr) * Math.sin(bot.pose.theta) / 2.0;
         double newTheta = bot.pose.theta + dTheta;
         
-        if (newTheta > Math.PI)
-            newTheta -= Math.PI*2;
-        else if (newTheta < -Math.PI)
-            newTheta += Math.PI*2;
+        newTheta = Utils.wrapAngle(newTheta);
         
         Pose nextPose = new Pose(newX, newY, newTheta);
         bot.pose = nextPose;

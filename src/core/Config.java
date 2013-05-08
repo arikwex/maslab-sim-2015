@@ -98,7 +98,6 @@ public class Config {
 	public static final double DELTA_CM_PER_STEP = 0.02673181188;
 	public static final double DELTA_STEPS_PER_CM = 37.4086127846;
     public static final long DELTA_STEP_MAX = (long)(20*DELTA_STEPS_PER_CM);
-
 	public static final String CAMERA_CONFIG_FILE = "camera_config.txt";
     public static final double DELTA_MICROSTEPS_PER_CM = DELTA_STEPS_PER_CM/8;
     public static final double DELTA_LINK_LENGTH = 15;

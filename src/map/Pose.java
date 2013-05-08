@@ -1,5 +1,7 @@
 package map;
 
+import utils.Utils;
+
 public class Pose extends Point{
     public double theta;
     
@@ -13,6 +15,6 @@ public class Pose extends Point{
     }
     
     public String toString() {
-        return "(" + round(x,2) + ", " + round(y,2) + ", " + round(theta, 2) + ")";
+        return "(" + Utils.round(x,2) + ", " + Utils.round(y,2) + ", " + Utils.round(theta, 2) + ")";
     }
 }
