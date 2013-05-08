@@ -86,8 +86,8 @@ public class Config {
 	public static final double DELTA_CM_PER_STEP = 0.02673181188;
 	public static final double DELTA_STEPS_PER_CM = 37.4086127846;
     public static final long DELTA_STEP_MAX = (long)(20*DELTA_STEPS_PER_CM);
-    public static final double DELTA_MICROSTEPS_PER_CM = DELTA_STEPS_PER_CM/8;
-    public static final double DELTA_LINK_LENGTH = 15;
-    public static final Point[] DELTA_POSITION = {new Point(-7.5,-4.33),new Point(7.5,-4.33),new Point(0,8.0829)};
-    
+    public static final double DELTA_MICROSTEPS_PER_CM = DELTA_STEPS_PER_CM*8;
+    public static final double DELTA_LINK_LENGTH = 34.29;
+    public static final double DELTA_SIDE = 25.654;
+    public static final double DELTA_POST_HEIGHT = 63.5;
 }

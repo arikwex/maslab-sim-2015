@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 
-public class DeltaInterface extends Thread implements SerialPortEventListener{
+public class DeltaInterface implements SerialPortEventListener{
 	SerialPort serialPort;
 	/** The port we're normally going to use. */
 	private static final String PORT_NAMES[] = {
@@ -72,6 +72,7 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
         } catch (Exception e) {
             System.err.println(e.toString());
         }
+    	
     }
 
     /**
@@ -94,6 +95,7 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
             output.write(msg.getBytes());// write it to the serial
             output.flush();// refresh the serial
             System.out.print("<- " + msg);// output for debugging
+            System.out.println();
         } catch (Exception e) {
             System.err.println(e.toString());
         }
@@ -123,26 +125,22 @@ public class DeltaInterface extends Thread implements SerialPortEventListener{
         	command += Integer.toString(steps[i]);
         	command += "S";
         }
-        	
+    	command += "E";
         this.sendString(command);
  	}
-    public void run(){
-    	while (true){
-    		
-    	}
-    }
+  
  
    	public static void main(String[] args) throws Exception {
     	DeltaInterface main = new DeltaInterface();
         System.out.println("Started");
-        int[] steps = {-1600,700,-900};
-        int[] isteps = {1600,-700,900};
-        while(true){
-        	main.move(steps);
-        	Thread.sleep(5000);
-        	main.move(isteps);
-        	Thread.sleep(5000);
-        }
+        int[] steps = {5000,5000,5000};
+        int[] isteps = {-1000,-1000,-1000};
+        Thread.sleep(7000);
+        
+        main.move(isteps);
+        //Thread.sleep(6000);
+        //main.move(isteps);
+
  	}
 
 }

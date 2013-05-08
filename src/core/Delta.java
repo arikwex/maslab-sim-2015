@@ -16,9 +16,16 @@ public class Delta {
     private boolean midMove = false;
     private boolean isZeroed = false;
     
+    public Point[] DELTA_POSITION;
+    
     private Delta() {
+    	double side = Config.DELTA_SIDE;
+    	DELTA_POSITION = new Point[3];
+    	DELTA_POSITION[0] = new Point(-side/2, side/(2*Math.sqrt(3)));
+    	DELTA_POSITION[1] = new Point(0, side/Math.sqrt(3));
+    	DELTA_POSITION[2] = new Point(side/2, side/(2*Math.sqrt(3)));
+        System.out.println("Pos 1: " + DELTA_POSITION[0] + " Pos 2: " + DELTA_POSITION[1] + " Pos 3: " + DELTA_POSITION[2]);
         di = new DeltaInterface();
-        di.run();
     }
     
     public static Delta getInstance() {
@@ -48,16 +55,43 @@ public class Delta {
         double[] deltas = {0,0,0};
         Point pos = new Point(x,y);
         int[] steps= {0,0,0};
+       
         for (int i = 0; i< deltas.length; i++){
-        	double d = pos.distance(Config.DELTA_POSITION[i]);
-        	deltas[i] = Math.sqrt(Math.pow(Config.DELTA_STEP_MAX, 2)-Math.pow(d, 2));
-        	steps[i] = (int) Math.round(deltas[i]*Config.DELTA_MICROSTEPS_PER_CM);
+        	double d = pos.distance(DELTA_POSITION[i]);
+        	deltas[i] = Math.sqrt(Math.pow(Config.DELTA_LINK_LENGTH, 2)-Math.pow(d, 2))-63.5;  	
         }
         
+        double max = getMaxValue(deltas);
+        for (int i = 0; i< deltas.length; i++){
+        	deltas[i] -= max;
+        	steps[i] = (int) ((deltas[i])*Config.DELTA_MICROSTEPS_PER_CM);
+        }
+        
+        System.out.println("Delta 1: " + deltas[0] + " Delta 2: " + deltas[1] + " Delta 3: " + deltas[2]);
+        System.out.println("Steps 1: " + steps[0] + " Steps 2: " + steps[1] + " Steps 3: " + steps[2]);
         this.move(steps);
      
     }
 
+    public static double getMaxValue(double[] numbers){
+    	double maxValue = numbers[0];
+    	for(int i=1;i < numbers.length;i++){
+    		if(numbers[i] > maxValue){
+    		  maxValue = numbers[i];
+    		}
+    	  }
+    	return maxValue;
+    	}
+
+    public static double getMinValue(double[] numbers){
+    	double minValue = numbers[0];
+    	 for(int i=1;i<numbers.length;i++){
+    	    if(numbers[i] < minValue){
+    		  minValue = numbers[i];
+    		}
+    	  }
+    	return minValue;
+    	}
 	public void step() {
 		
 	}
@@ -104,11 +138,13 @@ public class Delta {
 	public static void main(String[] args) throws Exception {
     	Delta main = new Delta();
         System.out.println("Started");
-        while(true){
-        	main.goToPosition(3, 3, 0);
-        	Thread.sleep(5000);
-        	main.goToPosition(0, 0, 0);
-        	Thread.sleep(5000);
-        }
+        Thread.sleep(3000);
+        main.topOut();
+        Thread.sleep(5000);
+        int[] steps = {-3000,-3000,-3000};
+        
+        main.goToPosition(17,21,0);
+        
+        
  	}
 }
