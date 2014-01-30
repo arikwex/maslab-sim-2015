@@ -95,7 +95,7 @@ public class Config {
 
 	public static final double ROBOT_RADIUS = 0.2;
 
-	public static final double COLLISION_MARGIN = -0.00;
+	public static final double COLLISION_MARGIN = 0.1;
 
     public static final int MOTOR_LEFT_DIR_PIN = 8;
 	public static final int MOTOR_LEFT_PWM_PIN = 7;

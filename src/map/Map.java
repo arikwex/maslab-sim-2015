@@ -4,9 +4,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import core.Block;
-import core.Config.BlockColor;
 import core.Config;
-import core.StateEstimator;
+import core.Config.BlockColor;
 import data_collection.DataCollection;
 
 public class Map {
@@ -152,6 +151,7 @@ public class Map {
 		this.robotGoal = m.robotGoal;
 		this.robotStart = m.robotStart;
 		this.ShelterLocation = m.ShelterLocation;
+		this.reactors = m.reactors;
 	}
 
 	public void update() {

@@ -10,8 +10,8 @@ import core.BotClientSingleton;
 import core.Config;
 
 public class BotClientMapLoader {
-	private static final String MAP_STRING = "22.00:3.00,2.00,3.14:0.00,0.00,0.00,2.00,N:0.00,2.00,1.00,3.00,N:1.00,3.00,3.00,3.00,N:3.00,3.00,4.00,3.00,R:4.00,3.00,4.00,1.00,N:4.00,1.00,2.00,1.00,N:2.00,1.00,1.00,0.00,N:1.00,0.00,0.00,0.00,R:2,1,1.2,1.8,N";
-	
+	//private static final String MAP_STRING = "22.00:3.00,2.00,3.14:0.00,0.00,0.00,2.00,N:0.00,2.00,1.00,3.00,N:1.00,3.00,3.00,3.00,N:3.00,3.00,4.00,3.00,R:4.00,3.00,4.00,1.00,N:4.00,1.00,2.00,1.00,N:2.00,1.00,1.00,0.00,N:1.00,0.00,0.00,0.00,R:2,1,1.2,1.8,N";
+	private static final String MAP_STRING = "22.00:3.00,1.00,1.57:2.00,2.00,2.00,4.00,N:4.00,4.00,2.00,4.00,N:4.00,4.00,1.00,7.00,N:1.00,7.00,3.00,7.00,N:3.00,7.00,6.00,7.00,N:6.00,7.00,6.00,5.00,N:6.00,5.00,6.00,3.00,N:6.00,3.00,8.00,3.00,N:8.00,3.00,8.00,9.00,N:8.00,9.00,2.00,9.00,N:2.00,9.00,2.00,11.00,N:2.00,11.00,4.00,13.00,N:4.00,13.00,6.00,11.00,N:6.00,11.00,10.00,11.00,N:10.00,11.00,10.00,1.00,N:10.00,1.00,5.00,0.00,N:5.00,0.00,2.00,0.00,N:2.00,0.00,2.00,2.00,N:";
 	public static Map loadMap() {
 		Map m = new Map();
 		BotClientSingleton bc = BotClientSingleton.getInstance();
@@ -28,6 +28,7 @@ public class BotClientMapLoader {
 				maxY = Double.NEGATIVE_INFINITY;
 		System.out.println("Loading obstacles");
 		m.obstacles = new ArrayList<Obstacle>();
+		m.reactors = new ArrayList<>();
 		for (int i = 0; i < bcMap.walls.size(); i++) {
 			Wall w = bcMap.walls.get(i);
 			double width;
