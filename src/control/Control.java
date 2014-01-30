@@ -30,7 +30,7 @@ public class Control {
         rotPid = new PID(.03, 0, 0, 0, .15);
         rotPid.start(0, 0);
 
-        velPid = new PID(2, 0, 0, 0, .2);
+        velPid = new PID(2, 0, 0, 0, .3);
         velPid.start(0, 0);
         
         leftController = new WheelVelocityController(hw, WheelVelocityController.LEFT);
@@ -73,7 +73,6 @@ public class Control {
         double thetaErr = Math.toDegrees(Utils.thetaDiff(bot.pose.theta, bot.pose.angleTo(wayPoint)));
 
         double vel = velPid.step(-distance);
-        
         Log.log("Desired vel: " + vel);
         
         if (Math.abs(thetaErr) < 7)
@@ -82,6 +81,7 @@ public class Control {
             vel = 0;
 
         double rot = rotPid.step(-thetaErr);
+        Log.log("Desired rot: " + rot);
         
         setMotion(vel, rot);
         Log.log("From: " + bot.pose + " to:" + wayPoint + " with theta " + bot.pose.angleTo(wayPoint) + " and distance " + distance + " theta err " + thetaErr);
