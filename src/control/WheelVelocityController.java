@@ -40,10 +40,11 @@ public class WheelVelocityController {
         applySlew(targetPwm);
         //currPwm = targetPwm;
         
+        // TODO: Double check that currPwm is okay in setSpeed
         if (wheel == LEFT)
-            hw.motor_left.setValue(currPwm);
+            hw.motor_left.setSpeed(currPwm);
         else
-            hw.motor_right.setValue(currPwm);
+            hw.motor_right.setSpeed(currPwm);
     }
     
     private void applySlew(int targetPwm) {

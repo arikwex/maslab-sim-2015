@@ -56,8 +56,10 @@ public class Hardware {
         return instance;
     }
     
-    public void step() {
+    public void transmit() {
         comm.transmit();
+    }
+    public void updateSensorData() {
         comm.updateSensorData();
     }
 }
