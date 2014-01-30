@@ -7,7 +7,7 @@ public abstract class State {
     protected StateEstimator se;
     
     long startTime;
-	protected long tooLong;
+	protected long tooLong = Long.MAX_VALUE;
 	protected State prev;
     
     public State() {

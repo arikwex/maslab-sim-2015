@@ -2,8 +2,8 @@ package state_machine;
 
 import java.util.ArrayList;
 
+import map.Point;
 import vision.Ball;
-import vision.Vision;
 
 public class ExploreState extends State {
     /* Class to just do nothing for now */
@@ -36,5 +36,8 @@ public class ExploreState extends State {
         return smallest;
     }
     
-    public void run() {}
+    public void run() {
+    	StateMachine sm = StateMachine.getInstance();
+    	sm.setGoal(new Point(0.5, 0.5));
+    }
 }

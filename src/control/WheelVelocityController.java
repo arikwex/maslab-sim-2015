@@ -10,7 +10,7 @@ public class WheelVelocityController {
     private int wheel;
     
     private double targetVel = 0;
-    private int currPwm = 0;
+    private double currentOut = 0;
     private long prevTime;
     
     private static final int SLEW_LIM = 1000; //pwm units per second
@@ -22,7 +22,7 @@ public class WheelVelocityController {
     public WheelVelocityController(Hardware hw, int wheel) {
         this.hw = hw;
         this.wheel = wheel;
-        this.pid = new PID(0, 5, 0, 0, 128);
+        this.pid = new PID(0, .2, 0, .1, 1.0);
         pid.start(0, 0);
         prevTime = System.currentTimeMillis();
     }
@@ -33,61 +33,47 @@ public class WheelVelocityController {
     }
     
     public void step() {
-        int targetPwm = computeTargetPWM();
-        if (wheel == LEFT)
-        	targetPwm*=-1;
-        
-        applySlew(targetPwm);
-        //currPwm = targetPwm;
+        double targetOut = computeTargetOut();
+                
+        //applySlew(targetPwm);
+        currentOut = targetOut;
         
         // TODO: Double check that currPwm is okay in setSpeed
         if (wheel == LEFT)
-            hw.motorLeft.setSpeed(currPwm);
+            hw.motorLeft.setSpeed(currentOut);
         else
-            hw.motorRight.setSpeed(currPwm);
+            hw.motorRight.setSpeed(-currentOut);
     }
     
     private void applySlew(int targetPwm) {
         long now = System.currentTimeMillis();
         int cap = (int)((now-prevTime)/1000.0 * SLEW_LIM);
-        int dPwm = targetPwm - currPwm;
+        double dPwm = targetPwm - currentOut;
         if (cap > 0) {
         	prevTime = now;
         	if (dPwm < 0) {
-        		currPwm -= cap;
-        		if (currPwm < targetPwm)
-        			currPwm = targetPwm;
+        		currentOut -= cap;
+        		if (currentOut < targetPwm)
+        			currentOut = targetPwm;
         	} else {
-        		currPwm += cap;
-        		if (currPwm > targetPwm)
-        			currPwm = targetPwm;
+        		currentOut += cap;
+        		if (currentOut > targetPwm)
+        			currentOut = targetPwm;
         	}
         	
         }
     }
 
-    private int computeTargetPWM() {
-        double ff = 1.0 * 255 * targetVel/Config.MAX_VELOCITY;
+    private double computeTargetOut() {
+        double ff = 1.0 * targetVel/Config.MAX_VELOCITY;
         
-        double actual = Config.WHEEL_CIRCUMFERENCE;
-        if (wheel == LEFT)
-            actual *= hw.encoderLeft.getAngularSpeed();
+        double actual = Config.WHEEL_RADIUS;
+        if (wheel == RIGHT)
+        	actual *= hw.encoderRight.getAngularSpeed();
         else
-            actual *= hw.encoderRight.getAngularSpeed();
+        	actual *= hw.encoderLeft.getAngularSpeed();
+        System.out.println("Actual: " + wheel + " " + actual + " desired " + targetVel);
         
-        return (int)Math.round(pid.step(actual) + ff);
+        return pid.step(actual) + ff;
     }
-    
-    public static void main(String[] args) {
-		Hardware hw = Hardware.getInstance();
-        WheelVelocityController left = new WheelVelocityController(hw, 0);
-        WheelVelocityController right = new WheelVelocityController(hw, 1);
-        left.setVelocity(-.2);
-        right.setVelocity(-.2);
-		while (true) {
-			left.step();
-			right.step();
-			try { Thread.sleep(50);} catch (Exception e){};
-		}
-	}
 }

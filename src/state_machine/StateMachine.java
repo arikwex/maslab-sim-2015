@@ -1,5 +1,6 @@
 package state_machine;
 
+import logging.Log;
 import map.Point;
 
 public class StateMachine {
@@ -19,6 +20,7 @@ public class StateMachine {
     } 
     
     public void step() {
+    	Log.log("StateMachine step");
     	if (state == null) {
     	    // TODO: Implement states, and set a reasonable start state
     	    state = new ExploreState();
@@ -28,6 +30,7 @@ public class StateMachine {
     
     protected void setGoal(Point p) {
         this.goal = p;
+        Log.log(this.goal.toString());
     }
     
     public Point getGoal() {

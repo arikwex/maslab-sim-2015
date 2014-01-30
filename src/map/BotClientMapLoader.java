@@ -10,12 +10,15 @@ import core.BotClientSingleton;
 import core.Config;
 
 public class BotClientMapLoader {
+	private static final String MAP_STRING = "22.00:3.00,2.00,3.14:0.00,0.00,0.00,2.00,N:0.00,2.00,1.00,3.00,N:1.00,3.00,4.00,3.00,N:4.00,3.00,4.00,1.00,N:4.00,1.00,2.00,1.00,N:2.00,1.00,1.00,0.00,N:1.00,0.00,0.00,0.00,N:";
+	
 	public static Map loadMap() {
 		Map m = new Map();
 		BotClientSingleton bc = BotClientSingleton.getInstance();
 
 		// TODO: Load real map
-		BotClientMap bcMap = BotClientMap.getDefaultMap();
+		BotClientMap bcMap = new BotClientMap();
+		bcMap.load(MAP_STRING);
 
 		final double scaleFactor = Config.METERS_PER_INCH * bcMap.gridSize;
 

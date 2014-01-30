@@ -49,13 +49,13 @@ public class StateEstimator implements Runnable {
         // updateBlocks();
         // sonarCheck();
 
-        Log.log(this.toString());
+        //Log.log(this.toString());
     }
 
     public void updatePose() {
         hw.updateSensorData();
-        double dl = hw.encoderLeft.getDeltaAngularDistance() * Config.WHEEL_CIRCUMFERENCE;
-        double dr = hw.encoderRight.getDeltaAngularDistance() * Config.WHEEL_CIRCUMFERENCE;
+        double dl = hw.encoderLeft.getDeltaAngularDistance() * Config.WHEEL_RADIUS;
+        double dr = hw.encoderRight.getDeltaAngularDistance() * Config.WHEEL_RADIUS;
 
         if (dr == 0 && dl == 0)
             return; // we haven't moved at all

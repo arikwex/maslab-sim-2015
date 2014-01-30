@@ -47,7 +47,7 @@ public class Overlord extends Thread {
  
 	public void start() {
 		while (true) {
-			System.out.println("justed updated");
+			//Log.log("justed updated");
 			startTime = System.currentTimeMillis();
 			
 			dc.step();
@@ -57,7 +57,7 @@ public class Overlord extends Thread {
 			map.update();
 			
 			pp.step();
-			System.out.println(se.getCaptureStatus());
+			//Log.log(se.getCaptureStatus());
 			c.step();
 			
 			l.updatePose();

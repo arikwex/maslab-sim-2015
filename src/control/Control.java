@@ -1,6 +1,7 @@
 package control;
 
 import hardware.Hardware;
+import logging.Log;
 import map.Map;
 import map.Point;
 import map.Robot;
@@ -29,7 +30,7 @@ public class Control {
         rotPid = new PID(.05, 0, 0, 0, .2);
         rotPid.start(0, 0);
 
-        velPid = new PID(3, 0, 0, 0, .2);
+        velPid = new PID(1, 0, 0, 0, .2);
         velPid.start(0, 0);
         
         leftController = new WheelVelocityController(hw, WheelVelocityController.LEFT);
@@ -44,13 +45,13 @@ public class Control {
     }
     
     private void setMotion(double vel, double rot) {
-        setVelocity(-vel + rot, -vel - rot);
+        setVelocity(vel + rot, vel - rot);
     }
     
     private void setVelocity(double left, double right) {    	
     	leftController.setVelocity(left);
         rightController.setVelocity(right);
-        System.out.println("Set left controller to "+left+" Set right controller to "+right);
+        //Log.log("Set left controller to "+left+" Set right controller to "+right);
     }
     
     public void step() {
@@ -67,9 +68,7 @@ public class Control {
         	setMotion(0,0);
         	return;
         }
-        
-        System.out.println("From: " + bot.pose + " to:" + wayPoint + " with theta " + bot.pose.angleTo(wayPoint));
-        
+                
         double distance = bot.pose.distance(wayPoint);
         double thetaErr = Math.toDegrees(Utils.thetaDiff(bot.pose.theta, bot.pose.angleTo(wayPoint)));
 
@@ -82,36 +81,6 @@ public class Control {
         double rot = rotPid.step(-thetaErr);
         
         setMotion(vel, rot);
-    }
-    
-    
-    public static void main(String[] Args){
-        Hardware hw = Hardware.getInstance();
-    	WheelVelocityController leftController = new WheelVelocityController(hw, WheelVelocityController.LEFT);
-    	WheelVelocityController rightController = new WheelVelocityController(hw, WheelVelocityController.RIGHT);
-    	double theta = 0;
-    	double x = 0;
-    	double y = 0;
-    	leftController.setVelocity(0.2);
-		rightController.setVelocity(0.2);
-		double l = 0;
-		double r = 0;
-		while (l < 1 || r < 1 ){
-    		System.out.println("l = "+ l);
-    		System.out.println("r = "+ r);
-    		leftController.step();
-    		rightController.step();
-    		l = hw.encoderLeft.getDeltaAngularDistance() * Config.WHEEL_CIRCUMFERENCE;
-    		r = hw.encoderRight.getDeltaAngularDistance() * Config.WHEEL_CIRCUMFERENCE;
-    		if (l >= 1){
-    			
-    			rightController.setVelocity(0);
-    		}
-    		if (r >= 1){
-    			leftController.setVelocity(0);
-    		}
-    	}
-    	
-		System.out.println(l);
+        Log.log("From: " + bot.pose + " to:" + wayPoint + " with theta " + bot.pose.angleTo(wayPoint) + " and distance " + distance);
     }
 }
