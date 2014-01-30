@@ -69,7 +69,7 @@ public class WheelVelocityController {
     private int computeTargetPWM() {
         double ff = 1.0 * 255 * targetVel/Config.MAX_VELOCITY;
         
-        double actual = Config.METERS_PER_TICK;
+        double actual = Config.WHEEL_CIRCUMFERENCE;
         if (wheel == LEFT)
             actual *= hw.encoderLeft.getAngularSpeed();
         else

@@ -48,12 +48,10 @@ public class Config {
     public static double[][] sonarPositions = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 },
             { 0, 0, 0 }, { 0, 0, 0 } };
 
-    public static final double WHEELBASE = .435;
-    public static final double TICKS_PER_REV = 133236;
-    public static final double METERS_PER_REV = 0.3; // TODO: Measure and update this
-    public static final double WHEEL_RADIUS = .0625;
-    public static final double METERS_PER_TICK = (WHEEL_RADIUS * Math.PI * 2) / TICKS_PER_REV;
-    public static final double MAX_VELOCITY = WHEEL_RADIUS * Math.PI * 2 * 1.183;
+    public static final double WHEELBASE = 0.213995;
+    public static final double WHEEL_RADIUS = 0.0492125;
+    public static final double WHEEL_CIRCUMFERENCE = WHEEL_RADIUS * Math.PI * 2.0;
+    public static final double MAX_VELOCITY = WHEEL_CIRCUMFERENCE * 5.833;
 
     public static final double TOOCLOSE = 0.1;
 
@@ -69,12 +67,7 @@ public class Config {
     public static double[][] ASSEMBLY_CROSS = new double[][] {{0,0,-1}, {-6,-6,-1}, {0,-6,-1}, {6,-6,-1}, {0,-12,-1}};
     public static double[][] ASSEMBLY_PYRAMID = new double[][] {{0,0,-1}, {-2.5, -6, -1}, {2.5, -6, -1}, {0,-3.5, 4}, {0, -3.5, 9}};
 	
-    public static double[][] botPoly = new double[][] {{ -.34, -.27 }, { -.34, .27 }, { .22, .27 }, {.34, 0}, { .22, -.27 }};
-    //public static double[][] botPoly = new double[][] {{ -.32, -.25 }, { -.32, .25 }, { .20, .25 }, { .20, -.25 }};
-    //public static double[][] botPoly = new double[][] {{ -.37, -.23 }, { -.37, .23 }, { .11, .23 }, { .11, -.23 }};
-    //public static double[][] botPoly = new double[][] {{ -.30, -.23 }, { -.30, .23 }, { .18, .23 }, { .18, -.23 }};
-    //public static double[][] botPoly = new double[][] {{ -.3, -.2 }, { -.3, .2 }, { .2, 0 }};
-    //public static double[][] botPoly = new double[][] {{ -.32, -.22 }, { -.32, .22 }, { .12, .22 }, { .12, -.22 }};
+    public static double[][] botPoly = new double[][] {{ -0.210439, -0.117145 }, { -0.210439, 0.117145 }, { 0.117475, 0.117145 }, { 0.117475, -0.117145 }};
 
     //constants for distance vs sizeP 
 	public static int c;

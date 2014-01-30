@@ -54,8 +54,8 @@ public class StateEstimator implements Runnable {
 
     public void updatePose() {
         hw.updateSensorData();
-        double dl = hw.encoderLeft.getDeltaAngularDistance() * Config.METERS_PER_REV;
-        double dr = hw.encoderRight.getDeltaAngularDistance() * Config.METERS_PER_REV;
+        double dl = hw.encoderLeft.getDeltaAngularDistance() * Config.WHEEL_CIRCUMFERENCE;
+        double dr = hw.encoderRight.getDeltaAngularDistance() * Config.WHEEL_CIRCUMFERENCE;
 
         if (dr == 0 && dl == 0)
             return; // we haven't moved at all
