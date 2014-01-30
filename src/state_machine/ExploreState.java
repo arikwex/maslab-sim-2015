@@ -4,8 +4,13 @@ import java.util.ArrayList;
 
 import map.Point;
 import vision.Ball;
+import core.StateEstimator;
 
 public class ExploreState extends State {
+	
+	private Point curGoal;
+	private int reactorIndex = 0;
+	
     /* Class to just do nothing for now */
     public State transition() {
         /* If we find a ball in our FOV, transition to the TrackBallState,
@@ -38,6 +43,16 @@ public class ExploreState extends State {
     
     public void run() {
     	StateMachine sm = StateMachine.getInstance();
-    	sm.setGoal(new Point(0.5, 0.5));
+    	StateEstimator se = StateEstimator.getInstance();
+    	
+    	if (curGoal == null) {
+    		curGoal = se.map.reactors.get(reactorIndex);
+    	}
+    	else if (curGoal.distance(new Point(se.map.bot.pose.x, se.map.bot.pose.y)) < 0.3) {
+    		reactorIndex++;
+    		curGoal = se.map.reactors.get(reactorIndex);
+    	}
+    		
+    	sm.setGoal(curGoal);
     }
 }

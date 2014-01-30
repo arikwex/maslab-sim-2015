@@ -10,7 +10,7 @@ import core.BotClientSingleton;
 import core.Config;
 
 public class BotClientMapLoader {
-	private static final String MAP_STRING = "22.00:3.00,2.00,3.14:0.00,0.00,0.00,2.00,N:0.00,2.00,1.00,3.00,N:1.00,3.00,4.00,3.00,N:4.00,3.00,4.00,1.00,N:4.00,1.00,2.00,1.00,N:2.00,1.00,1.00,0.00,N:1.00,0.00,0.00,0.00,N:";
+	private static final String MAP_STRING = "22.00:3.00,2.00,3.14:0.00,0.00,0.00,2.00,N:0.00,2.00,1.00,3.00,N:1.00,3.00,3.00,3.00,N:3.00,3.00,4.00,3.00,R:4.00,3.00,4.00,1.00,N:4.00,1.00,2.00,1.00,N:2.00,1.00,1.00,0.00,N:1.00,0.00,0.00,0.00,R:";
 	
 	public static Map loadMap() {
 		Map m = new Map();
@@ -31,8 +31,14 @@ public class BotClientMapLoader {
 		for (int i = 0; i < bcMap.walls.size(); i++) {
 			Wall w = bcMap.walls.get(i);
 			double width;
-			if (w.type == Wall.WallType.NORMAL || w.type == Wall.WallType.OPPONENT || w.type == Wall.WallType.REACTOR) {
+			if (w.type == Wall.WallType.NORMAL || w.type == Wall.WallType.OPPONENT) {
 				width = 0.25 * Config.METERS_PER_INCH;
+			}
+			else if (w.type == Wall.WallType.REACTOR) {
+				width = 0.25 * Config.METERS_PER_INCH;
+				Point mid = new Point((w.start.x+w.end.x)/2.0, (w.start.y+w.end.y)/2.0);
+				m.reactors.add(mid);
+				System.out.println("Added reactor: " + mid);
 			} else { // w.type == Wall.WallType.SILO
 				width = 6 * Config.METERS_PER_INCH;
 			}
@@ -40,6 +46,7 @@ public class BotClientMapLoader {
 			m.obstacles.add(obs);
 			System.out.println(obs);
 			
+			// Min/max computing for world box
 			if (w.start.x < minX) minX = w.start.x;
 			if (w.start.x > maxX) maxX = w.start.x;
 			if (w.start.y < minY) minY = w.start.y;
