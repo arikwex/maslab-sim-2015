@@ -2,8 +2,6 @@ package logging;
 
 import javax.swing.SwingUtilities;
 
-import map.Map;
-
 public class Log {
     private static Log instance;
     

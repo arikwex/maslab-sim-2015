@@ -19,26 +19,20 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.Rectangle2D.Double;
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import rrt.PathPlanning;
-
-import core.Config;
-
 import map.Map;
 import map.MapBlock;
 import map.Obstacle;
-import map.ParseMap;
 import map.Point;
 import map.Robot;
 import map.Segment;
+import rrt.PathPlanning;
+import core.Config;
 
 public class RobotGraph extends JFrame implements Runnable {
     private static final long serialVersionUID = -1299466487663318439L;
