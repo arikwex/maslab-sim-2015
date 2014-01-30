@@ -3,6 +3,7 @@ package state_machine;
 import java.util.ArrayList;
 
 import map.Point;
+import map.Reactor;
 import vision.Ball;
 import core.StateEstimator;
 
@@ -45,16 +46,22 @@ public class ExploreState extends State {
     	StateMachine sm = StateMachine.getInstance();
     	StateEstimator se = StateEstimator.getInstance();
     	
-    	/*
     	if (curGoal == null) {
-    		curGoal = se.map.reactors.get(reactorIndex);
+    		Reactor r = se.map.reactors.get(reactorIndex);
+    	    curGoal = new Point(r.mid.x + r.nx*0.2, r.mid.y + r.ny*0.2);
     	}
     	else if (curGoal.distance(new Point(se.map.bot.pose.x, se.map.bot.pose.y)) < 0.3) {
     		reactorIndex++;
-    		curGoal = se.map.reactors.get(reactorIndex);
-    	}*/
+    		if (reactorIndex >= se.map.reactors.size()) {
+    			reactorIndex = 0;
+    		}
+    		Reactor r = se.map.reactors.get(reactorIndex);
+    	    curGoal = new Point(r.mid.x + r.nx*0.2, r.mid.y + r.ny*0.2);
+    	}
     	
+    	/*
     	curGoal = new Point(2.0,6.5);
+    	*/
     		
     	sm.setGoal(curGoal);
     }

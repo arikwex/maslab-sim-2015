@@ -25,7 +25,8 @@ public class Overlord extends Thread {
 		bc = BotClientSingleton.getInstance();
 		//bc.pendOnStartup();
 		map = Map.getInstance();
-		map.setMap(BotClientMapLoader.loadMap()); 
+		map.setMap(BotClientMapLoader.loadMap());
+		BotClientMapLoader.setReactorNormVectors(map);
 		
 		//map.setMap(ParseMap.parseFile("cheat_map.txt"));
 		//m.setMap(ParseMap.parseFile("construction_map_2013.txt"));

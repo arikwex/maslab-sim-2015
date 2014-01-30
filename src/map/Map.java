@@ -15,7 +15,7 @@ public class Map {
     private ArrayList<Obstacle> worldBounds = null; // world rect in obstacle format.
 
     public ArrayList<Obstacle> obstacles;
-    public ArrayList<Point> reactors;
+    public ArrayList<Reactor> reactors;
     private ArrayList<MapBlock> blocks;
     public Robot bot;
 

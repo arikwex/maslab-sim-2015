@@ -23,12 +23,11 @@ public class PathPlanning {
 	private StateMachine sm;
 	private StateEstimator se;
 	private Map map;
-
+	
+	public ArrayList<Segment> rrtEdges;
 	public LinkedList<Point> path;
 	public Point nextWaypoint;
 	public Point goal;
-	
-	public ArrayList<Segment> rrtEdges = new ArrayList<Segment>();
 
 	public PathPlanning() {
 		this.sm = StateMachine.getInstance();
@@ -112,6 +111,11 @@ public class PathPlanning {
     				path.removeFirst();
     				nextWaypoint = path.getFirst();
 		    	} else {
+		    		Hardware hw = Hardware.getInstance();
+		    		hw.motorLeft.setSpeed(0);
+		    		hw.motorRight.setSpeed(0);
+		    		hw.transmit();
+		    		
 		    	    findPath(newGoal);
 		            nextWaypoint = path.getFirst();
 		    	}
@@ -134,9 +138,19 @@ public class PathPlanning {
 	public Point getNextWaypoint() {
 		return nextWaypoint;
 	}
-
+	
 	public void findPath(Point goal) {
-	    rrtEdges.clear();
+		Hardware hw = Hardware.getInstance();
+		hw.motorLeft.setSpeed(0);
+		hw.motorRight.setSpeed(0);
+		hw.transmit();
+		path = RRTSearch(goal, true);
+	}
+
+	public LinkedList<Point> RRTSearch(Point goal, boolean allowRandom) {
+
+		rrtEdges = new ArrayList<Segment>();
+		LinkedList<Point> path = new LinkedList<Point>();
 	    
 		Point start = new Point(map.bot.pose.x, map.bot.pose.y);
 		TreeNode root = new TreeNode(start);
@@ -146,15 +160,9 @@ public class PathPlanning {
 		TreeNode closest, newNode, goalNode;
 		Segment seg;
 		if (map.checkSegment(new Segment(start, goal), map.bot.pose.theta)) {
-			path = new LinkedList<Point>();
 			path.add(goal);
-			return;
+			return path;
 		}
-		
-		Hardware hw = Hardware.getInstance();
-		hw.motorLeft.setSpeed(0);
-		hw.motorRight.setSpeed(0);
-		hw.transmit();
 
 		long count = 0;
 		while (true) {
@@ -167,10 +175,15 @@ public class PathPlanning {
 		            rrt = new Tree(root);
 		        }
 		        if (count > 100000 && rrt.nodes.size() > 5) {
-		            System.out.println("FUCK IT GO TO RANDOM NODE");
-		            
-	                goalNode = rrt.nodes.get((int)(Math.random()*rrt.nodes.size()));
-	                break;		        
+		        	if (allowRandom) {
+			            System.out.println("FUCK IT GO TO RANDOM NODE");
+			            
+		                goalNode = rrt.nodes.get((int)(Math.random()*rrt.nodes.size()));
+		                break;		        
+		        	}
+		        	else {
+		        		return null;
+		        	}
 		        }
 		        Log.getInstance().updatePose();
 		        System.out.println(count + " nodes " + rrt.nodes.size());
@@ -215,7 +228,6 @@ public class PathPlanning {
 
 		TreeNode curNode = goalNode;
 		Boolean pathcomplete = false;
-		path = new LinkedList<Point>();
 		while (!pathcomplete) {
 			path.add(0, curNode.loc);
 			if (curNode == rrt.root) {
@@ -224,5 +236,7 @@ public class PathPlanning {
 			}
 			curNode = curNode.parent;
 		}
+		
+		return path;
 	}
 }
