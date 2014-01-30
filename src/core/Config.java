@@ -140,4 +140,9 @@ public class Config {
 	public static final int PIXELWIDTH = 320;
 
     public static final double RRT_GOAL_BIAS = .05;
+    
+    public static final String BOTCLIENT_HOST = "18.150.7.174:6667";
+    public static final String BOTCLIENT_TOKEN = "1221";
+    
+    public static final double METERS_PER_INCH = 0.0254;
 }

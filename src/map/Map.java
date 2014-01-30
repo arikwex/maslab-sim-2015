@@ -24,8 +24,6 @@ public class Map {
 
 	public Point ShelterLocation;
 
-	public Fiducial[] fiducials;
-
 	private ArrayList<MapBlock> blocksIShouldSee;
 
     Map() {
@@ -148,7 +146,6 @@ public class Map {
 		this.blocks = m.blocks;
 		this.obstacles = m.obstacles;
 		this.bot = m.bot;
-		this.fiducials = m.fiducials;
 		this.worldBounds = m.worldBounds;
 		this.worldRect = m.worldRect;
 		this.robotGoal = m.robotGoal;
