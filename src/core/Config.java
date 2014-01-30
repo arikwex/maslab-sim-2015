@@ -50,6 +50,7 @@ public class Config {
 
     public static final double WHEELBASE = .435;
     public static final double TICKS_PER_REV = 133236;
+    public static final double METERS_PER_REV = 0.3; // TODO: Measure and update this
     public static final double WHEEL_RADIUS = .0625;
     public static final double METERS_PER_TICK = (WHEEL_RADIUS * Math.PI * 2) / TICKS_PER_REV;
     public static final double MAX_VELOCITY = WHEEL_RADIUS * Math.PI * 2 * 1.183;
@@ -103,8 +104,16 @@ public class Config {
 
 	public static final double COLLISION_MARGIN = -0.00;
 	
-	public static final int ONE_BLOCK_PIN = 6;
-	public static final int TWO_BLOCK_PIN = 7;
+	public static final int MOTOR_LEFT_PWM_PIN = 0;
+	public static final int MOTOR_RIGHT_PWM_PIN = 1;
+	public static final int SERVO_GRIP_PIN = 2;
+	public static final int SERVO_ELEVATION_PIN = 3;
+	public static final int BALL_LAUNCHER_PIN = 4;
+	public static final int RANGE_SENSOR_PIN = 5;
+	public static final int ENCODER_LEFT_PIN_A = 6;
+	public static final int ENCODER_LEFT_PIN_B = 7;
+	public static final int ENCODER_RIGHT_PIN_A = 8;
+	public static final int ENCODER_RIGHT_PIN_B = 9;
 
 	public static final String DELTA_PORT_NAMES[] = {
         "/dev/tty.usbserial-A9007UX1", // Mac OS X

@@ -4,20 +4,19 @@ import java.io.IOException;
 import java.text.ParseException;
 
 import logging.Log;
-import logging.RobotGraph;
 import map.Map;
 import map.ParseMap;
-import control.Control;
-import data_collection.DataCollection;
-import orc.Orc;
 import rrt.PathPlanning;
 import state_machine.StateMachine;
-import uORCInterface.OrcController;
+
+import comm.MapleComm;
+
+import control.Control;
+import data_collection.DataCollection;
 
 public class Overlord extends Thread {
 
-	OrcController orcControl;
-	Orc orc;
+    MapleComm comm;
 
 	DataCollection dc;
 	StateEstimator se;
@@ -27,7 +26,6 @@ public class Overlord extends Thread {
 
 	Log l;
 	private long startTime;
-	private Delta delta;
 	private Map map;
 
 	public Overlord() {
@@ -40,17 +38,12 @@ public class Overlord extends Thread {
 
 			try {Thread.sleep(2000);} catch (InterruptedException e) {}
 			
-			orcControl = new OrcController(new int[] { 0, 1 });
-			orc = Orc.makeOrc();
-			
-			
 			dc = DataCollection.getInstance();
 			se = StateEstimator.getInstance();
 			se.numBlocksLeft = map.getBlocks().size();
 			sm = StateMachine.getInstance();
 			pp = PathPlanning.getInstance();
 			c = Control.getInstance();
-			delta = Delta.getInstance();
 			
 			try {Thread.sleep(2000);} catch (InterruptedException e) {}
 			
@@ -77,8 +70,6 @@ public class Overlord extends Thread {
 			pp.step();
 			System.out.println(se.getCaptureStatus());
 			c.step();
-			
-			delta.step();
 			
 			l.updatePose();
 			try {Thread.sleep(50-(System.currentTimeMillis()-startTime));} catch (Exception e){};

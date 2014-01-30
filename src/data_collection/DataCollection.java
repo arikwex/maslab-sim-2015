@@ -1,47 +1,27 @@
 package data_collection;
 
-import java.util.ArrayList;
+import hardware.Hardware;
 
-import logging.Log;
+import java.util.ArrayList;
 
 import core.Block;
 import core.Config;
-import core.Delta;
-
-import firmware_interfaces.SonarInterface;
-
-import orc.Orc;
-import uORCInterface.OrcController;
-import vision.ObjectPositionDetect;
 
 public class DataCollection {
 
     private static DataCollection instance;
     
-    private OrcController orc;
+    private Hardware hw;
     
-    private EncoderPair encoders;
-    private SonarInterface sonarInterface;
-    private ObjectPositionDetect vision;
-    
-    private ArrayList<Sonar> sonars;
-    private Delta delta;
     private ArrayList<Block> blocksInVision;
     
     private boolean[] digitalIn;
     
     
-    
     private DataCollection() {
-        orc = new OrcController(new int[] {0,1});
+        hw = Hardware.getInstance();
         
-        digitalIn = new boolean[8];
-        
-        encoders = new EncoderPair();
-        //sonarInterface = new SonarInterface();
-        //sonars = sonarInterface.getSonars();
-
-        vision = ObjectPositionDetect.getInstance();
+        digitalIn = new boolean[1];
 
         blocksInVision = new ArrayList<Block>();
     }
@@ -52,23 +32,18 @@ public class DataCollection {
         return instance;   
     }
 
-    public void step() {
-        encoders.sample();
-        
+    public void step() {        
         sampleDigitalPins();
         
         //sonarInterface.sample();
-    	vision.step();
-        blocksInVision = vision.blocks;
+        
+        // TODO: Add vision processing step here
+    	//vision.step();
+        //blocksInVision = vision.blocks;
     }
     
     private void sampleDigitalPins() {
-        digitalIn[Config.ONE_BLOCK_PIN] = orc.digitalRead(Config.ONE_BLOCK_PIN);
-        digitalIn[Config.TWO_BLOCK_PIN] = orc.digitalRead(Config.TWO_BLOCK_PIN);
-    }
-
-    public ArrayList<Sonar> getSonars() {
-        return sonars;
+        digitalIn[Config.RANGE_SENSOR_PIN] = hw.range_sensor.getValue();
     }
 
     public ArrayList<Block> getBlocks() {
@@ -78,17 +53,4 @@ public class DataCollection {
     public boolean[] getDigitalPins() {
         return digitalIn;
     }
-    
-    public EncoderPair getEncoders() {
-        return encoders;
-    }
-    
-    public void log() {
-    	if (encoders == null){
-    		Log.log("No encoders");
-    		return;
-    	}
-    	Log.log(encoders.toString());
-    }
-    
 }

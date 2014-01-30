@@ -1,22 +1,23 @@
 package core;
 
+import hardware.Hardware;
+
 import java.util.ArrayList;
 
-import utils.Utils;
-
-import data_collection.DataCollection;
-import data_collection.EncoderPair;
 import logging.Log;
 import map.Map;
 import map.MapBlock;
 import map.Pose;
 import map.Robot;
 import map.Segment;
+import utils.Utils;
+import data_collection.DataCollection;
 
 public class StateEstimator implements Runnable {
     private static StateEstimator instance;
 
     private DataCollection dc;
+    private Hardware hw;
 
     boolean ready = false;
     public boolean[] tooClose;
@@ -33,6 +34,7 @@ public class StateEstimator implements Runnable {
     private StateEstimator() {
         map = Map.getInstance();
         dc = DataCollection.getInstance();
+        hw = Hardware.getInstance();
         started = false;
     }
 
@@ -51,13 +53,8 @@ public class StateEstimator implements Runnable {
     }
 
     public void updatePose() {
-        if (dc.getEncoders() == null) {
-            return;
-        }
-        EncoderPair enc = dc.getEncoders();
-
-        double dl = enc.dLeft * Config.METERS_PER_TICK;
-        double dr = enc.dRight * Config.METERS_PER_TICK;
+        double dl = hw.encoder_left.getDeltaAngularDistance() * Config.METERS_PER_REV;
+        double dr = hw.encoder_right.getDeltaAngularDistance() * Config.METERS_PER_REV;
 
         if (dr == 0 && dl == 0)
             return; // we haven't moved at all
@@ -74,8 +71,8 @@ public class StateEstimator implements Runnable {
         Pose nextPose = new Pose(newX, newY, newTheta);
         bot.pose = nextPose;
 
-         if (map.checkSegment(new Segment(bot.pose,nextPose),bot.pose.theta))
-         bot.pose = nextPose;
+        if (map.checkSegment(new Segment(bot.pose,nextPose),bot.pose.theta))
+            bot.pose = nextPose;
     }
 
     public void updateBlocks() {
@@ -91,6 +88,7 @@ public class StateEstimator implements Runnable {
         }
     }
 
+    /*
     public void sonarCheck() {
         anyTooClose = false;
         if (tooClose == null)
@@ -101,17 +99,11 @@ public class StateEstimator implements Runnable {
                 anyTooClose = true;
         }
     }
+    */
 
     // returns zero for no block, 1 for single block 2 for double block;
     public int getCaptureStatus() {
-        boolean[] digitalIn = dc.getDigitalPins();
-        boolean one = digitalIn[Config.ONE_BLOCK_PIN];
-        boolean two = digitalIn[Config.TWO_BLOCK_PIN];
-
-        if (one && two)
-            return 2;
-        if (one && !two)
-            return 1;
+        // TODO: Update this based on state?
         return 0;
     }
 

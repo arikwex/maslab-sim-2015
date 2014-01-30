@@ -20,8 +20,8 @@ public class StateMachine {
     
     public void step() {
     	if (state == null) {
-    	    state = new ExploreState();
-    	    //state = new AssemblyState();
+    	    // TODO: Implement states, and set a reasonable start state
+    	    state = new DoNothingState();
     	}
         state = state.step();
     }

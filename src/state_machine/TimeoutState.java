@@ -11,18 +11,7 @@ public class TimeoutState extends State{
     }
 
     protected State transition() {
-    	Map map = Map.getInstance();
-    	if (prev.getClass() == ExploreState.class ||prev.getClass() == CollectState.class||prev.getClass() == FindShelterState.class){
-/*    		return new ExploreState();
-    	}
-    	    	
-    	else if (prev.getClass() == FindShelterState.class){
-*/
-    		map.ShelterLocation = map.bot.pose;
-    		return new AssemblyState();
-    	}
-    	else if (prev.getClass() == AssemblyState.class )
-    		return new StopState();
+    	// TODO: Implement a reasonable timeout action
         return this;
     }
     

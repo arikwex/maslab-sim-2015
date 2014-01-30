@@ -1,19 +1,17 @@
 package control;
 
-import core.Config;
-import data_collection.EncoderPair;
-import rrt.PathPlanning;
+import hardware.Hardware;
 import map.Map;
 import map.Point;
-import map.Pose;
 import map.Robot;
-import map.Segment;
-import uORCInterface.OrcController;
+import rrt.PathPlanning;
 import utils.Utils;
+import core.Config;
 
 public class Control {
     private static Control instance;
     
+    private Hardware hw;
     private PathPlanning pp;
     private Robot bot;
 
@@ -24,7 +22,7 @@ public class Control {
     private PID velPid;
 
     public Control() {
-    	OrcController orc = new OrcController(new int[]{0,1});
+        this.hw = Hardware.getInstance();
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
@@ -34,8 +32,8 @@ public class Control {
         velPid = new PID(3, 0, 0, 0, .2);
         velPid.start(0, 0);
         
-        leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
-        rightController = new WheelVelocityController(orc, WheelVelocityController.RIGHT);
+        leftController = new WheelVelocityController(hw, WheelVelocityController.LEFT);
+        rightController = new WheelVelocityController(hw, WheelVelocityController.RIGHT);
 
     }
     
@@ -59,6 +57,7 @@ public class Control {
         goToWaypoint();
         leftController.step();
         rightController.step();
+        hw.step();
     }
 
     public void goToWaypoint() {
@@ -87,13 +86,12 @@ public class Control {
     
     
     public static void main(String[] Args){
-    	OrcController orc = new OrcController(new int[]{0,1});
-    	WheelVelocityController leftController = new WheelVelocityController(orc, WheelVelocityController.LEFT);
-    	WheelVelocityController rightController = new WheelVelocityController(orc, WheelVelocityController.RIGHT);
+        Hardware hw = Hardware.getInstance();
+    	WheelVelocityController leftController = new WheelVelocityController(hw, WheelVelocityController.LEFT);
+    	WheelVelocityController rightController = new WheelVelocityController(hw, WheelVelocityController.RIGHT);
     	double theta = 0;
     	double x = 0;
     	double y = 0;
-    	EncoderPair enc = new EncoderPair();
     	leftController.setVelocity(0.2);
 		rightController.setVelocity(0.2);
 		double l = 0;
@@ -103,19 +101,8 @@ public class Control {
     		System.out.println("r = "+ r);
     		leftController.step();
     		rightController.step();
-    		enc.sample();
-    		/*
-    		double dl = enc.dLeft * Config.METERS_PER_TICK;
-    		double dr = enc.dRight * Config.METERS_PER_TICK;
-    		double dTheta = (dr - dl) / Config.WHEELBASE;
-    		double newTheta = theta + dTheta;
-    		x = x + (dl + dr) * Math.cos(theta) / 2.0;
-            y = y + (dl + dr) * Math.sin(theta) / 2.0;
-    		theta = newTheta;
-			*/
-    
-    		l = enc.left* Config.METERS_PER_TICK;
-    		r = enc.right*Config.METERS_PER_TICK;
+    		l = hw.encoder_left.getDeltaAngularDistance() * Config.METERS_PER_REV;
+    		r = hw.encoder_right.getDeltaAngularDistance() * Config.METERS_PER_REV;
     		if (l >= 1){
     			
     			rightController.setVelocity(0);

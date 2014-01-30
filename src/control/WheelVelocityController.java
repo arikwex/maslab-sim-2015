@@ -1,16 +1,13 @@
 package control;
 
-import uORCInterface.OrcController;
+import hardware.Hardware;
 import core.Config;
-import data_collection.DataCollection;
-import data_collection.EncoderPair;
 
 public class WheelVelocityController {
     public static final int LEFT = 0;
     public static final int RIGHT = 1;
     
     private int wheel;
-    private EncoderPair enc;
     
     private double targetVel = 0;
     private int currPwm = 0;
@@ -19,16 +16,15 @@ public class WheelVelocityController {
     private static final int SLEW_LIM = 1000; //pwm units per second
     private PID pid;
     
-    private OrcController orc;
+    private Hardware hw;
     
     
-    public WheelVelocityController(OrcController orc, int wheel) {
-        this.orc = orc;
+    public WheelVelocityController(Hardware hw, int wheel) {
+        this.hw = hw;
         this.wheel = wheel;
         this.pid = new PID(0, 5, 0, 0, 128);
         pid.start(0, 0);
         prevTime = System.currentTimeMillis();
-        enc = DataCollection.getInstance().getEncoders();
     }
     
     public void setVelocity(double v) {
@@ -44,7 +40,10 @@ public class WheelVelocityController {
         applySlew(targetPwm);
         //currPwm = targetPwm;
         
-        orc.motorSet(wheel, currPwm);
+        if (wheel == LEFT)
+            hw.motor_left.setValue(currPwm);
+        else
+            hw.motor_right.setValue(currPwm);
     }
     
     private void applySlew(int targetPwm) {
@@ -71,17 +70,17 @@ public class WheelVelocityController {
         
         double actual = Config.METERS_PER_TICK;
         if (wheel == LEFT)
-            actual *= enc.dLeft / enc.dt;
+            actual *= hw.encoder_left.getAngularSpeed();
         else
-            actual *= enc.dRight / enc.dt;
+            actual *= hw.encoder_right.getAngularSpeed();
         
         return (int)Math.round(pid.step(actual) + ff);
     }
     
     public static void main(String[] args) {
-		OrcController orc = new OrcController(new int[]{0,1});
-        WheelVelocityController left = new WheelVelocityController(orc, 0);
-        WheelVelocityController right = new WheelVelocityController(orc, 1);
+		Hardware hw = Hardware.getInstance();
+        WheelVelocityController left = new WheelVelocityController(hw, 0);
+        WheelVelocityController right = new WheelVelocityController(hw, 1);
         left.setVelocity(-.2);
         right.setVelocity(-.2);
 		while (true) {

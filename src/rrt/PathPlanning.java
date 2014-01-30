@@ -1,10 +1,9 @@
 package rrt;
 
+import hardware.Hardware;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
-
-import core.Config;
-import core.StateEstimator;
 
 import logging.Log;
 import map.Map;
@@ -14,8 +13,9 @@ import map.Polygon;
 import map.Pose;
 import map.Segment;
 import state_machine.StateMachine;
-import uORCInterface.OrcController;
 import utils.Utils;
+import core.Config;
+import core.StateEstimator;
 
 public class PathPlanning {
 	private static PathPlanning instance;
@@ -151,9 +151,9 @@ public class PathPlanning {
 			return;
 		}
 		
-		OrcController orc = new OrcController(new int[] {0,1});
-		orc.motorSet(0, 0);
-		orc.motorSet(1, 0);
+		Hardware hw = Hardware.getInstance();
+		hw.motor_left.setValue(0);
+		hw.motor_right.setValue(0);
 
 		long count = 0;
 		while (true) {
