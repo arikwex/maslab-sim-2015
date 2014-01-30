@@ -43,7 +43,7 @@ public class DataCollection {
     }
     
     private void sampleDigitalPins() {
-        digitalIn[Config.RANGE_SENSOR_PIN] = hw.range_sensor.getValue();
+        digitalIn[0] = hw.range_sensor.getValue();
     }
 
     public ArrayList<Block> getBlocks() {

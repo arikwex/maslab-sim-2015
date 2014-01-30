@@ -28,6 +28,6 @@ public class Log {
     }
     
     public synchronized static void log(String s) {
-//    	System.out.println(s);
+    	System.out.println(s);
     }
 }

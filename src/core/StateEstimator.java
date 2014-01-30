@@ -53,6 +53,7 @@ public class StateEstimator implements Runnable {
     }
 
     public void updatePose() {
+        hw.updateSensorData();
         double dl = hw.encoder_left.getDeltaAngularDistance() * Config.METERS_PER_REV;
         double dr = hw.encoder_right.getDeltaAngularDistance() * Config.METERS_PER_REV;
 

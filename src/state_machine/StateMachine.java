@@ -21,7 +21,7 @@ public class StateMachine {
     public void step() {
     	if (state == null) {
     	    // TODO: Implement states, and set a reasonable start state
-    	    state = new DoNothingState();
+    	    state = new ExploreState();
     	}
         state = state.step();
     }

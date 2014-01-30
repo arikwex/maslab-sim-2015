@@ -46,6 +46,9 @@ public class Hardware {
         comm.registerDevice(servo_grip);
         comm.registerDevice(servo_elevation);
         comm.registerDevice(ball_launcher);
+        comm.registerDevice(range_sensor);
+        comm.registerDevice(encoder_left);
+        comm.registerDevice(encoder_right);
         comm.initialize();
     }
     
