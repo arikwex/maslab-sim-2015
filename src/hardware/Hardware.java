@@ -4,6 +4,7 @@ import comm.MapleComm;
 import comm.MapleIO;
 
 import core.Config;
+import devices.actuators.Cytron;
 import devices.actuators.DigitalOutput;
 import devices.actuators.PWMOutput;
 import devices.actuators.Servo;
@@ -15,8 +16,8 @@ public class Hardware {
     private static Hardware instance;
     
     private MapleComm comm;
-    public PWMOutput motor_left;
-    public PWMOutput motor_right;
+    public Cytron motor_left;
+    public Cytron motor_right;
     public Servo servo_grip;
     public Servo servo_elevation;
     public DigitalOutput ball_launcher;
@@ -30,8 +31,8 @@ public class Hardware {
         
         // Initialize devices
         // TODO: Get actual pin numbers and servo types
-        motor_left = new PWMOutput(Config.MOTOR_LEFT_PWM_PIN);
-        motor_right = new PWMOutput(Config.MOTOR_RIGHT_PWM_PIN);
+        motor_left = new Cytron(Config.MOTOR_LEFT_DIR_PIN, Config.MOTOR_LEFT_PWM_PIN);
+        motor_right = new Cytron(Config.MOTOR_RIGHT_DIR_PIN, Config.MOTOR_RIGHT_PWM_PIN);
         servo_grip = new Servo6001HB(Config.SERVO_GRIP_PIN);
         servo_elevation = new Servo6001HB(Config.SERVO_ELEVATION_PIN);
         ball_launcher = new DigitalOutput(Config.BALL_LAUNCHER_PIN);
@@ -57,5 +58,6 @@ public class Hardware {
     
     public void step() {
         comm.transmit();
+        comm.updateSensorData();
     }
 }

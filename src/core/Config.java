@@ -103,17 +103,19 @@ public class Config {
 	public static final double ROBOT_RADIUS = 0.2;
 
 	public static final double COLLISION_MARGIN = -0.00;
-	
-	public static final int MOTOR_LEFT_PWM_PIN = 0;
-	public static final int MOTOR_RIGHT_PWM_PIN = 1;
-	public static final int SERVO_GRIP_PIN = 2;
-	public static final int SERVO_ELEVATION_PIN = 3;
-	public static final int BALL_LAUNCHER_PIN = 4;
-	public static final int RANGE_SENSOR_PIN = 5;
-	public static final int ENCODER_LEFT_PIN_A = 6;
-	public static final int ENCODER_LEFT_PIN_B = 7;
-	public static final int ENCODER_RIGHT_PIN_A = 8;
-	public static final int ENCODER_RIGHT_PIN_B = 9;
+
+    public static final int MOTOR_LEFT_DIR_PIN = 8;
+	public static final int MOTOR_LEFT_PWM_PIN = 7;
+    public static final int MOTOR_RIGHT_DIR_PIN = 10;
+	public static final int MOTOR_RIGHT_PWM_PIN = 9;
+	public static final int SERVO_GRIP_PIN = 12;
+	public static final int SERVO_ELEVATION_PIN = 11;
+	public static final int BALL_LAUNCHER_PIN = 37;
+	public static final int RANGE_SENSOR_PIN = 36;
+	public static final int ENCODER_LEFT_PIN_A = 29;
+	public static final int ENCODER_LEFT_PIN_B = 30;
+	public static final int ENCODER_RIGHT_PIN_A = 31;
+	public static final int ENCODER_RIGHT_PIN_B = 32;
 
 	public static final String DELTA_PORT_NAMES[] = {
         "/dev/tty.usbserial-A9007UX1", // Mac OS X
