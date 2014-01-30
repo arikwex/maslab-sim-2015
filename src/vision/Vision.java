@@ -28,7 +28,7 @@ public class Vision implements VisionInterface {
     	Vision v = Vision.getInstance();
     	//v.snapshot();
     	try { 
-    		v.process( ImageIO.read( new File("camera\\maslab_0.png") ) );
+    		v.process( ImageIO.read( new File("camera/maslab_0.png") ) );
     	} catch ( Exception e ) {
     		e.printStackTrace();
     	}
@@ -44,10 +44,10 @@ public class Vision implements VisionInterface {
     }
     
     public Vision() {
-    	grabber = new VideoInputFrameGrabber(0);
-    	grabber.setImageWidth(320);
-    	grabber.setImageHeight(240);
-		try { grabber.start(); } catch ( Exception e ) {}
+    	//grabber = new VideoInputFrameGrabber(0);
+    	//grabber.setImageWidth(320);
+    	//grabber.setImageHeight(240);
+		//try { grabber.start(); } catch ( Exception e ) {}
 		
 		blurOp = new FilterOp("blur");
 		colorizeOp = new FilterOp("colorize");

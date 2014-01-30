@@ -5,7 +5,7 @@ uniform float height;
 uniform sampler2D txtr;
 
 void main() {
-	vec4 color = texture(txtr,vec2(x,y),0.0);
+	vec4 color = texture2D(txtr,vec2(x,y),0.0);
 	gl_FragColor = color;
 	
 	float dx = 1.0/width;
@@ -14,8 +14,8 @@ void main() {
 	// clip top of walls
 	float my = y;
 	bool startedWall = false;
-	while ( my < 1 ) {
-		vec4 color = texture(txtr,vec2(x,my),0.0);
+	while ( my < 1.0 ) {
+		vec4 color = texture2D(txtr,vec2(x,my),0.0);
 		
 		// find bottom of wall
 		if ( length(color-vec4(1,1,1,1))<0.01 && startedWall ) {
