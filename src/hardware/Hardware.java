@@ -16,14 +16,14 @@ public class Hardware {
     private static Hardware instance;
     
     private MapleComm comm;
-    public Cytron motor_left;
-    public Cytron motor_right;
-    public Servo servo_grip;
-    public Servo servo_elevation;
-    public DigitalOutput ball_launcher;
-    public DigitalInput range_sensor;
-    public Encoder encoder_left;
-    public Encoder encoder_right;
+    public Cytron motorLeft;
+    public Cytron motorRight;
+    public Servo servoGrip;
+    public Servo servoElevation;
+    public DigitalOutput ballLauncher;
+    public DigitalInput rangeSensor;
+    public Encoder encoderLeft;
+    public Encoder encoderRight;
     
     public Hardware() {
         // Initialize MapleComm
@@ -31,24 +31,24 @@ public class Hardware {
         
         // Initialize devices
         // TODO: Get actual pin numbers and servo types
-        motor_left = new Cytron(Config.MOTOR_LEFT_DIR_PIN, Config.MOTOR_LEFT_PWM_PIN);
-        motor_right = new Cytron(Config.MOTOR_RIGHT_DIR_PIN, Config.MOTOR_RIGHT_PWM_PIN);
-        servo_grip = new Servo6001HB(Config.SERVO_GRIP_PIN);
-        servo_elevation = new Servo6001HB(Config.SERVO_ELEVATION_PIN);
-        ball_launcher = new DigitalOutput(Config.BALL_LAUNCHER_PIN);
-        range_sensor = new DigitalInput(Config.RANGE_SENSOR_PIN);
-        encoder_left = new Encoder(Config.ENCODER_LEFT_PIN_A, Config.ENCODER_LEFT_PIN_B);
-        encoder_right = new Encoder(Config.ENCODER_RIGHT_PIN_A, Config.ENCODER_RIGHT_PIN_B);
+        motorLeft = new Cytron(Config.MOTOR_LEFT_DIR_PIN, Config.MOTOR_LEFT_PWM_PIN);
+        motorRight = new Cytron(Config.MOTOR_RIGHT_DIR_PIN, Config.MOTOR_RIGHT_PWM_PIN);
+        servoGrip = new Servo6001HB(Config.SERVO_GRIP_PIN);
+        servoElevation = new Servo6001HB(Config.SERVO_ELEVATION_PIN);
+        ballLauncher = new DigitalOutput(Config.BALL_LAUNCHER_PIN);
+        rangeSensor = new DigitalInput(Config.RANGE_SENSOR_PIN);
+        encoderLeft = new Encoder(Config.ENCODER_LEFT_PIN_A, Config.ENCODER_LEFT_PIN_B);
+        encoderRight = new Encoder(Config.ENCODER_RIGHT_PIN_A, Config.ENCODER_RIGHT_PIN_B);
         
         // Register devices and initialize Maple
-        comm.registerDevice(motor_left);
-        comm.registerDevice(motor_right);
-        comm.registerDevice(servo_grip);
-        comm.registerDevice(servo_elevation);
-        comm.registerDevice(ball_launcher);
-        comm.registerDevice(range_sensor);
-        comm.registerDevice(encoder_left);
-        comm.registerDevice(encoder_right);
+        comm.registerDevice(motorLeft);
+        comm.registerDevice(motorRight);
+        comm.registerDevice(servoGrip);
+        comm.registerDevice(servoElevation);
+        comm.registerDevice(ballLauncher);
+        comm.registerDevice(rangeSensor);
+        comm.registerDevice(encoderLeft);
+        comm.registerDevice(encoderRight);
         comm.initialize();
     }
     

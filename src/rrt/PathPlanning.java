@@ -152,8 +152,8 @@ public class PathPlanning {
 		}
 		
 		Hardware hw = Hardware.getInstance();
-		hw.motor_left.setSpeed(0);
-		hw.motor_right.setSpeed(0);
+		hw.motorLeft.setSpeed(0);
+		hw.motorRight.setSpeed(0);
 
 		long count = 0;
 		while (true) {

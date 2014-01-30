@@ -17,7 +17,7 @@ public class TrackBallState extends State {
     protected State transition() {
         hw.updateSensorData();
         // Range sensor detects ball
-        if (!hw.range_sensor.getValue()) {
+        if (!hw.rangeSensor.getValue()) {
             return new GrabBallState();
         }
         else{

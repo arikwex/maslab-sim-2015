@@ -101,8 +101,8 @@ public class Control {
     		System.out.println("r = "+ r);
     		leftController.step();
     		rightController.step();
-    		l = hw.encoder_left.getDeltaAngularDistance() * Config.METERS_PER_REV;
-    		r = hw.encoder_right.getDeltaAngularDistance() * Config.METERS_PER_REV;
+    		l = hw.encoderLeft.getDeltaAngularDistance() * Config.METERS_PER_REV;
+    		r = hw.encoderRight.getDeltaAngularDistance() * Config.METERS_PER_REV;
     		if (l >= 1){
     			
     			rightController.setVelocity(0);

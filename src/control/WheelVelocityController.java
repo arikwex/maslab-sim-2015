@@ -42,9 +42,9 @@ public class WheelVelocityController {
         
         // TODO: Double check that currPwm is okay in setSpeed
         if (wheel == LEFT)
-            hw.motor_left.setSpeed(currPwm);
+            hw.motorLeft.setSpeed(currPwm);
         else
-            hw.motor_right.setSpeed(currPwm);
+            hw.motorRight.setSpeed(currPwm);
     }
     
     private void applySlew(int targetPwm) {
@@ -71,9 +71,9 @@ public class WheelVelocityController {
         
         double actual = Config.METERS_PER_TICK;
         if (wheel == LEFT)
-            actual *= hw.encoder_left.getAngularSpeed();
+            actual *= hw.encoderLeft.getAngularSpeed();
         else
-            actual *= hw.encoder_right.getAngularSpeed();
+            actual *= hw.encoderRight.getAngularSpeed();
         
         return (int)Math.round(pid.step(actual) + ff);
     }
