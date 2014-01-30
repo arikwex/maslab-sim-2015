@@ -27,7 +27,7 @@ public class Hardware {
     
     public Hardware() {
         // Initialize MapleComm
-        comm = new MapleComm(MapleIO.SerialPortType.LINUX);
+        comm = new MapleComm(MapleIO.SerialPortType.WINDOWS);
         
         // Initialize devices
         // TODO: Get actual pin numbers and servo types

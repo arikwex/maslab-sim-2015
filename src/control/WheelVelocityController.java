@@ -22,7 +22,7 @@ public class WheelVelocityController {
     public WheelVelocityController(Hardware hw, int wheel) {
         this.hw = hw;
         this.wheel = wheel;
-        this.pid = new PID(0, .2, 0, .1, 1.0);
+        this.pid = new PID(0, .04, 0, .05, 1.0);
         pid.start(0, 0);
         prevTime = System.currentTimeMillis();
     }
@@ -42,7 +42,7 @@ public class WheelVelocityController {
         if (wheel == LEFT)
             hw.motorLeft.setSpeed(currentOut);
         else
-            hw.motorRight.setSpeed(-currentOut);
+            hw.motorRight.setSpeed(currentOut);
     }
     
     private void applySlew(int targetPwm) {
@@ -65,13 +65,14 @@ public class WheelVelocityController {
     }
 
     private double computeTargetOut() {
-        double ff = 1.0 * targetVel/Config.MAX_VELOCITY;
+        double ff = .02 + 1.0 * targetVel/Config.MAX_VELOCITY;
         
         double actual = Config.WHEEL_RADIUS;
         if (wheel == RIGHT)
         	actual *= hw.encoderRight.getAngularSpeed();
         else
         	actual *= hw.encoderLeft.getAngularSpeed();
+        
         System.out.println("Actual: " + wheel + " " + actual + " desired " + targetVel);
         
         return pid.step(actual) + ff;

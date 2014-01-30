@@ -10,7 +10,7 @@ import core.BotClientSingleton;
 import core.Config;
 
 public class BotClientMapLoader {
-	private static final String MAP_STRING = "22.00:3.00,2.00,3.14:0.00,0.00,0.00,2.00,N:0.00,2.00,1.00,3.00,N:1.00,3.00,3.00,3.00,N:3.00,3.00,4.00,3.00,R:4.00,3.00,4.00,1.00,N:4.00,1.00,2.00,1.00,N:2.00,1.00,1.00,0.00,N:1.00,0.00,0.00,0.00,R:";
+	private static final String MAP_STRING = "22.00:3.00,2.00,3.14:0.00,0.00,0.00,2.00,N:0.00,2.00,1.00,3.00,N:1.00,3.00,3.00,3.00,N:3.00,3.00,4.00,3.00,R:4.00,3.00,4.00,1.00,N:4.00,1.00,2.00,1.00,N:2.00,1.00,1.00,0.00,N:1.00,0.00,0.00,0.00,R:2,1,1.2,1.8,N";
 	
 	public static Map loadMap() {
 		Map m = new Map();
@@ -23,9 +23,9 @@ public class BotClientMapLoader {
 		final double scaleFactor = Config.METERS_PER_INCH * bcMap.gridSize;
 
 		double minX = Double.POSITIVE_INFINITY,
-				maxX = Double.POSITIVE_INFINITY,
+				maxX = Double.NEGATIVE_INFINITY,
 				minY = Double.POSITIVE_INFINITY,
-				maxY = Double.POSITIVE_INFINITY;
+				maxY = Double.NEGATIVE_INFINITY;
 		System.out.println("Loading obstacles");
 		m.obstacles = new ArrayList<Obstacle>();
 		for (int i = 0; i < bcMap.walls.size(); i++) {
@@ -59,7 +59,9 @@ public class BotClientMapLoader {
 
 		m.bot = new Robot(bcMap.startPose.x * scaleFactor, bcMap.startPose.y * scaleFactor, bcMap.startPose.theta);
 		
-		m.worldRect = new Rectangle2D.Double(minX, minY, maxX, maxY);
+		m.worldRect = new Rectangle2D.Double(minX * scaleFactor, minY * scaleFactor, maxX * scaleFactor, maxY * scaleFactor);
+		
+		System.out.println("World rect: " + m.worldRect);
 
 		return m;
 	}

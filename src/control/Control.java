@@ -27,10 +27,10 @@ public class Control {
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
-        rotPid = new PID(.05, 0, 0, 0, .2);
+        rotPid = new PID(.03, 0, 0, 0, .15);
         rotPid.start(0, 0);
 
-        velPid = new PID(1, 0, 0, 0, .2);
+        velPid = new PID(2, 0, 0, 0, .2);
         velPid.start(0, 0);
         
         leftController = new WheelVelocityController(hw, WheelVelocityController.LEFT);
@@ -45,7 +45,7 @@ public class Control {
     }
     
     private void setMotion(double vel, double rot) {
-        setVelocity(vel + rot, vel - rot);
+        setVelocity(vel - rot, vel + rot);
     }
     
     private void setVelocity(double left, double right) {    	
@@ -72,7 +72,10 @@ public class Control {
         double distance = bot.pose.distance(wayPoint);
         double thetaErr = Math.toDegrees(Utils.thetaDiff(bot.pose.theta, bot.pose.angleTo(wayPoint)));
 
-        double vel = velPid.step(distance);
+        double vel = velPid.step(-distance);
+        
+        Log.log("Desired vel: " + vel);
+        
         if (Math.abs(thetaErr) < 7)
         	vel *= (7-Math.abs(thetaErr)) / 7;
         else
@@ -81,6 +84,6 @@ public class Control {
         double rot = rotPid.step(-thetaErr);
         
         setMotion(vel, rot);
-        Log.log("From: " + bot.pose + " to:" + wayPoint + " with theta " + bot.pose.angleTo(wayPoint) + " and distance " + distance);
+        Log.log("From: " + bot.pose + " to:" + wayPoint + " with theta " + bot.pose.angleTo(wayPoint) + " and distance " + distance + " theta err " + thetaErr);
     }
 }
