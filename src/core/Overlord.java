@@ -9,14 +9,10 @@ import map.ParseMap;
 import rrt.PathPlanning;
 import state_machine.StateMachine;
 
-import comm.MapleComm;
-
 import control.Control;
 import data_collection.DataCollection;
 
 public class Overlord extends Thread {
-
-    MapleComm comm;
 
 	DataCollection dc;
 	StateEstimator se;

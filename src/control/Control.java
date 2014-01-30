@@ -57,7 +57,7 @@ public class Control {
         goToWaypoint();
         leftController.step();
         rightController.step();
-        hw.step();
+        hw.transmit();
     }
 
     public void goToWaypoint() {
