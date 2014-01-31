@@ -28,6 +28,9 @@ public class Vision implements VisionInterface {
 	FilterOp clipTopOp;
 	private static BufferedImage processed;
 	private final int DOWNSAMPLE = 1;
+	
+	private ArrayList<Ball> balls = new ArrayList<Ball>();
+	private ArrayList<Wall> walls = new ArrayList<Wall>();
     
     public static void main ( String[] args ) {
     	TestBed tester = new TestBed(640,480);
@@ -102,23 +105,25 @@ public class Vision implements VisionInterface {
     @Override
     public ArrayList<Ball> getBalls() {
         // TODO Auto-generated method stub
-        return null;
+        return balls;
     }
     
     @Override
     public ArrayList<Wall> getWalls() {
+    	/*
         Wall w = new Wall(new Vector2D(0.558, 0.0), new Vector2D(0.558, 0.558), Wall.Type.Wall);
         ArrayList<Wall> a = new ArrayList<Wall>();
         a.add(w);
-        return a;
+        */
+        return walls;
     }
     
     
     public BufferedImage gameObjects( BufferedImage inp ) {
 		BufferedImage res = new BufferedImage(400,400,BufferedImage.TYPE_INT_ARGB);
 		Graphics g = res.getGraphics();
-		List<Ball> balls = new ArrayList<Ball>();
-		List<Wall> walls = new ArrayList<Wall>();
+		balls.clear();
+		walls.clear();
 		Wall currWall = null;
 		Vector2D prevSegment = null;
 		
@@ -138,9 +143,6 @@ public class Vision implements VisionInterface {
 		g.setColor(new Color(0,255,0));
 		g.drawRect(0,0,399,399);
 		g.fillOval((int)(res.getWidth()/2.0-SCALE*ROBOT_DIAM/2.0),(int)(res.getHeight()/2.0-SCALE*ROBOT_DIAM/2.0),(int)(SCALE*ROBOT_DIAM),(int)(SCALE*ROBOT_DIAM));
-		
-		double Xprev = 0;
-		double Zprev = 0;
 		
 		// Map walls
 		for ( int x = 0; x < inp.getWidth(); x+=MAP_STRIDE ) {
@@ -166,8 +168,6 @@ public class Vision implements VisionInterface {
 					}
 					
 					prevSegment = currSegment;
-					Xprev = X;
-					Zprev = Z;
 					y = 10000;
 				}
 			}
