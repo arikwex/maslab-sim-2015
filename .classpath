@@ -15,7 +15,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Arikwex/Desktop/Eclipse/ShaderCL/ShaderCL/ShaderCL.jar"/>
-	<classpathentry kind="lib" path="lib/javacv/javacv-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/javacv.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openCV-goog0.6"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

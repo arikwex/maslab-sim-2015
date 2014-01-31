@@ -129,6 +129,7 @@ public class StateEstimator implements Runnable {
     	// Get all vision (local) and map (global) walls
     	// Vision uses bot pointing in positive y direction as reference
     	Vision v = Vision.getInstance();
+    	v.snapshot();
     	Map m = Map.getInstance();
     	ArrayList<vision.Wall> visWalls = v.getWalls();
     	ArrayList<comm.BotClientMap.Wall> mapWalls = m.walls;

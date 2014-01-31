@@ -42,8 +42,9 @@ public class Vision implements VisionInterface {
     	for ( int i = 0; i <= 100 ; i++ ) {
     		int img = i%7;
 	    	try { 
-	    		v.process( ImageIO.read( new File("camera\\maslab_"+img+".png") ) );
-	    		tester.setImage(processed);
+	    		//v.process( ImageIO.read( new File("camera\\maslab_"+img+".png") ) );
+	    		//tester.setImage(processed);
+	    		v.snapshot();
 	    		Thread.sleep(1000);
 	    	} catch ( Exception e ) {
 	    		e.printStackTrace();
@@ -68,10 +69,10 @@ public class Vision implements VisionInterface {
     }
     
     public Vision() {
-    	//grabber = new VideoInputFrameGrabber(0);
-    	//grabber.setImageWidth(320);
-    	//grabber.setImageHeight(240);
-		//try { grabber.start(); } catch ( Exception e ) {}
+    	grabber = new VideoInputFrameGrabber(0);
+    	grabber.setImageWidth(320);
+    	grabber.setImageHeight(240);
+		try { grabber.start(); } catch ( Exception e ) {}
 		
 		blurOp = new FilterOp("blur");
 		colorizeOp = new FilterOp("colorize");
@@ -85,7 +86,8 @@ public class Vision implements VisionInterface {
     		BufferedImage capture = grabber.grab().getBufferedImage();
     		process(capture);
     	} catch ( Exception e ) {
-    		Log.log("[Vision] " + e.getLocalizedMessage());
+    		e.printStackTrace();
+    		//Log.log("[Vision] " + e);
     	}
     }
     
@@ -238,7 +240,7 @@ public class Vision implements VisionInterface {
 	
 	public Point findBottom( BufferedImage bi, int x, int y, int color ) {
 		int dy = 0;
-		while ( y<bi.getHeight()-2 ) {
+		while ( y<bi.getHeight()-2 && x>10 && x<bi.getWidth()-10 ) {
 			dy++;
 			
 			int mid = bi.getRGB(x, y+1);
