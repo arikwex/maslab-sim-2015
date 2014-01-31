@@ -22,7 +22,7 @@ public class WheelVelocityController {
     public WheelVelocityController(Hardware hw, int wheel) {
         this.hw = hw;
         this.wheel = wheel;
-        this.pid = new PID(0, .04, 0, .05, 1.0);
+        this.pid = new PID(0, .2, 0, 1.0, 1.0);
         pid.start(0, 0);
         prevTime = System.currentTimeMillis();
     }

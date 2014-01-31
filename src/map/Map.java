@@ -3,6 +3,8 @@ package map;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
+import comm.BotClientMap.Wall;
+
 import core.Block;
 import core.Config;
 import core.Config.BlockColor;
@@ -15,6 +17,7 @@ public class Map {
     private ArrayList<Obstacle> worldBounds = null; // world rect in obstacle format.
 
     public ArrayList<Obstacle> obstacles;
+	public ArrayList<Wall> walls;
     public ArrayList<Reactor> reactors;
     private ArrayList<MapBlock> blocks;
     public Robot bot;
@@ -145,6 +148,7 @@ public class Map {
 	public void setMap(Map m){
 		this.blocks = m.blocks;
 		this.obstacles = m.obstacles;
+		this.walls = m.walls;
 		this.bot = m.bot;
 		this.worldBounds = m.worldBounds;
 		this.worldRect = m.worldRect;

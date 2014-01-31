@@ -65,10 +65,10 @@ public class Vision implements VisionInterface {
     }
     
     public Vision() {
-    	grabber = new VideoInputFrameGrabber(0);
-    	grabber.setImageWidth(320);
-    	grabber.setImageHeight(240);
-		try { grabber.start(); } catch ( Exception e ) {}
+    	//grabber = new VideoInputFrameGrabber(0);
+    	//grabber.setImageWidth(320);
+    	//grabber.setImageHeight(240);
+		//try { grabber.start(); } catch ( Exception e ) {}
 		
 		blurOp = new FilterOp("blur");
 		colorizeOp = new FilterOp("colorize");
@@ -107,8 +107,10 @@ public class Vision implements VisionInterface {
     
     @Override
     public ArrayList<Wall> getWalls() {
-        // TODO Auto-generated method stub
-        return null;
+        Wall w = new Wall(new Vector2D(0.558, 0.0), new Vector2D(0.558, 0.558), Wall.Type.Wall);
+        ArrayList<Wall> a = new ArrayList<Wall>();
+        a.add(w);
+        return a;
     }
     
     

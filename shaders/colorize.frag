@@ -5,15 +5,18 @@ uniform float height;
 uniform sampler2D txtr;
 
 void main() {
-	vec4 color = texture(txtr,vec2(x,y),0.0);
+	vec4 color = texture2D(txtr,vec2(x,y),0.0);
 	gl_FragColor = vec4(0,0,0,1);
 
 	// WHITE WALL
 	// average floor
 	vec4 floor = vec4(0,0,0,0);
 	float N = 0.0;
-	for ( float a = 0;  a < 1; a += 0.05 ) {
-		floor += texture(txtr,vec2(a,0.99),0.0);
+	int i;
+	float a;
+	for ( i = 0;  i < 20; i += 1 ) {
+	    a = 0.05*float(i);
+		floor += texture2D(txtr,vec2(a,0.99),0.0);
 		N += 1.0;
 	}
 	floor /= N;

@@ -14,8 +14,8 @@ void main() {
 	// clip top of walls
 	float my = y+dy;
 	bool startedWall = false;
-	while ( my < 1 ) {
-		vec4 color = texture(txtr,vec2(x,my),0.0);
+	while ( my < 1.0 ) {
+		vec4 color = texture2D(txtr,vec2(x,my),0.0);
 		
 		// scroll down until meeting a blue or teal color, then sepukku
 		if ( length(color-vec4(1,0,0,1))<0.01 || length(color-vec4(1,1,0,1))<0.01 ) {

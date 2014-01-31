@@ -6,7 +6,6 @@ import comm.MapleIO;
 import core.Config;
 import devices.actuators.Cytron;
 import devices.actuators.DigitalOutput;
-import devices.actuators.PWMOutput;
 import devices.actuators.Servo;
 import devices.actuators.Servo6001HB;
 import devices.sensors.DigitalInput;
@@ -30,7 +29,6 @@ public class Hardware {
         comm = new MapleComm(MapleIO.SerialPortType.LINUX);
         
         // Initialize devices
-        // TODO: Get actual pin numbers and servo types
         motorLeft = new Cytron(Config.MOTOR_LEFT_DIR_PIN, Config.MOTOR_LEFT_PWM_PIN);
         motorRight = new Cytron(Config.MOTOR_RIGHT_DIR_PIN, Config.MOTOR_RIGHT_PWM_PIN);
         servoGrip = new Servo6001HB(Config.SERVO_GRIP_PIN);

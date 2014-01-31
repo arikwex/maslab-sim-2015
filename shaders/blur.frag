@@ -2,7 +2,7 @@ varying float x;
 varying float y;
 uniform float width;
 uniform float height;
-uniform int kernel_size = 3; 
+uniform int kernel_size; 
 uniform sampler2D txtr;
 
 void main() {
@@ -16,7 +16,7 @@ void main() {
 		for ( int j = -sz; j <= sz; j++ ) {
 			float dist = float(i*i+j*j);
 			float w = pow(2.0,-dist/float(sz*sz));
-			sum += texture(txtr,vec2(x+float(i)*dx,y+float(j)*dy),0.0)*w;
+			sum += texture2D(txtr,vec2(x+float(i)*dx,y+float(j)*dy),0.0)*w;
 			wt += w;
 		}
 	}
