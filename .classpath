@@ -4,7 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/MaslabBotClient"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/MaslabComm"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/openCV-goog0.6"/>
 	<classpathentry kind="lib" path="C:/Users/Arikwex/workspace/LJWGL/jar/lwjgl.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Arikwex/workspace/LJWGL/native/windows"/>
@@ -16,5 +15,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/Arikwex/Desktop/Eclipse/ShaderCL/ShaderCL/ShaderCL.jar"/>
+	<classpathentry kind="lib" path="lib/javacv/javacv-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="lib/javacv.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

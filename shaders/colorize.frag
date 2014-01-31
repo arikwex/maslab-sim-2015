@@ -18,17 +18,25 @@ void main() {
 	}
 	floor /= N;
 	
-	if ( length(color-floor)>length(color-vec4(1,1,1,1)) ) {
+	if ( length(color-floor)>length(color-vec4(1.1,1.1,1.1,1)) ) {
 		gl_FragColor = vec4(1,1,1,1);
 	}
 
-	// GREEN
-	if ( color.y > color.z*1.2 && color.y > color.x*1.2 )
-		gl_FragColor = vec4(0,1,0,1);
+	// TEAL
+	if ( color.x > color.z*1.2 && color.y > color.z*1.2 && length(color.xyz)>0.7 )
+		gl_FragColor = vec4(1,1,0,1);
 	
 	// BLUE
 	if ( color.x > color.y*1.2 && color.x > color.z*1.2 )
 		gl_FragColor = vec4(1,0,0,1);
+	
+	// PURPLE
+	if ( color.x > color.y*1.35 && color.z > color.y*1.05 && length(color.xyz)>0.7 )
+		gl_FragColor = vec4(1,0,1,1);
+	
+	// GREEN
+	if ( color.y > color.z*1.2 && color.y > color.x*1.2 )
+		gl_FragColor = vec4(0,1,0,1);
 	
 	// RED	
 	if ( color.z > color.y*1.2 && color.z > color.x*1.2 )
