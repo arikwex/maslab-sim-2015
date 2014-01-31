@@ -6,23 +6,21 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import vision.Wall.Type;
+import com.googlecode.javacv.OpenCVFrameGrabber;
 
 import logging.Log;
-
+import vision.Wall.Type;
 import Core.FilterOp;
 
-import com.googlecode.javacv.VideoInputFrameGrabber;
 
 // TODO: Replace this Vision singleton class with actual vision code
 public class Vision implements VisionInterface {
 
     private static Vision instance;
-    private VideoInputFrameGrabber grabber;
+    private OpenCVFrameGrabber grabber;
     FilterOp blurOp;
 	FilterOp colorizeOp;
 	FilterOp clipTopOp;
@@ -53,7 +51,7 @@ public class Vision implements VisionInterface {
     	
     	
     	try { 
-    		v.process( ImageIO.read( new File("camera\\maslab_1.png") ) );
+    		v.process( ImageIO.read( new File("camera/maslab_1.png") ) );
     		tester.setImage(processed);
     		Thread.sleep(1000);
     	} catch ( Exception e ) {
@@ -69,10 +67,13 @@ public class Vision implements VisionInterface {
     }
     
     public Vision() {
-    	grabber = new VideoInputFrameGrabber(0);
+    	grabber = new OpenCVFrameGrabber(0);
     	grabber.setImageWidth(320);
     	grabber.setImageHeight(240);
-		try { grabber.start(); } catch ( Exception e ) {}
+		try { grabber.start(); }
+		catch ( Exception e ) {
+			e.printStackTrace();
+		}
 		
 		blurOp = new FilterOp("blur");
 		colorizeOp = new FilterOp("colorize");
@@ -85,6 +86,7 @@ public class Vision implements VisionInterface {
     	try {
     		BufferedImage capture = grabber.grab().getBufferedImage();
     		process(capture);
+    		System.out.println("Vision snapshot");
     	} catch ( Exception e ) {
     		e.printStackTrace();
     		//Log.log("[Vision] " + e);

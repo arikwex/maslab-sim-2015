@@ -26,7 +26,7 @@ public class Hardware {
     
     public Hardware() {
         // Initialize MapleComm
-        comm = new MapleComm(MapleIO.SerialPortType.WINDOWS);
+        comm = new MapleComm(MapleIO.SerialPortType.LINUX);
         
         // Initialize devices
         motorLeft = new Cytron(Config.MOTOR_LEFT_DIR_PIN, Config.MOTOR_LEFT_PWM_PIN);

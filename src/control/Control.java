@@ -27,7 +27,7 @@ public class Control {
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
-        rotPid = new PID(.03, 0, 0, 0, .15);
+        rotPid = new PID(.3, 0, 0, 0, .15);
         rotPid.start(0, 0);
 
         velPid = new PID(2, 0, 0, 0, .3);

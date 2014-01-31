@@ -5,7 +5,7 @@ uniform float height;
 uniform sampler2D txtr;
 
 void main() {
-	vec4 original = texture(txtr,vec2(x,y),0.0);
+	vec4 original = texture2D(txtr,vec2(x,y),0.0);
 	gl_FragColor = original;
 	
 	float dx = 1.0/width;
@@ -19,7 +19,7 @@ void main() {
 		
 		// scroll down until meeting a blue or teal color, then sepukku
 		if ( length(color-vec4(1,0,0,1))<0.01 || length(color-vec4(1,1,0,1))<0.01 ) {
-			color = texture(txtr,vec2(x,my+2*dy),0.0);
+			color = texture2D(txtr,vec2(x,my+2.0*dy),0.0);
 			//double check
 			if ( length(color-vec4(1,0,0,1))<0.01 || length(color-vec4(1,1,0,1))<0.01 ) {
 				gl_FragColor = vec4(0,0,0,1);
@@ -34,7 +34,7 @@ void main() {
 		return;
 	}
 	
-	vec4 beneath = texture(txtr,vec2(x,y+dy),0.0);
+	vec4 beneath = texture2D(txtr,vec2(x,y+dy),0.0);
 	if ( length(original-vec4(1,1,1,1))<0.01 && length(beneath-vec4(0,0,0,1))<0.01 ) {
 		gl_FragColor = vec4(1,1,1,1);
 		
@@ -42,8 +42,8 @@ void main() {
 		my = y-dy;
 		int consecutive = 0;
 		
-		while ( my > 0 ) {
-			vec4 color = texture(txtr,vec2(x,my),0.0);
+		while ( my > 0.0 ) {
+			vec4 color = texture2D(txtr,vec2(x,my),0.0);
 			
 			// Early cutoff for finding blue or teal
 			if ( length(color-vec4(1,0,0,1))<0.01 || length(color-vec4(1,1,0,1))<0.01 ) {
