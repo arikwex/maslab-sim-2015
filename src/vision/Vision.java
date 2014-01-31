@@ -86,7 +86,9 @@ public class Vision implements VisionInterface {
     
     @Override
     public ArrayList<Wall> getWalls() {
-        // TODO Auto-generated method stub
-        return null;
+        Wall w = new Wall(new Vector2D(0.558, 0.0), new Vector2D(0.558, 0.558), Wall.Type.Wall);
+        ArrayList<Wall> a = new ArrayList<Wall>();
+        a.add(w);
+        return a;
     }
 }

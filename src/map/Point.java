@@ -42,6 +42,10 @@ public class Point extends Point2D {
         return Math.atan2(p.y-this.y, p.x-this.x);
 	}
 	
+	public double distance(Point p) {
+		return Math.sqrt(Math.pow(p.x-this.x, 2) + Math.pow(p.y-this.y,  2));
+	}
+	
 	public Point getRotated(double t) {
 		return new Point(x*Math.cos(t)-y*Math.sin(t), y*Math.cos(t) + x*Math.sin(t));
 	}
@@ -52,5 +56,5 @@ public class Point extends Point2D {
 
 	public String toString() {
 		return "(" + Utils.round(x,2) + " , " + Utils.round(y,2) + ")";
-	}	
+	}
 }

@@ -4,13 +4,18 @@ import hardware.Hardware;
 
 import java.util.ArrayList;
 
-import logging.Log;
 import map.Map;
 import map.MapBlock;
+import map.PointPolar;
 import map.Pose;
 import map.Robot;
 import map.Segment;
 import utils.Utils;
+import vision.Vector2D;
+import vision.Vision;
+
+import comm.BotClientMap.Point;
+
 import data_collection.DataCollection;
 
 public class StateEstimator implements Runnable {
@@ -45,14 +50,15 @@ public class StateEstimator implements Runnable {
     }
 
     public void step() {
-        updatePose();
+        updatePoseEncoder();
+        correctPoseVision();
         // updateBlocks();
         // sonarCheck();
 
         //Log.log(this.toString());
     }
 
-    public void updatePose() {
+    private void updatePoseEncoder() {
         hw.updateSensorData();
         double dl = hw.encoderLeft.getDeltaAngularDistance() * Config.WHEEL_RADIUS;
         double dr = hw.encoderRight.getDeltaAngularDistance() * Config.WHEEL_RADIUS;
@@ -74,6 +80,99 @@ public class StateEstimator implements Runnable {
 
         if (map.checkSegment(new Segment(bot.pose,nextPose),bot.pose.theta))
             bot.pose = nextPose;
+    }
+    
+    // Apply law of cosines, where angle gamma is opposite from side c
+    private double lawOfCosinesTheta(double a, double b, double c) {
+    	return Math.acos((c*c - a*a - b*b) / (-2*a*b));
+    }
+    
+    // Transform a wall segment composed of a local left vector, pointing from the
+    // robot to the left endpoint of the wall, and a similar local right vector,
+    // to an (r,theta) line representation.
+    private PointPolar getPolarLine(Vector2D left, Vector2D right) {
+    	System.out.println("getPolarLine " + left.x + "," + left.y + " - " + right.x + "," + right.y);
+		double oppositeMagnitude = new Vector2D(left.x - right.x, left.y - right.y).getMagnitude();
+		
+		// Law of cosines for both angles
+		double thetaRight = lawOfCosinesTheta(oppositeMagnitude, right.getMagnitude(), left.getMagnitude());
+		double thetaLeft = lawOfCosinesTheta(oppositeMagnitude, left.getMagnitude(), right.getMagnitude());
+		double r, theta;
+		if (thetaRight < Math.PI/2) {
+			r = Math.sin(thetaRight)*right.getMagnitude();
+		}
+		else if (thetaLeft < Math.PI/2) {
+			r = Math.sin(thetaLeft)*left.getMagnitude();
+		}
+		else { // Both lines are parallel
+			r = 0;
+		}
+		
+		// Left is past our perpendicular
+		if (thetaLeft < Math.PI/2) {
+			theta = Math.acos(left.y/left.getMagnitude()) - Math.acos(r/left.getMagnitude());
+		}
+		else { // Left is before our perpendicular
+			theta = Math.acos(left.y/left.getMagnitude()) + Math.acos(r/left.getMagnitude());
+		}
+		
+		System.out.println("getPolarLine " + r + "," + theta);
+		return new PointPolar(r, theta);
+    }
+    
+    private void correctPoseVision() {
+    	// Get all vision (local) and map (global) walls
+    	// Vision uses bot pointing in positive y direction as reference
+    	Vision v = Vision.getInstance();
+    	Map m = Map.getInstance();
+    	ArrayList<vision.Wall> visWalls = v.getWalls();
+    	ArrayList<comm.BotClientMap.Wall> mapWalls = m.walls;
+    	ArrayList<comm.BotClientMap.Wall> mapWallsLocal = new ArrayList<comm.BotClientMap.Wall>(); 
+    	ArrayList<PointPolar> visLines = new ArrayList<PointPolar>();
+    	ArrayList<PointPolar> mapLines = new ArrayList<PointPolar>();
+    	// Bot position
+    	double rx = m.bot.pose.x;
+    	double ry = m.bot.pose.y;
+    	// Bot pointing unit vector
+    	Vector2D unitPointing = new Vector2D(Math.cos(m.bot.pose.theta), Math.sin(m.bot.pose.theta));
+    	Vector2D unitPerp = unitPointing.perp();
+    	
+    	// Transform all map (global) walls to local space, then transform to (r,theta) lines
+    	for (comm.BotClientMap.Wall w : mapWalls) {
+    		Vector2D start = new Vector2D(w.start.x - rx, w.start.y - ry);
+    		double startY = start.dot(unitPointing);
+    		double startX = start.dot(unitPerp);
+    		start = new Vector2D(startX, startY);
+    		Vector2D end = new Vector2D(w.end.x - rx, w.end.y - ry);
+    		double endY = end.dot(unitPointing);
+    		double endX = end.dot(unitPerp);
+    		end = new Vector2D(endX, endY);
+    		
+    		mapWallsLocal.add(new comm.BotClientMap.Wall(new Point(start.x, start.y), new Point(end.x, end.y), comm.BotClientMap.Wall.WallType.NORMAL));
+    		mapLines.add(getPolarLine(start, end));
+    	}
+    	
+    	// Transform all vision (local) walls to (r,theta) lines
+    	for (vision.Wall w : visWalls) {
+    		Vector2D left = new Vector2D(w.left.x, w.left.y);
+    		Vector2D right = new Vector2D(w.right.x, w.right.y);
+    		visLines.add(getPolarLine(left, right));
+    	}
+    	
+    	
+    	System.out.println("Maplines: ");
+    	for (int i = 0; i < mapLines.size(); i++) {
+    		PointPolar pp = mapLines.get(i);
+    		System.out.print("\t" + pp);
+    		comm.BotClientMap.Wall w = mapWalls.get(i);
+    		comm.BotClientMap.Wall lw = mapWallsLocal.get(i);
+    		System.out.println(String.format(" %f %f %f %f", w.start.x, w.start.y, w.end.x, w.end.y));
+    		System.out.println(String.format("\t\t%f %f %f %f", lw.start.x, lw.start.y, lw.end.x, lw.end.y));
+    	}
+    	System.out.println("Vislines: ");
+    	for (PointPolar pp : visLines) {
+    		System.out.println("\t" + pp);
+    	}
     }
 
     public void updateBlocks() {
@@ -122,5 +221,12 @@ public class StateEstimator implements Runnable {
             step();
         }
 
+    }
+    
+    public static void main(String [] args) {
+    	Vector2D left = new Vector2D(0.558, 0.0);
+    	Vector2D right = new Vector2D(0.558, 0.558);
+    	PointPolar line = StateEstimator.getInstance().getPolarLine(left, right);
+    	System.out.println(line);
     }
 }

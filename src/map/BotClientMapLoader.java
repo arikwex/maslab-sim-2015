@@ -30,6 +30,17 @@ public class BotClientMapLoader {
 				minY = Double.POSITIVE_INFINITY,
 				maxY = Double.NEGATIVE_INFINITY;
 		System.out.println("Loading obstacles");
+		
+		// Build walls ArrayList (copy with scaling)
+		m.walls = new ArrayList<Wall>();
+		for (Wall w : bcMap.walls) {
+			Wall scaledWall = new Wall(
+					new BotClientMap.Point(w.start.x*scaleFactor, w.start.y*scaleFactor),
+					new BotClientMap.Point(w.end.x*scaleFactor, w.end.y*scaleFactor),
+					Wall.WallType.NORMAL);
+			m.walls.add(scaledWall);
+		}
+		
 		m.obstacles = new ArrayList<Obstacle>();
 		m.reactors = new ArrayList<Reactor>();
 		for (int i = 0; i < bcMap.walls.size(); i++) {
