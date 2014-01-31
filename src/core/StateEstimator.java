@@ -120,6 +120,11 @@ public class StateEstimator implements Runnable {
 		return new PointPolar(r, theta);
     }
     
+    // Compute r-theta distance between two polar defined lines
+    private double rThetaDist(PointPolar p1, PointPolar p2) {
+    	return Math.sqrt(Math.pow(p2.r - p1.r, 2) + Math.pow(p2.theta * 4/Math.PI - p1.theta * 4/Math.PI, 2));
+    }
+    
     private void correctPoseVision() {
     	// Get all vision (local) and map (global) walls
     	// Vision uses bot pointing in positive y direction as reference
@@ -159,7 +164,35 @@ public class StateEstimator implements Runnable {
     		visLines.add(getPolarLine(left, right));
     	}
     	
+    	// Iterate through pairs of vision / mapping lines and attempt to match
+    	ArrayList<Integer> matchedMapLines = new ArrayList<Integer>();
+    	double totalThetaErr = 0.0;
+    	double totalXErr = 0.0;
+    	double totalYErr = 0.0;
+    	for (int i = 0; i < visLines.size(); i++) {
+    		int bestMapLine = -1;
+			PointPolar visLine = visLines.get(i);
+    		double bestDist = Double.POSITIVE_INFINITY;
+    		for (int j = 0; j < mapLines.size(); j++) {
+    			PointPolar mapLine = mapLines.get(j);
+    			double dist = rThetaDist(visLine, mapLine);
+    			if (dist < bestDist) {
+    				bestDist = dist;
+    				bestMapLine = j;
+    			}
+    		}
+    		matchedMapLines.add(bestMapLine);
+    		PointPolar mapLine = mapLines.get(bestMapLine);
+    		System.out.println("Matched: " + mapLine.r + "," + mapLine.theta);
+    		totalThetaErr += visLine.theta - mapLine.theta;
+    		totalXErr += (visLine.r - mapLine.r) * Math.cos(visLine.theta);
+    		totalYErr += (visLine.r - mapLine.r) * Math.sin(visLine.theta);
+    	}
+    	System.out.println("Total theta error: " + totalThetaErr);
+    	System.out.println("Total x error: " + totalXErr);
+    	System.out.println("Total y error: " + totalYErr);
     	
+    	/*
     	System.out.println("Maplines: ");
     	for (int i = 0; i < mapLines.size(); i++) {
     		PointPolar pp = mapLines.get(i);
@@ -173,6 +206,7 @@ public class StateEstimator implements Runnable {
     	for (PointPolar pp : visLines) {
     		System.out.println("\t" + pp);
     	}
+    	*/
     }
 
     public void updateBlocks() {
