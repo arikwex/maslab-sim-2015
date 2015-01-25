@@ -22,7 +22,7 @@ public class Overlord extends Thread {
 
 	public Overlord() {
 		map = Map.getInstance();
-		MapLoader.load(map, new File("roomMap.txt"));
+		MapLoader.load(map, new File("gameMaps/two_rooms.txt"));
 
 		try {Thread.sleep(50);} catch (InterruptedException e) {}
 		
