@@ -1,7 +1,7 @@
 package state_machine;
 
 import logging.Log;
-import map.Point;
+import map.geom.Point;
 
 public class StateMachine {
 
@@ -20,9 +20,7 @@ public class StateMachine {
     } 
     
     public void step() {
-    	Log.log("StateMachine step");
     	if (state == null) {
-    	    // TODO: Implement states, and set a reasonable start state
     	    state = new ExploreState();
     	}
         state = state.step();

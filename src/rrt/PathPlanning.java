@@ -7,11 +7,11 @@ import java.util.LinkedList;
 
 import logging.Log;
 import map.Map;
-import map.Obstacle;
-import map.Point;
-import map.Polygon;
 import map.Pose;
-import map.Segment;
+import map.geom.Obstacle;
+import map.geom.Point;
+import map.geom.Polygon;
+import map.geom.Segment;
 import state_machine.StateMachine;
 import utils.Utils;
 import core.Config;
@@ -114,7 +114,6 @@ public class PathPlanning {
 		    		Hardware hw = Hardware.getInstance();
 		    		hw.motorLeft.setSpeed(0);
 		    		hw.motorRight.setSpeed(0);
-		    		hw.transmit();
 		    		
 		    	    findPath(newGoal);
 		            nextWaypoint = path.getFirst();
@@ -143,7 +142,6 @@ public class PathPlanning {
 		Hardware hw = Hardware.getInstance();
 		hw.motorLeft.setSpeed(0);
 		hw.motorRight.setSpeed(0);
-		hw.transmit();
 		path = RRTSearch(goal, true);
 	}
 
@@ -186,7 +184,6 @@ public class PathPlanning {
 		        	}
 		        }
 		        Log.getInstance().updatePose();
-		        System.out.println(count + " nodes " + rrt.nodes.size());
 		    }
 		    
 			p = map.randomPoint();

@@ -1,5 +1,6 @@
 package map;
 
+import map.geom.Point;
 import utils.Utils;
 
 public class Pose extends Point{

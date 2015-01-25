@@ -19,12 +19,15 @@ public abstract class State {
     public State step() {
         prev = this;
         State next = this.transition();
+        /*
         if (System.currentTimeMillis() - startTime >= this.tooLong){
         	return new TimeoutState();
         }
         else {
         	next.run();
         }
+        */
+        next.run();
         
         return next;
         

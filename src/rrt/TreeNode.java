@@ -1,7 +1,8 @@
 package rrt;
 
 import java.util.LinkedList;
-import map.Point;
+
+import map.geom.Point;
 
 public class TreeNode {
 	public Point loc;

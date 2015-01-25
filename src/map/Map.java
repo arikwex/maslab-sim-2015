@@ -3,40 +3,30 @@ package map;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-import comm.BotClientMap.Wall;
-
-import core.Block;
-import core.Config;
-import core.Config.BlockColor;
-import data_collection.DataCollection;
+import map.elements.Platform;
+import map.elements.Stack;
+import map.elements.Wall;
+import map.geom.Obstacle;
+import map.geom.Point;
+import map.geom.Robot;
+import map.geom.Segment;
 
 public class Map {
     private static Map instance;
     
     public java.awt.geom.Rectangle2D.Double worldRect = null;
-    private ArrayList<Obstacle> worldBounds = null; // world rect in obstacle format.
-
-    public ArrayList<Obstacle> obstacles;
-	public ArrayList<Wall> walls;
-    public ArrayList<Reactor> reactors;
-    private ArrayList<MapBlock> blocks;
+    
+    private ArrayList<Wall> walls;
+    private ArrayList<Platform> platforms;
+    private ArrayList<Stack> stacks;
+    
     public Robot bot;
-
-    protected Point robotStart;
     protected Point robotGoal;
 
-	public Point ShelterLocation;
-
-	private ArrayList<MapBlock> blocksIShouldSee;
-
-    Map() {
+    public Map() {
         this.bot = new Robot(0,0,0);
         this.worldRect = new Rectangle2D.Double();
-        this.blocks = new ArrayList<MapBlock>();
-    }
-    
-    public ArrayList<Obstacle> getObstacles() {
-        return obstacles;
+        this.clear();
     }
     
     public static Map getInstance() {
@@ -45,70 +35,92 @@ public class Map {
         return instance;   
     }
     
-    public boolean addBlock(MapBlock b) {        
-        if (this.isOnMap(b)== null) {
-            blocks.add(b);
-            return true;
-        }
-        
-        return false;
+    public void clear() {
+    	worldRect = null;
+    	walls = new ArrayList<Wall>();
+    	platforms = new ArrayList<Platform>();
+    	stacks = new ArrayList<Stack>();
+    }
+    
+    /* WORLD RECTANGLE */
+    
+    public void setWorldRect(java.awt.geom.Rectangle2D.Double worldRect) {
+    	this.worldRect = worldRect;
+    }
+    
+    public java.awt.geom.Rectangle2D.Double getWorldRect() {
+    	return worldRect;
+    }
+    
+    /* OBSTACLES */
+    
+    public synchronized void addStack(Stack obs) {        
+        stacks.add(obs);
     }
 
+	public synchronized void removeStack(Stack obs) {
+		stacks.remove(obs);
+	}
+	
+	public synchronized ArrayList<Stack> getStacks() {
+		return stacks;
+	}
+	
+	/* PLATFORMS */
+    
+    public synchronized void addPlatform(Platform obs) {        
+        platforms.add(obs);
+    }
+
+	public synchronized void removePlatform(Platform obs) {
+		platforms.remove(obs);
+	}
+	
+	public synchronized ArrayList<Platform> getPlatforms() {
+		return platforms;
+	}
+	
+	/* WALLS */
+    
+    public synchronized void addWall(Wall obs) {        
+        walls.add(obs);
+    }
+
+	public synchronized void removeWall(Wall obs) {
+		walls.remove(obs);
+	}
+	
+	public synchronized ArrayList<Wall> getWalls() {
+		return walls;
+	}
+	
+	public synchronized ArrayList<Obstacle> getObstacles() {
+		ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
+		for (Wall w : walls) {
+			obstacles.add(w);
+		}
+		for (Platform p : platforms) {
+			obstacles.add(p);
+		}
+		for (Stack s : stacks) {
+			obstacles.add(s);
+		}
+		return obstacles;
+	}
+
     public boolean checkSegment(Segment seg, double theta) {
+    	ArrayList<Obstacle> obstacles = this.getObstacles();
     	if (obstacles == null){
     		return false;
     	}
     	
-        for (Obstacle o : obstacles)
-            if (o.intersects(seg, theta))
-            	return false;
+        for (Obstacle o : obstacles) {
+	        if (o.intersects(seg, theta)) {
+	        	return false;
+	        }
+        }
         
         return true;
-    }
-
-    public void nearestIntersectingSegment(Segment seg) {
-
-    }
-
-    public MapBlock isOnMap(MapBlock block) {
-    	MapBlock closest = null;
-        for (MapBlock b : blocks) {
-            BlockColor color = b.getColor();
-            if (b.distance(block) < Config.minDist && color == block.getColor()) {
-                if (closest == null || block.distance(b)<block.distance(closest)){
-                	closest = b;
-                }
-            }
-        }
-        return closest;
-    }
-
-    public MapBlock closestBlock() {
-    	return closestBlock(bot.pose);
-    }
-    
-    public MapBlock closestBlock(Point from) {
-        MapBlock bestBlock = null;
-        double minDist = Double.POSITIVE_INFINITY;
-
-        for (MapBlock b : blocks) {
-        	boolean bad = false;
-            double d = b.distance(from);
-            for (Obstacle obs : obstacles){
-            	if (obs.getMinCSpace().contains(b)){
-            		bad = true;
-            		break;
-            	}
-            }
-            if (bad)
-            	continue;
-            if (d < minDist) {
-                minDist = d;
-                bestBlock = b;
-            }
-        }
-
-        return bestBlock;
     }
     
     public Point randomPoint() {
@@ -116,91 +128,4 @@ public class Map {
         double y = Math.random()*(worldRect.height) + worldRect.y;
         return new Point(x,y);
     }
-
-	public void throwAwayBadBlocks() {
-		for (int i = blocks.size()-1; i >= 0; i--){
-			if ((blocks.get(i).x < worldRect.x ||blocks.get(i).x > (worldRect.x+worldRect.width))||
-					(blocks.get(i).y < worldRect.y ||blocks.get(i).y > (worldRect.y+worldRect.height))){
-				blocks.remove(i);
-				continue;
-			}
-			for (Obstacle obs : obstacles){
-				if (obs.contains(blocks.get(i))){
-					blocks.remove(i);
-					break;
-				}
-			}
-		}		
-	}
-	
-	public void removeBlock(MapBlock b) {
-		blocks.remove(b);
-	}
-
-	public synchronized ArrayList<MapBlock> getBlocks() {
-		return blocks;
-	}
-
-	public synchronized void setBlocks(ArrayList<MapBlock> blocks) {
-		this.blocks = blocks;
-	}
-
-	public void setMap(Map m){
-		this.blocks = m.blocks;
-		this.obstacles = m.obstacles;
-		this.walls = m.walls;
-		this.bot = m.bot;
-		this.worldBounds = m.worldBounds;
-		this.worldRect = m.worldRect;
-		this.robotGoal = m.robotGoal;
-		this.robotStart = m.robotStart;
-		this.ShelterLocation = m.ShelterLocation;
-		this.reactors = m.reactors;
-	}
-
-	public void update() {
-		
-		for (Block b : DataCollection.getInstance().getBlocks()) {
-			MapBlock block = new MapBlock(b);
-			MapBlock closest = isOnMap(block);
-			if (closest != null){
-				closest.setLocation(block);
-			}
-			else{
-				boolean duplicate = false;
-				for (int i = blocks.size()-1; i>=0;i--){
-					 
-					if (blocks.get(i)==block){
-						duplicate = true;
-						break;
-					}
-				}
-				if (!duplicate)
-					addBlock(block);
-			}
-		}
-		blocksIShouldSee = getBlocksIShouldSee();
-		for (MapBlock mb : blocksIShouldSee){
-			Block found = null;
-			for (Block b : DataCollection.getInstance().getBlocks()){
-				if (isOnMap(new MapBlock(b)) == mb &&
-						(found == null || mb.distance(b)<mb.distance(found))){
-					found = b;
-				}
-			}
-			if (found == null){
-				blocks.remove(mb);
-			}
-			else {
-				mb.setLocation(found);
-			}
-		}
-		
-		
-	}
-
-	private ArrayList<MapBlock> getBlocksIShouldSee() {
-		// TODO Auto-generated method stub
-		return new ArrayList<MapBlock>();
-	}
 }

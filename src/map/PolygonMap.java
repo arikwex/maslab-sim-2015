@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.*;
 import java.text.*;
 
+import map.geom.Obstacle;
+
 public class PolygonMap {
 
     protected Point2D.Double robotStart = new Point2D.Double();

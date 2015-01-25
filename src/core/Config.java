@@ -2,7 +2,7 @@ package core;
 
 import java.awt.Color;
 
-import map.Point;
+import map.geom.Point;
 
 public class Config {
     public static final double minDist = 0;
@@ -67,7 +67,12 @@ public class Config {
     public static double[][] ASSEMBLY_CROSS = new double[][] {{0,0,-1}, {-6,-6,-1}, {0,-6,-1}, {6,-6,-1}, {0,-12,-1}};
     public static double[][] ASSEMBLY_PYRAMID = new double[][] {{0,0,-1}, {-2.5, -6, -1}, {2.5, -6, -1}, {0,-3.5, 4}, {0, -3.5, 9}};
 	
-    public static double[][] botPoly = new double[][] {{ -0.210439, -0.117145 }, { -0.210439, 0.117145 }, { 0.117475, 0.117145 }, { 0.117475, -0.117145 }};
+    public static double[][] botPoly = new double[][] {
+    	{ -0.2, -0.1 },
+    	{ 0.1, -0.1 },
+    	{ 0.1, 0.1 },
+    	{ -0.2, 0.1 }
+    };
 
     //constants for distance vs sizeP 
 	public static int c;

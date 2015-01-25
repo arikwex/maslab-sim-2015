@@ -16,9 +16,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,18 +26,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import map.Map;
-import map.MapBlock;
-import map.Obstacle;
-import map.Point;
-import map.Robot;
-import map.Segment;
+import map.geom.Obstacle;
+import map.geom.Point;
+import map.geom.Robot;
+import map.geom.Segment;
 import rrt.PathPlanning;
 import core.Config;
 
 public class RobotGraph extends JFrame implements Runnable {
     private static final long serialVersionUID = -1299466487663318439L;
 
-    private double[] pose = { 0, 0, 0 };
     private List<double[]> poseHistory = new ArrayList<double[]>();
 
     private PaintablePanel p;
@@ -60,9 +58,7 @@ public class RobotGraph extends JFrame implements Runnable {
     private double y_max = Y_MAX_INITIAL;
     private double y_min = Y_MIN_INITIAL;
 
-    public ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
     public Robot bot;
-
     private boolean drawCSpace = true;
 
     private MyMouseListener ml = new MyMouseListener();
@@ -111,14 +107,14 @@ public class RobotGraph extends JFrame implements Runnable {
 
         public void mouseWheelMoved(MouseWheelEvent e) {
             // TEST to zoom on center of screen.
-            int notches = e.getWheelRotation();
+            int notches = e.getWheelRotation() * 2;
             if (notches < 0) { // zoom out, mag gets smaller
                 total_mag /= MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH;
                 x_max /= MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH;
                 x_min /= MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH;
                 y_max /= MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH;
                 y_min /= MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH;
-            } else { // zoom in, mag gets bigger
+            } else if (notches > 0) { // zoom in, mag gets bigger
                 total_mag *= MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH;
                 x_max *= MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH;
                 x_min *= MAG_INCREMENT_PER_MOUSE_WHEEL_NOTCH;
@@ -191,7 +187,7 @@ public class RobotGraph extends JFrame implements Runnable {
         setWidgets();
         poseHistory.add(new double[] { 0, 0, 0 });
         setResizable(false);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
         setVisible(true);
 
@@ -221,8 +217,8 @@ public class RobotGraph extends JFrame implements Runnable {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-            // g.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-            g.setColor(Color.black);
+            g.setColor(Color.white);
+            g.fillRect(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 
             // transform to robot world coordinates
             double xscale = FRAME_WIDTH / (x_max - x_min);
@@ -234,86 +230,69 @@ public class RobotGraph extends JFrame implements Runnable {
             t.scale(xscale, yscale);
             g.setTransform(t);
 
-            // set the stroke so that when it zooms in all the lines still look
-            // thin.
-            g.setStroke(new BasicStroke((float) (1.0f * (x_max - x_min) / (FRAME_WIDTH * total_mag))));
-
-            // TODO erase stuff here I suppose?
+            // set the stroke so that when it zooms in all the lines still look thin.
+            BasicStroke regularLine = new BasicStroke((float) (1.0f * (x_max - x_min) / (FRAME_WIDTH * total_mag)));
+            g.setStroke(regularLine);
 
             // draw the grid
+            g.setColor(Color.black);
             drawGrid(g);
             drawAxes(g);
 
             paintObstacles(g);
-            paintBlocks(g);
             paintBot(g);
-            paintPath(g);
-
             paintRrt(g);
+            paintPath(g);
         }
 
         private void paintRrt(Graphics2D g) {
             PathPlanning pp = PathPlanning.getInstance();
-            g.setColor(Color.blue);
-            Segment s;
-            for (int i = 0; i<pp.rrtEdges.size(); i++) {
-                s = pp.rrtEdges.get(i);
-                g.draw(new Line2D.Double(s.start, s.end));
+            if (pp.rrtEdges != null) {
+	            g.setColor(new Color(0,0,255,128));
+	            Segment s;
+	            for (int i = 0; i<pp.rrtEdges.size(); i++) {
+	                s = pp.rrtEdges.get(i);
+	                g.draw(new Line2D.Double(s.start, s.end));
+	            }
             }
         }
 
         private void paintObstacles(Graphics2D g) {
-            if (map.obstacles == null)
+            if (map.getObstacles() == null)
                 return;
-            for (Obstacle o : map.obstacles) {
-                g.setColor(o.color);
-                g.fill(o.getPath());
+            for (Obstacle o : map.getObstacles()) {
+                o.paint(g);
+            	g.setColor(new Color(0,0,0,128));
                 if (drawCSpace) {
-                    // g.draw(o.getMaxCSpace().getPath());
+                    //g.draw(o.getMaxCSpace().getPath());
                     g.draw(o.getMinCSpace().getPath());
-                    g.draw(o.getPolyCSpace(bot.getRotated(bot.pose.theta)).getPath());
+                    //g.draw(o.getPolyCSpace(bot.getRotated(bot.pose.theta)).getPath());
                 }
             }
         }
 
-        private void paintBlocks(Graphics2D g) {
-            if (map.getBlocks() == null || map.getBlocks().isEmpty())
-                return;
-            ArrayList<MapBlock> blocks = map.getBlocks();
-            for (int i = blocks.size() - 1; i >= 0; i--) {
-                MapBlock b = blocks.get(i);
-                paintPoint(g, b, Config.BlockColorToColor(b.getColor()));
-            }
-        }
-
         private void paintPoint(Graphics2D g, Point p, Color c) {
-            g.setColor(c);
-            double POINT_RADIUS = 0.05;
+        	g.setColor(c);
+        	double POINT_RADIUS = 0.03;
             double xMin = p.x - POINT_RADIUS;
             double yMin = p.y - POINT_RADIUS;
-
-            double xMax = p.x + POINT_RADIUS;
-            double yMax = p.y + POINT_RADIUS;
-
-            Shape[] shape = new Shape[2];
-            shape[0] = new Line2D.Double(xMin, yMin, xMax, yMax);
-            shape[1] = new Line2D.Double(xMin, yMax, xMax, yMin);
-
-            for (int i = 0; i < shape.length; i++) {
-                g.draw(shape[i]);
-            }
+        	g.fill(new Ellipse2D.Double(xMin, yMin, POINT_RADIUS * 2, POINT_RADIUS * 2));
         }
 
         private void paintPath(Graphics2D g) {
             if (pp.path == null || pp.path.size() < 1)
                 return;
             g.setColor(Color.RED);
-
+            BasicStroke fatLine = new BasicStroke((float) (4.0f * (x_max - x_min) / (FRAME_WIDTH * total_mag)));
+            g.setStroke(fatLine);
+            
             Point start = bot.pose;
             for (Point p : pp.path) {
                 g.draw(new Line2D.Double(start, p));
                 start = p;
             }
+            
+            g.draw(new Ellipse2D.Double(start.x-0.1, start.y-0.1, 0.2, 0.2));
         }
 
         private void paintBot(Graphics2D g) {
@@ -322,23 +301,15 @@ public class RobotGraph extends JFrame implements Runnable {
             t.translate(bot.pose.x, bot.pose.y);
             t.rotate(bot.pose.theta);
 
+            g.setColor(new Color(255,180,50,200));
+            g.fill(t.createTransformedShape(bot.getPath()));
             g.setColor(bot.color);
             g.draw(t.createTransformedShape(bot.getPath()));
             paintPoint(g, bot.pose, bot.color);
 
             paintPoint(g, new Point(0, 0), bot.color);
-            for (Point p : bot.rotatedPoints(bot.pose.theta - Math.PI/4, bot.pose.theta + Math.PI / 4, bot.pose))
-                paintPoint(g, p, bot.color);
-        }
-
-        private void eraseBot(Graphics2D g) {
-            Path2D botPath = bot.getPath();
-            g.setColor(new Color(238, 238, 238));
-            double w = botPath.getBounds2D().getWidth() / 2 + 1;
-            double h = botPath.getBounds2D().getHeight() / 2 + 1;
-            Shape s = new Rectangle2D.Double(bot.pose.x - w, bot.pose.y - h, botPath.getBounds2D().getWidth() * 2,
-                    botPath.getBounds2D().getHeight() * 2);
-            g.fill(s);
+            //for (Point p : bot.rotatedPoints(bot.pose.theta - Math.PI/4, bot.pose.theta + Math.PI / 4, bot.pose))
+            //    paintPoint(g, p, bot.color);
         }
 
         /**
@@ -376,10 +347,6 @@ public class RobotGraph extends JFrame implements Runnable {
 
     public void paintBot() {
         p.paint((Graphics2D) p.getGraphics());
-    }
-
-    public void addObstacle(Obstacle o) {
-        obstacles.add(o);
     }
 
     public void run() {

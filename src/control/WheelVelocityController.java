@@ -33,37 +33,13 @@ public class WheelVelocityController {
     }
     
     public void step() {
-        double targetOut = computeTargetOut();
-                
-        //applySlew(targetPwm);
-        currentOut = targetOut;
+        double currentOut = computeTargetOut();
         
-        // TODO: Double check that currPwm is okay in setSpeed
         if (wheel == LEFT)
             hw.motorLeft.setSpeed(currentOut);
         else
             hw.motorRight.setSpeed(currentOut);
     }
-    
-    private void applySlew(int targetPwm) {
-        long now = System.currentTimeMillis();
-        int cap = (int)((now-prevTime)/1000.0 * SLEW_LIM);
-        double dPwm = targetPwm - currentOut;
-        if (cap > 0) {
-        	prevTime = now;
-        	if (dPwm < 0) {
-        		currentOut -= cap;
-        		if (currentOut < targetPwm)
-        			currentOut = targetPwm;
-        	} else {
-        		currentOut += cap;
-        		if (currentOut > targetPwm)
-        			currentOut = targetPwm;
-        	}
-        	
-        }
-    }
-
     private double computeTargetOut() {
         double ff = .02 + 1.0 * targetVel/Config.MAX_VELOCITY;
         
@@ -72,8 +48,6 @@ public class WheelVelocityController {
         	actual *= hw.encoderRight.getAngularSpeed();
         else
         	actual *= hw.encoderLeft.getAngularSpeed();
-        
-        System.out.println("Actual: " + wheel + " " + actual + " desired " + targetVel);
         
         return pid.step(actual) + ff;
     }

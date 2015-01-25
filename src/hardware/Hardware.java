@@ -1,53 +1,41 @@
 package hardware;
 
-import comm.MapleComm;
-import comm.MapleIO;
-
+import hardware.components.Camera;
+import hardware.components.Motor;
+import hardware.components.Encoder;
+import hardware.components.Gyro;
+import hardware.components.Lidar;
+import hardware.components.Servo;
+import hardware.simulated.SimulatedMotor;
+import hardware.simulated.SimulatedEncoder;
+import hardware.simulated.SimulatedServo;
 import core.Config;
-import devices.actuators.Cytron;
-import devices.actuators.DigitalOutput;
-import devices.actuators.Servo;
-import devices.actuators.Servo6001HB;
-import devices.sensors.DigitalInput;
-import devices.sensors.Encoder;
 
 public class Hardware {
     private static Hardware instance;
     
-    private MapleComm comm;
-    public Cytron motorLeft;
-    public Cytron motorRight;
+    public Motor motorLeft;
+    public Motor motorRight;
     public Servo servoGrip;
     public Servo servoElevation;
-    public DigitalOutput ballLauncher;
-    public DigitalInput rangeSensor;
     public Encoder encoderLeft;
     public Encoder encoderRight;
+    public Gyro gyroscope;
+    public Lidar lidar;
+    public Camera camera;
     
     public Hardware() {
-        // Initialize MapleComm
-        comm = new MapleComm(MapleIO.SerialPortType.LINUX);
-        
         // Initialize devices
-        motorLeft = new Cytron(Config.MOTOR_LEFT_DIR_PIN, Config.MOTOR_LEFT_PWM_PIN);
-        motorRight = new Cytron(Config.MOTOR_RIGHT_DIR_PIN, Config.MOTOR_RIGHT_PWM_PIN);
-        servoGrip = new Servo6001HB(Config.SERVO_GRIP_PIN);
-        servoElevation = new Servo6001HB(Config.SERVO_ELEVATION_PIN);
-        ballLauncher = new DigitalOutput(Config.BALL_LAUNCHER_PIN);
-        rangeSensor = new DigitalInput(Config.RANGE_SENSOR_PIN);
-        encoderLeft = new Encoder(Config.ENCODER_LEFT_PIN_A, Config.ENCODER_LEFT_PIN_B);
-        encoderRight = new Encoder(Config.ENCODER_RIGHT_PIN_A, Config.ENCODER_RIGHT_PIN_B);
+        motorLeft = new SimulatedMotor(Config.MOTOR_LEFT_DIR_PIN, Config.MOTOR_LEFT_PWM_PIN);
+        motorRight = new SimulatedMotor(Config.MOTOR_RIGHT_DIR_PIN, Config.MOTOR_RIGHT_PWM_PIN);
+        servoGrip = new SimulatedServo(Config.SERVO_GRIP_PIN);
+        servoElevation = new SimulatedServo(Config.SERVO_ELEVATION_PIN);
+        encoderLeft = new SimulatedEncoder(Config.ENCODER_LEFT_PIN_A, Config.ENCODER_LEFT_PIN_B);
+        encoderRight = new SimulatedEncoder(Config.ENCODER_RIGHT_PIN_A, Config.ENCODER_RIGHT_PIN_B);
         
-        // Register devices and initialize Maple
-        comm.registerDevice(motorLeft);
-        comm.registerDevice(motorRight);
-        comm.registerDevice(servoGrip);
-        comm.registerDevice(servoElevation);
-        comm.registerDevice(ballLauncher);
-        comm.registerDevice(rangeSensor);
-        comm.registerDevice(encoderLeft);
-        comm.registerDevice(encoderRight);
-        comm.initialize();
+        // SIMULATION ONLY
+        ((SimulatedEncoder)encoderLeft).setSimulatedMotor((SimulatedMotor)motorLeft);
+        ((SimulatedEncoder)encoderRight).setSimulatedMotor((SimulatedMotor)motorRight);
     }
     
     public static Hardware getInstance() {
@@ -55,12 +43,5 @@ public class Hardware {
             instance = new Hardware();
         }
         return instance;
-    }
-    
-    public void transmit() {
-        comm.transmit();
-    }
-    public void updateSensorData() {
-        comm.updateSensorData();
     }
 }

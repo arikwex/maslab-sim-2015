@@ -2,33 +2,5 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/MaslabBotClient"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/MaslabComm"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/lwjgl-2.9.0/jar/lwjgl.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/gurtej/workspace/MaslabStaffBot/lib/lwjgl-2.9.0/native/linux"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/lwjgl-2.9.0/jar/lwjgl_util.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/gurtej/workspace/MaslabStaffBot/lib/lwjgl-2.9.0/native/linux"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/ShaderCL.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/ffmpeg-20130915-git-7ac6c63-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/javacpp.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/javacv-android-arm.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/motorControl-0.0.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/orc-0.0.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/RXTXcomm.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/uORCInterface-0.0.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/opencv-2.4.8-linux-x86_64.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/home/gurtej/opencv-2.4.8/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/ffmpeg-2.1.1-linux-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/javacv.jar"/>
-	<classpathentry kind="lib" path="/home/gurtej/workspace/MaslabStaffBot/lib/javacv-linux-x86_64.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

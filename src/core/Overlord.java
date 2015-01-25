@@ -1,17 +1,16 @@
 package core;
 
+import java.io.File;
+
 import logging.Log;
-import map.BotClientMapLoader;
+import map.MapLoader;
 import map.Map;
 import rrt.PathPlanning;
 import state_machine.StateMachine;
 import control.Control;
-import data_collection.DataCollection;
 
 public class Overlord extends Thread {
 
-    BotClientSingleton bc;
-	DataCollection dc;
 	StateEstimator se;
 	StateMachine sm;
 	PathPlanning pp;
@@ -22,43 +21,29 @@ public class Overlord extends Thread {
 	private Map map;
 
 	public Overlord() {
-		bc = BotClientSingleton.getInstance();
-		//bc.pendOnStartup();
 		map = Map.getInstance();
-		map.setMap(BotClientMapLoader.loadMap());
-		BotClientMapLoader.setReactorNormVectors(map);
-		
-		//map.setMap(ParseMap.parseFile("cheat_map.txt"));
-		//m.setMap(ParseMap.parseFile("construction_map_2013.txt"));
-        //m.setMap(ParseMap.parseFile("challenge_2013.txt"));
+		MapLoader.load(map, new File("roomMap.txt"));
 
-		try {Thread.sleep(2000);} catch (InterruptedException e) {}
+		try {Thread.sleep(50);} catch (InterruptedException e) {}
 		
-		dc = DataCollection.getInstance();
 		se = StateEstimator.getInstance();
-		se.numBlocksLeft = map.getBlocks().size();
 		sm = StateMachine.getInstance();
 		pp = PathPlanning.getInstance();
 		c = Control.getInstance();
 		
-		try {Thread.sleep(2000);} catch (InterruptedException e) {}
+		try {Thread.sleep(50);} catch (InterruptedException e) {}
 		
 		l = Log.getInstance();
 	}
  
 	public void start() {
 		while (true) {
-			//Log.log("justed updated");
 			startTime = System.currentTimeMillis();
 			
-			dc.step();
 			se.step();
 			sm.step();
-
-			map.update();
 			
 			pp.step();
-			//Log.log(se.getCaptureStatus());
 			c.step();
 			
 			l.updatePose();

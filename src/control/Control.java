@@ -3,8 +3,8 @@ package control;
 import hardware.Hardware;
 import logging.Log;
 import map.Map;
-import map.Point;
-import map.Robot;
+import map.geom.Point;
+import map.geom.Robot;
 import rrt.PathPlanning;
 import utils.Utils;
 import core.Config;
@@ -27,15 +27,14 @@ public class Control {
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
-        rotPid = new PID(.3, 0, 0, 0, .15);
+        rotPid = new PID(1, 0.0, 0.0, 0.1, .15);
         rotPid.start(0, 0);
 
-        velPid = new PID(2, 0, 0, 0, .3);
+        velPid = new PID(1.5, 0, 0, 0.1, .3);
         velPid.start(0, 0);
         
         leftController = new WheelVelocityController(hw, WheelVelocityController.LEFT);
         rightController = new WheelVelocityController(hw, WheelVelocityController.RIGHT);
-
     }
     
     public static Control getInstance() {
@@ -58,7 +57,6 @@ public class Control {
         goToWaypoint();
         leftController.step();
         rightController.step();
-        hw.transmit();
     }
 
     public void goToWaypoint() {
