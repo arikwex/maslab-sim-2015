@@ -5,6 +5,8 @@ import hardware.Hardware;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import control.Control;
+import control.ControlMode;
 import logging.Log;
 import map.Map;
 import map.Pose;
@@ -17,12 +19,13 @@ import utils.Utils;
 import core.Config;
 import core.StateEstimator;
 
-public class PathPlanning {
+public class PathPlanning extends Thread {
 	private static PathPlanning instance;
 
 	private StateMachine sm;
 	private StateEstimator se;
 	private Map map;
+	private volatile boolean running = true;
 	
 	public ArrayList<Segment> rrtEdges;
 	public LinkedList<Point> path;
@@ -40,8 +43,26 @@ public class PathPlanning {
 			instance = new PathPlanning();
 		return instance;
 	}
+	
+	public void run() {
+		while (running) {
+			step();
+			try {
+				Thread.sleep(100);
+			} catch (Exception e) {
+			}
+		}
+	}
+	
+	public void end() {
+		running = false;
+	}
 
 	public void step() {
+		if (Control.getInstance().getMode() != ControlMode.TRAVEL_PLAN) {
+			return;
+		}
+		
 		Pose curLoc = map.bot.pose;
 		Point newGoal = sm.getGoal();
 		
@@ -50,13 +71,15 @@ public class PathPlanning {
 			return;
 		}
 		
-		System.out.println("New: " + newGoal + " Old: " + goal);
+		Control.getInstance().linkTarget(getNextWaypoint());
+		
+		//Log.log("New: " + newGoal + " Old: " + goal);
 		
 		if (nextWaypoint == null || goal == null || newGoal.distance(goal) > .05) {
-			System.out.println("MOVE GOAL");
+			Log.log("MOVE GOAL");
 			goal = newGoal;
 			findPath(newGoal);
-			System.out.println("NEW PATH?");
+			//Log.log("NEW PATH?");
 			nextWaypoint = path.getFirst();
 		}
 		
@@ -64,34 +87,21 @@ public class PathPlanning {
 
 		for (Obstacle o : map.getObstacles()) {
 		    if (o.getPolyCSpace(rotBot).contains(curLoc)) {
-		        System.out.println("WTF?");
-		        System.out.println(map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta));
+		    	Log.log("WTF?");
+		        Log.log("" + map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta));
 		        //while(true);
 		    }
 		}
 		
 		if (!map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta)) {
-			System.out.println("BROKEN PATH");
+			Log.log("BROKEN PATH");
 			
 			map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta);
-			System.out.println("Cur: " + curLoc + " next: " + nextWaypoint);
+			Log.log("Cur: " + curLoc + " next: " + nextWaypoint);
 			
 			findPath(newGoal);
 			nextWaypoint = path.getFirst();
 		}
-
-		/*
-		// try to shortcut paths
-		for (int i = path.size()-1; i >= 0; i--) {
-			if (map.checkSegment(new Segment(curLoc, path.get(i)), curLoc.theta)) {
-				System.out.println("SHORTCUT AT " + i);
-
-				nextWaypoint = path.get(i);
-				i--;
-				for (; i>= 0; i--)
-					path.remove(i);
-			}
-		}*/
 
 		if (path.size() > 1) {
 		    if (map.checkSegment(new Segment(curLoc, path.get(1)), curLoc.theta)) {
@@ -105,7 +115,7 @@ public class PathPlanning {
 		    
 	        double thetaErr = Utils.thetaDiff(curLoc.theta, curLoc.angleTo(nextWaypoint));
 		    
-	        System.out.println("THETA ERROR!!! " + thetaErr);
+	        Log.log("THETA ERROR!!! " + thetaErr);
 	        if (Math.abs(thetaErr) < Math.PI/8) {
 		    	if (path.size() > 1) {
     				path.removeFirst();
@@ -128,10 +138,12 @@ public class PathPlanning {
 			return;
 		}
 		
-		System.out.print("Path: ");
+		/*
+		String acc = "";
 		for (Point p : path)
-			System.out.print(p + ", ");
-		System.out.println("");
+			acc += (p + ", ");
+		Log.log("Path: " + acc);
+		*/
 	}
 
 	public Point getNextWaypoint() {
@@ -174,7 +186,7 @@ public class PathPlanning {
 		        }
 		        if (count > 100000 && rrt.nodes.size() > 5) {
 		        	if (allowRandom) {
-			            System.out.println("FUCK IT GO TO RANDOM NODE");
+		        		Log.log("FUCK IT GO TO RANDOM NODE");
 			            
 		                goalNode = rrt.nodes.get((int)(Math.random()*rrt.nodes.size()));
 		                break;		        

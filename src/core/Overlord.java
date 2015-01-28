@@ -17,7 +17,7 @@ public class Overlord extends Thread {
 	Control c;
 
 	Log l;
-	private long startTime;
+	private static long startTime;
 	private Map map;
 
 	public Overlord() {
@@ -37,18 +37,22 @@ public class Overlord extends Thread {
 	}
  
 	public void start() {
-		while (true) {
-			startTime = System.currentTimeMillis();
+		startTime = System.currentTimeMillis();
+		pp.start();
+		while (timeRemaining() < 3 * 60 * 1000) {
 			
 			se.step();
 			sm.step();
-			
-			pp.step();
 			c.step();
-			
 			l.updatePose();
+			
 			try {Thread.sleep(50-(System.currentTimeMillis()-startTime));} catch (Exception e){};
 		}
+		pp.end();
+	}
+	
+	public static long timeRemaining() {
+		return (System.currentTimeMillis() - startTime);
 	}
 
 	public static void main(String[] args) {

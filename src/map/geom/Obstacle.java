@@ -80,7 +80,6 @@ public abstract class Obstacle extends Polygon {
 
             for (Point p : bot.rotatedPoints(theta, seg.theta, seg.start)) {
                 if (this.contains(p)) {
-                    //System.out.println("theta: " + theta + " seg: " + seg.theta + " seg: " + seg);
                     return true;
                 }
             }

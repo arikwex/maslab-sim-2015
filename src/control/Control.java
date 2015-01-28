@@ -6,18 +6,20 @@ import map.Map;
 import map.geom.Point;
 import map.geom.Robot;
 import rrt.PathPlanning;
+import state_machine.StateMachine;
 import utils.Utils;
 import core.Config;
 
 public class Control {
     private static Control instance;
     
+    private ControlMode mode = ControlMode.TRAVEL_PLAN;
+    private Point target = null;
+    
     private Hardware hw;
     private PathPlanning pp;
     private Robot bot;
 
-    private WheelVelocityController leftController;
-    private WheelVelocityController rightController;
 
     private PID rotPid;
     private PID velPid;
@@ -27,14 +29,11 @@ public class Control {
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
-        rotPid = new PID(1, 0.0, 0.0, 0.1, .15);
+        rotPid = new PID(1, 0.05, 0.7, 0.1, .25);
         rotPid.start(0, 0);
 
-        velPid = new PID(1.5, 0, 0, 0.1, .3);
+        velPid = new PID(1.5, 0, 0, 0.1, .4);
         velPid.start(0, 0);
-        
-        leftController = new WheelVelocityController(hw, WheelVelocityController.LEFT);
-        rightController = new WheelVelocityController(hw, WheelVelocityController.RIGHT);
     }
     
     public static Control getInstance() {
@@ -43,45 +42,127 @@ public class Control {
         return instance;   
     }
     
+    public void setControlMode(ControlMode mode) {
+    	this.mode = mode;
+    }
+    
+    public ControlMode getMode() {
+    	return this.mode;
+    }
+    
+    public synchronized void setTarget(Point target) {
+    	this.target = null;
+    	StateMachine.getInstance().setGoal(null);
+		StateMachine.getInstance().setPointer(null);
+		if (target == null) {
+			return;
+		}
+    	
+    	if (mode == ControlMode.TRAVEL_PLAN) {
+    		this.target = target;
+    		StateMachine.getInstance().setGoal(target);
+    	} else {
+	    	this.target = new Point(target.x, target.y);
+    	}
+    	
+    	StateMachine.getInstance().setPointer(this.target);
+    }
+    
+    public synchronized void linkTarget(Point target) {
+    	if (target == null) {
+    		this.target = null;
+			return;
+		}
+    	this.target = new Point(target.x, target.y);
+    }
+    
     private void setMotion(double vel, double rot) {
         setVelocity(vel - rot, vel + rot);
     }
     
-    private void setVelocity(double left, double right) {    	
-    	leftController.setVelocity(left);
-        rightController.setVelocity(right);
-        //Log.log("Set left controller to "+left+" Set right controller to "+right);
+    private void setVelocity(double left, double right) {   
+    	hw.motorLeft.setSpeed(left);
+    	hw.motorRight.setSpeed(right);
     }
     
     public void step() {
-        goToWaypoint();
-        leftController.step();
-        rightController.step();
+    	if (this.target == null) {
+    		setMotion(0, 0);
+    		return;
+    	}
+    	
+    	if (mode == ControlMode.AIM) {
+    		aim();
+    	} else if (mode == ControlMode.TRAVEL_PLAN) {
+    		goToWaypoint();
+    	} else if (mode == ControlMode.DRIVE_FORWARD) {
+     		driveForward();
+     	} else if (mode == ControlMode.DRIVE_BACK) {
+    		driveBackward();
+    	}
+    }
+    
+    public double getDistanceToTarget() {
+    	if (target == null) {
+    		return 9999;
+    	}
+    	return bot.pose.distance(target);
+    }
+    
+    public double getAngleToTarget() {
+    	if (target == null) {
+    		return 0;
+    	}
+    	return Math.toDegrees(Utils.thetaDiff(bot.pose.theta, bot.pose.angleTo(target)));
+    }
+    
+    public void aim() { 
+        double thetaErr = getAngleToTarget();
+        double rot = rotPid.step(-thetaErr);
+        setMotion(0, rot);
+    }
+    
+    public void driveForward() {
+        double distance = getDistanceToTarget();
+    	double vel = distance*4.0;
+        if (vel > 0.25) {
+        	vel = 0.25;
+        }
+        double thetaErr = getAngleToTarget();
+        double rot = rotPid.step(-thetaErr);
+        setMotion(vel, rot);
+    }
+    
+    public void driveBackward() {
+        double distance = getDistanceToTarget();
+    	double vel = distance*4.0;
+        if (vel > 0.25) {
+        	vel = 0.25;
+        }
+        double thetaErr = 0;
+        if (target != null) {
+        	thetaErr = Math.toDegrees(Utils.thetaDiff(bot.pose.theta + Math.PI, bot.pose.angleTo(target)));
+        }
+        double rot = rotPid.step(-thetaErr);
+        setMotion(-vel, rot);
     }
 
     public void goToWaypoint() {
-        Point wayPoint = pp.getNextWaypoint();
-        
-        if (wayPoint == null) {
-        	setMotion(0,0);
-        	return;
-        }
-                
-        double distance = bot.pose.distance(wayPoint);
-        double thetaErr = Math.toDegrees(Utils.thetaDiff(bot.pose.theta, bot.pose.angleTo(wayPoint)));
+        double distance = getDistanceToTarget();
+        double thetaErr = getAngleToTarget();
 
-        double vel = velPid.step(-distance);
-        Log.log("Desired vel: " + vel);
+        double vel = distance*0.4 + 0.2;
+        if (vel > 0.4) {
+        	vel = 0.4;
+        }
         
-        if (Math.abs(thetaErr) < 7)
-        	vel *= (7-Math.abs(thetaErr)) / 7;
-        else
+        if (Math.abs(thetaErr) < 15) {
+        	vel *= (15-Math.abs(thetaErr)) / 15;
+    	} else {
             vel = 0;
+        }
 
         double rot = rotPid.step(-thetaErr);
-        Log.log("Desired rot: " + rot);
-        
         setMotion(vel, rot);
-        Log.log("From: " + bot.pose + " to:" + wayPoint + " with theta " + bot.pose.angleTo(wayPoint) + " and distance " + distance + " theta err " + thetaErr);
     }
 }

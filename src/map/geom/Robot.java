@@ -1,13 +1,17 @@
 package map.geom;
 
+import hardware.Hardware;
+
 import java.awt.Color;
 import java.util.ArrayList;
 
 import map.Pose;
+import map.elements.Stack;
 import core.Config;
 
 public class Robot extends Polygon {
     public Pose pose;
+    public Stack gripping = null;
     
     private double maxRadius = 0;
     private double minRadius = Double.POSITIVE_INFINITY;
@@ -22,6 +26,14 @@ public class Robot extends Polygon {
             this.addVertex(p);
         }
         this.close();
+    }
+    
+    public Point getGripPoint() {
+    	double arm = Math.cos(Hardware.getInstance().servoElevation.getTransientValue() * Math.PI/2) * 0.18;
+    	return new Point(
+    		pose.x + Math.cos(pose.theta) * arm,
+    		pose.y + Math.sin(pose.theta) * arm
+    	);
     }
 
     public void scale(double ratio) {

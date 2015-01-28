@@ -68,7 +68,6 @@ public class MapLoader {
 		if (parts[0].equals("S")) {
 			Stack stack = new Stack(new Point(Integer.parseInt(parts[1]) * scaleFactor, Integer.parseInt(parts[2]) * scaleFactor),
 								    parts[3] + parts[4] + parts[5]);
-			stack.generateObstacleData();
 			map.addStack(stack);
 		}
 		

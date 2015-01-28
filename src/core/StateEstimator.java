@@ -50,6 +50,10 @@ public class StateEstimator implements Runnable {
 
         if (map.checkSegment(new Segment(bot.pose,nextPose),bot.pose.theta))
             bot.pose = nextPose;
+
+        if (bot.gripping != null) {
+        	bot.gripping.pt = bot.getGripPoint();
+        }
     }
     
     public String toString() {
@@ -61,6 +65,5 @@ public class StateEstimator implements Runnable {
         while (true) {
             step();
         }
-
     }
 }

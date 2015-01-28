@@ -1,5 +1,7 @@
 package logging;
 
+import hardware.Hardware;
+
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -8,6 +10,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -25,6 +28,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import control.Control;
+import control.ControlMode;
 import map.Map;
 import map.geom.Obstacle;
 import map.geom.Point;
@@ -32,6 +37,7 @@ import map.geom.Robot;
 import map.geom.Segment;
 import rrt.PathPlanning;
 import core.Config;
+import core.Overlord;
 
 public class RobotGraph extends JFrame implements Runnable {
     private static final long serialVersionUID = -1299466487663318439L;
@@ -60,6 +66,7 @@ public class RobotGraph extends JFrame implements Runnable {
 
     public Robot bot;
     private boolean drawCSpace = true;
+    public static Point pointer = null;
 
     private MyMouseListener ml = new MyMouseListener();
 
@@ -235,19 +242,21 @@ public class RobotGraph extends JFrame implements Runnable {
             g.setStroke(regularLine);
 
             // draw the grid
-            g.setColor(Color.black);
             drawGrid(g);
             drawAxes(g);
 
-            paintObstacles(g);
-            paintBot(g);
             paintRrt(g);
             paintPath(g);
+            paintBot(g);
+            paintObstacles(g);
+            
+            g.setColor(Color.black);
+            g2.drawString("Time Remaining: " + (int)(Overlord.timeRemaining() / 1000.0) + "s", 30, 30);
         }
 
         private void paintRrt(Graphics2D g) {
             PathPlanning pp = PathPlanning.getInstance();
-            if (pp.rrtEdges != null) {
+            if (pp.rrtEdges != null && Control.getInstance().getMode() == ControlMode.TRAVEL_PLAN) {
 	            g.setColor(new Color(0,0,255,128));
 	            Segment s;
 	            for (int i = 0; i<pp.rrtEdges.size(); i++) {
@@ -279,20 +288,33 @@ public class RobotGraph extends JFrame implements Runnable {
         	g.fill(new Ellipse2D.Double(xMin, yMin, POINT_RADIUS * 2, POINT_RADIUS * 2));
         }
 
-        private void paintPath(Graphics2D g) {
-            if (pp.path == null || pp.path.size() < 1)
-                return;
-            g.setColor(Color.RED);
+        private synchronized void paintPath(Graphics2D g) {
             BasicStroke fatLine = new BasicStroke((float) (4.0f * (x_max - x_min) / (FRAME_WIDTH * total_mag)));
+            Stroke oldStroke = g.getStroke();
             g.setStroke(fatLine);
-            
-            Point start = bot.pose;
-            for (Point p : pp.path) {
-                g.draw(new Line2D.Double(start, p));
-                start = p;
+
+            if (pointer != null) {
+	            if (Control.getInstance().getMode() == ControlMode.TRAVEL_PLAN) {
+	                if (pp.path == null || pp.path.size() < 1)
+	                    return;
+	                g.setColor(Color.RED);
+		            Point start = bot.pose;
+		            for (Point p : pp.path) {
+		                g.draw(new Line2D.Double(start, p));
+		                start = p;
+		            }
+		            g.draw(new Ellipse2D.Double(pointer.x-0.1, pointer.y-0.1, 0.2, 0.2));
+	            } else if (Control.getInstance().getMode() == ControlMode.DRIVE_FORWARD) {
+	            	g.setColor(Color.BLUE);
+		            g.draw(new Line2D.Double(bot.pose, pointer));
+		            g.draw(new Ellipse2D.Double(pointer.x-0.1, pointer.y-0.1, 0.2, 0.2));
+	            } else if (Control.getInstance().getMode() == ControlMode.DRIVE_BACK) {
+	            	g.setColor(Color.ORANGE);
+		            g.draw(new Line2D.Double(bot.pose, pointer));
+		            g.draw(new Ellipse2D.Double(pointer.x-0.1, pointer.y-0.1, 0.2, 0.2));
+	            }
             }
-            
-            g.draw(new Ellipse2D.Double(start.x-0.1, start.y-0.1, 0.2, 0.2));
+            g.setStroke(oldStroke);
         }
 
         private void paintBot(Graphics2D g) {
@@ -308,8 +330,15 @@ public class RobotGraph extends JFrame implements Runnable {
             paintPoint(g, bot.pose, bot.color);
 
             paintPoint(g, new Point(0, 0), bot.color);
-            //for (Point p : bot.rotatedPoints(bot.pose.theta - Math.PI/4, bot.pose.theta + Math.PI / 4, bot.pose))
-            //    paintPoint(g, p, bot.color);
+            
+            // Draw held-objects
+            Point gripPoint = bot.getGripPoint();
+            if (bot.gripping != null) {
+            	bot.gripping.paint(g);
+            } else {
+            	g.setColor(new Color(0,128,0,200));
+            	g.draw(new Ellipse2D.Double(gripPoint.x-0.05, gripPoint.y-0.05, 0.1, 0.1));
+            }
         }
 
         /**
@@ -317,7 +346,7 @@ public class RobotGraph extends JFrame implements Runnable {
          */
         private void drawGrid(Graphics2D g) {
             Color orig = g.getColor();
-            g.setColor(Color.GREEN);
+            g.setColor(new Color(55,128,55,33));
 
             for (double i = x_min - 2 * x_step; i <= x_max + 2 * x_step; i += x_step) {
                 g.drawLine((int) (Math.round(i)), (int) (Math.round(y_min - 2 * y_step)), (int) (Math.round(i)),

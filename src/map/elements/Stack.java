@@ -1,6 +1,7 @@
 package map.elements;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -11,8 +12,8 @@ import map.geom.Point;
 import map.geom.Polygon;
 
 public class Stack extends Obstacle {
-	public final Point pt;
-	public final String cubes;
+	public Point pt;
+	public String cubes;
 	
 	private final double sz = 0.75 / 24.0;
 	private final Polygon cube = new Polygon();
@@ -21,10 +22,10 @@ public class Stack extends Obstacle {
 		this.pt = pt;
 		this.cubes = cubes;
 		
-		cube.addVertex(new Point((pt.x + sz), (pt.y + sz)));
-		cube.addVertex(new Point((pt.x - sz), (pt.y + sz)));
-		cube.addVertex(new Point((pt.x - sz), (pt.y - sz)));
-		cube.addVertex(new Point((pt.x + sz), (pt.y - sz)));
+		cube.addVertex(new Point((+ sz), (-sz)));
+		cube.addVertex(new Point((- sz), (-sz)));
+		cube.addVertex(new Point((- sz), (sz)));
+		cube.addVertex(new Point((sz), (sz)));
 	}
 	
 	public Color getColor() {
@@ -45,7 +46,7 @@ public class Stack extends Obstacle {
 		
 		for (int i = 0; i < cubes.length(); i++) {
 			g.setColor(charToColor(cubes.charAt(i)));
-			Shape s = path.createTransformedShape(new AffineTransform(1, 0, 0, 1, 0, sz * 2.2 * i));
+			Shape s = path.createTransformedShape(new AffineTransform(1, 0, 0, 1, pt.x, sz * 2.2 * i + pt.y));
 			g.fill(s);
 		}
 	}

@@ -54,7 +54,8 @@ public class Map {
     
     /* OBSTACLES */
     
-    public synchronized void addStack(Stack obs) {        
+    public synchronized void addStack(Stack obs) {
+		obs.generateObstacleData();
         stacks.add(obs);
     }
 

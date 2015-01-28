@@ -68,10 +68,10 @@ public class Config {
     public static double[][] ASSEMBLY_PYRAMID = new double[][] {{0,0,-1}, {-2.5, -6, -1}, {2.5, -6, -1}, {0,-3.5, 4}, {0, -3.5, 9}};
 	
     public static double[][] botPoly = new double[][] {
-    	{ -0.2, -0.1 },
-    	{ 0.1, -0.1 },
-    	{ 0.1, 0.1 },
-    	{ -0.2, 0.1 }
+    	{ -0.25, -0.15 },
+    	{ 0.1, -0.13 },
+    	{ 0.1, 0.13 },
+    	{ -0.25, 0.15 }
     };
 
     //constants for distance vs sizeP 

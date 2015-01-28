@@ -11,9 +11,9 @@ public class Utils {
     }
 
     public static double wrapAngle(double angle) {
-        if (angle > Math.PI)
+        while (angle > Math.PI)
             angle -= 2 * Math.PI;
-        else if (angle < -Math.PI)
+        while (angle < -Math.PI)
             angle += 2 * Math.PI;
 
         return angle;

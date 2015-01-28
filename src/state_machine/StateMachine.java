@@ -1,6 +1,9 @@
 package state_machine;
 
+import rrt.PathPlanning;
+import state_machine.game.PlannerState;
 import logging.Log;
+import logging.RobotGraph;
 import map.geom.Point;
 
 public class StateMachine {
@@ -21,14 +24,17 @@ public class StateMachine {
     
     public void step() {
     	if (state == null) {
-    	    state = new ExploreState();
+    	    state = new PlannerState();
     	}
         state = state.step();
     }
     
-    protected void setGoal(Point p) {
+    public void setGoal(Point p) {
         this.goal = p;
-        Log.log(this.goal.toString());
+    }
+    
+    public void setPointer(Point p) {
+    	RobotGraph.pointer = p;
     }
     
     public Point getGoal() {

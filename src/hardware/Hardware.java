@@ -6,6 +6,8 @@ import hardware.components.Encoder;
 import hardware.components.Gyro;
 import hardware.components.Lidar;
 import hardware.components.Servo;
+import hardware.simulated.SimulatedElevator;
+import hardware.simulated.SimulatedGripper;
 import hardware.simulated.SimulatedMotor;
 import hardware.simulated.SimulatedEncoder;
 import hardware.simulated.SimulatedServo;
@@ -28,8 +30,8 @@ public class Hardware {
         // Initialize devices
         motorLeft = new SimulatedMotor(Config.MOTOR_LEFT_DIR_PIN, Config.MOTOR_LEFT_PWM_PIN);
         motorRight = new SimulatedMotor(Config.MOTOR_RIGHT_DIR_PIN, Config.MOTOR_RIGHT_PWM_PIN);
-        servoGrip = new SimulatedServo(Config.SERVO_GRIP_PIN);
-        servoElevation = new SimulatedServo(Config.SERVO_ELEVATION_PIN);
+        servoGrip = new SimulatedGripper(Config.SERVO_GRIP_PIN);
+        servoElevation = new SimulatedElevator(Config.SERVO_ELEVATION_PIN);
         encoderLeft = new SimulatedEncoder(Config.ENCODER_LEFT_PIN_A, Config.ENCODER_LEFT_PIN_B);
         encoderRight = new SimulatedEncoder(Config.ENCODER_RIGHT_PIN_A, Config.ENCODER_RIGHT_PIN_B);
         
