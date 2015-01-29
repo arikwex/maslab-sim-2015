@@ -39,7 +39,7 @@ public class Overlord extends Thread {
 	public void start() {
 		startTime = System.currentTimeMillis();
 		pp.start();
-		while (timeRemaining() < 3 * 60 * 1000) {
+		while (timeRemaining() > 0) {
 			
 			se.step();
 			sm.step();
@@ -52,7 +52,7 @@ public class Overlord extends Thread {
 	}
 	
 	public static long timeRemaining() {
-		return (System.currentTimeMillis() - startTime);
+		return (3 * 60 * 1000 - (System.currentTimeMillis() - startTime));
 	}
 
 	public static void main(String[] args) {

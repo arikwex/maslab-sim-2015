@@ -251,7 +251,8 @@ public class RobotGraph extends JFrame implements Runnable {
             paintObstacles(g);
             
             g.setColor(Color.black);
-            g2.drawString("Time Remaining: " + (int)(Overlord.timeRemaining() / 1000.0) + "s", 30, 30);
+            g.setTransform(new AffineTransform());
+            g.drawString("Time Remaining: " + (int)(Overlord.timeRemaining() / 1000.0) + "s", 30, 30);
         }
 
         private void paintRrt(Graphics2D g) {
