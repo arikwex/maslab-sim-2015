@@ -31,8 +31,10 @@ import javax.swing.JPanel;
 import control.Control;
 import control.ControlMode;
 import map.Map;
+import map.elements.HomeBase;
 import map.geom.Obstacle;
 import map.geom.Point;
+import map.geom.Polygon;
 import map.geom.Robot;
 import map.geom.Segment;
 import rrt.PathPlanning;
@@ -245,6 +247,7 @@ public class RobotGraph extends JFrame implements Runnable {
             drawGrid(g);
             drawAxes(g);
 
+            paintHomebase(g);
             paintRrt(g);
             paintPath(g);
             paintBot(g);
@@ -254,13 +257,26 @@ public class RobotGraph extends JFrame implements Runnable {
             g.setTransform(new AffineTransform());
             g.drawString("Time Remaining: " + (int)(Overlord.timeRemaining() / 1000.0) + "s", 30, 30);
         }
+        
+        private void paintHomebase(Graphics2D g) {
+        	Map m = Map.getInstance();
+        	HomeBase hb = m.getHomeBase();
+        	BasicStroke fatLine = new BasicStroke((float) (4.0f * (x_max - x_min) / (FRAME_WIDTH * total_mag)));
+            Stroke oldStroke = g.getStroke();
+            g.setStroke(fatLine);
+            g.setColor(new Color(200,0,255,25));
+        	g.fill(hb.getPath());
+        	g.setColor(new Color(200,0,255,70));
+            g.draw(hb.getPath());
+            g.setStroke(oldStroke);
+        }
 
         private void paintRrt(Graphics2D g) {
             PathPlanning pp = PathPlanning.getInstance();
             if (pp.rrtEdges != null && Control.getInstance().getMode() == ControlMode.TRAVEL_PLAN) {
 	            g.setColor(new Color(0,0,255,128));
 	            Segment s;
-	            for (int i = 0; i<pp.rrtEdges.size(); i++) {
+	            for (int i = 0; i < pp.rrtEdges.size(); i++) {
 	                s = pp.rrtEdges.get(i);
 	                g.draw(new Line2D.Double(s.start, s.end));
 	            }

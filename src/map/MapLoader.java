@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import logging.Log;
+import map.elements.HomeBase;
 import map.elements.Platform;
 import map.elements.Stack;
 import map.elements.Wall;
@@ -79,6 +80,17 @@ public class MapLoader {
 			accountAsBoundPoint(plat.start);
 			accountAsBoundPoint(plat.end);
 			map.addPlatform(plat);
+		}
+		
+		// HomeBase
+		if (parts[0].equals("H")) {
+			int N = Integer.parseInt(parts[1]);
+			Point[] poly = new Point[N];
+			for (int q = 0; q < N; q++) {
+				poly[q] = new Point(Integer.parseInt(parts[q*2 + 2]) * scaleFactor,
+									Integer.parseInt(parts[q*2 + 3]) * scaleFactor);
+			}
+			map.setHomeBase(new HomeBase(poly));
 		}
 	}
 	

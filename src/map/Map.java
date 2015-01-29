@@ -3,6 +3,7 @@ package map;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
+import map.elements.HomeBase;
 import map.elements.Platform;
 import map.elements.Stack;
 import map.elements.Wall;
@@ -19,6 +20,7 @@ public class Map {
     private ArrayList<Wall> walls;
     private ArrayList<Platform> platforms;
     private ArrayList<Stack> stacks;
+    private HomeBase homeBase;
     
     public Robot bot;
     protected Point robotGoal;
@@ -40,6 +42,7 @@ public class Map {
     	walls = new ArrayList<Wall>();
     	platforms = new ArrayList<Platform>();
     	stacks = new ArrayList<Stack>();
+    	homeBase = null;
     }
     
     /* WORLD RECTANGLE */
@@ -93,6 +96,16 @@ public class Map {
 	
 	public synchronized ArrayList<Wall> getWalls() {
 		return walls;
+	}
+	
+	/* HOME BASE */
+	
+	public synchronized HomeBase getHomeBase() {
+		return homeBase;
+	}
+	
+	public synchronized void setHomeBase(HomeBase hb) {
+		homeBase = hb;
 	}
 	
 	public synchronized ArrayList<Obstacle> getObstacles() {

@@ -1,7 +1,9 @@
-package mission;
+package mission.assmebly;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import mission.TwoStack;
 
 public class AssemblyState {
 	private final String A, B, C;

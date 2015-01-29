@@ -1,41 +1,33 @@
 package mission;
 
+import java.util.HashMap;
+
 public class TwoStack {
 	// Stack strings
 	public final String A, B;
 	
-	// Assembly time
-	public final AssemblyStep[] steps;
-	
 	public TwoStack(String A, String B) {
 		this.A = A;
 		this.B = B;
-		this.steps = null;
-	}
-	
-	public TwoStack(String A, String B, AssemblyStep[] steps) {
-		this.A = A;
-		this.B = B;
-		this.steps = steps;
 	}
 	
 	public String toString() {
 		return "[" + A + "], [" + B + "]";
 	}
 	
-	/** 
-	 * Gives all two stack crosses that yield two scorable stacks.
-	 * Scorable stacks are:
-	 * R R R R G
-	 * R R G G G
-	 * R G R G G
-	 */
 	public TwoStack[] getCrossOptions() {
+		HashMap<String, TwoStack> stacks = new HashMap<String, TwoStack>();
 		for (int i = 0; i <= 7; i++ ){
 			TwoStack ts = cross(i);
-			System.out.println(ts);
+			stacks.put(ts.A + "," + ts.B, ts);
 		}
-		return null;
+		TwoStack[] crossOps = new TwoStack[stacks.keySet().size()];
+		int i = 0;
+		for (String str : stacks.keySet()) {
+			crossOps[i] = stacks.get(str);
+			i++;
+		}
+		return crossOps;
 	}
 	
 	public TwoStack cross(int i) {
@@ -64,12 +56,6 @@ public class TwoStack {
 			a += A.charAt(2);
 			b += B.charAt(2);
 		}
-		AssemblyStep[] steps = stepsToCross(this, new TwoStack(a, b));
-		return new TwoStack(a, b, steps);
-	}
-	
-	public AssemblyStep[] stepsToCross(TwoStack src, TwoStack dest) {
-		AssemblyStep[] allowedMoves = null;
-		return null;
+		return new TwoStack(a, b);
 	}
 }

@@ -2,6 +2,7 @@ package map.elements;
 
 import java.awt.Color;
 
+import map.Pose;
 import map.geom.Obstacle;
 import map.geom.Point;
 
@@ -12,6 +13,10 @@ public class Platform extends Obstacle {
 	public Platform(Point A, Point B) {
 		start = A;
 		end = B;
+	}
+	
+	public Pose getDockingPose() {
+		return new Pose((start.x + end.x)/2, (start.y + end.y)/2, 0);
 	}
 	
 	public Color getColor() {

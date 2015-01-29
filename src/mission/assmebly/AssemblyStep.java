@@ -1,4 +1,4 @@
-package mission;
+package mission.assmebly;
 
 public enum AssemblyStep {
 	// Cost estimates are in milliseconds

@@ -1,4 +1,4 @@
-package mission;
+package mission.assmebly;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+
+import mission.TwoStack;
 
 public class Assembler {
 	public static AssemblyStep[] getAssemblySteps(TwoStack src, TwoStack dest) {

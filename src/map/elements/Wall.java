@@ -15,7 +15,7 @@ public class Wall extends Obstacle {
 	}
 	
 	public void generateObstacleData() {
-		double width = 1.0/24.0;
+		double width = 0.7/24.0;
 		double dx = end.x - start.x;
 		double dy = end.y - start.y;
 		// Generate a perpendicular unit vector
