@@ -2,6 +2,8 @@ package mission;
 
 import java.util.HashMap;
 
+import core.Config;
+
 public class TwoStack {
 	// Stack strings
 	public final String A, B;
@@ -18,8 +20,14 @@ public class TwoStack {
 	public TwoStack[] getReorderOptions() {
 		HashMap<String, TwoStack> stacks = new HashMap<String, TwoStack>();
 		for (int i = 0; i <= 5; i++ ){
-			TwoStack ts = reorder(i);
-			stacks.put(ts.A + "," + ts.B, ts);
+			TwoStack ts = reorder(i, false);
+			TwoStack ts2 = reorder(i, true);
+			if (worthy(ts)) {
+				stacks.put(ts.A + "," + ts.B, ts);
+			}
+			if (worthy(ts2)) {
+				stacks.put(ts2.A + "," + ts2.B, ts2);
+			}
 		}
 		TwoStack[] reorderOps = new TwoStack[stacks.keySet().size()];
 		int i = 0;
@@ -31,7 +39,7 @@ public class TwoStack {
 	}
 	
 	/* Assumes that one stack is empty */
-	public TwoStack reorder(int i) {
+	public TwoStack reorder(int i, boolean inverse) {
 		String stack = A;
 		boolean isA = true;
 		if (stack.length() == 0) {
@@ -52,6 +60,7 @@ public class TwoStack {
 			stack = "" + stack.charAt(2) + stack.charAt(1) + stack.charAt(0);
 		}
 		
+		isA ^= inverse;
 		if (isA) {
 			return new TwoStack(stack, "");
 		} else {
@@ -63,7 +72,9 @@ public class TwoStack {
 		HashMap<String, TwoStack> stacks = new HashMap<String, TwoStack>();
 		for (int i = 0; i <= 7; i++ ){
 			TwoStack ts = cross(i);
-			stacks.put(ts.A + "," + ts.B, ts);
+			if (worthy(ts)) {
+				stacks.put(ts.A + "," + ts.B, ts);
+			}
 		}
 		TwoStack[] crossOps = new TwoStack[stacks.keySet().size()];
 		int i = 0;
@@ -101,5 +112,25 @@ public class TwoStack {
 			b += B.charAt(2);
 		}
 		return new TwoStack(a, b);
+	}
+	
+	public boolean worthy(TwoStack ts) {
+		if (worthyStack(ts.A) && worthyStack(ts.B)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean worthyStack(String stack) {
+		if (stack.length() == 0) {
+			return true;
+		}
+		if (stack.charAt(stack.length()-1) == Config.TEAM_COLOR) {
+			return true;
+		}
+		if (stack.equals("RRR") || stack.equals("GGG")) {
+			return true;
+		}
+		return false;
 	}
 }

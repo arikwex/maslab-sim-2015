@@ -23,7 +23,7 @@ import utils.Utils;
 import core.Config;
 import core.StateEstimator;
 
-public class PathPlanning extends Thread {
+public class PathPlanning {
 	private static PathPlanning instance;
 
 	private StateMachine sm;
@@ -49,6 +49,7 @@ public class PathPlanning extends Thread {
 		return instance;
 	}
 	
+	/*
 	public void run() {
 		while (running) {
 			step();
@@ -58,6 +59,7 @@ public class PathPlanning extends Thread {
 			}
 		}
 	}
+	*/
 	
 	public void end() {
 		running = false;
@@ -84,7 +86,6 @@ public class PathPlanning extends Thread {
 			Log.log("MOVE GOAL");
 			goal = newGoal;
 			findPath(newGoal);
-			//Log.log("NEW PATH?");
 			nextWaypoint = path.getFirst();
 		}
 		

@@ -49,6 +49,7 @@ public class Overlord extends Thread {
 			dc.step();
 			se.step();
 			sm.step();
+			pp.step();
 			c.step();
 			l.updatePose();
 			

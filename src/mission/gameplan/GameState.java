@@ -28,12 +28,14 @@ public class GameState {
 	public final long timeRemaining;
 	public final GameState parent;
 	public final GameOperation op;
+	public final long movesSinceLastScore;
+	public int stacksThatScore = 0;
 	private int score;
 	private int numZones;
 	
 	public GameState(int robotLocation, String heldStack,
 					 List<LocationState> locationStates, Map map,
-					 long timeRemaining, GameState parent, GameOperation op) {
+					 long timeRemaining, GameState parent, GameOperation op, long movesSinceLastScore) {
 		this.robotLocation = robotLocation;
 		this.heldStack = heldStack;
 		this.locationStates = cloneLocations(locationStates);
@@ -41,6 +43,7 @@ public class GameState {
 		this.timeRemaining = timeRemaining;
 		this.parent = parent;
 		this.op = op;
+		this.movesSinceLastScore = movesSinceLastScore;
 		this.cacheScore();
 	}
 	
@@ -49,7 +52,7 @@ public class GameState {
 		for (LocationState location : ls) {
 			TwoStack clonedTwoStack = new TwoStack(location.twoStack.A, location.twoStack.B);
 			ret.add(new LocationState(clonedTwoStack, location.type,
-					new Pose(location.pose.x, location.pose.y, location.pose.theta)));
+					new Pose(location.pose.x, location.pose.y, location.pose.theta), location.visited));
 		}
 		return ret;
 	}
@@ -70,12 +73,7 @@ public class GameState {
 		if (op instanceof MoveToLocationOp) {
 			// MOVE TO LOCATION
 			MoveToLocationOp cast = (MoveToLocationOp)op;
-			Pose src = this.locationStates.get(robotLocation).pose;
-			src = new Pose(src.x, src.y, 0);
-			Pose dest = this.locationStates.get(cast.loc).pose;
-			dest = new Pose(dest.x, dest.y, 0);
-			return new GameState(cast.loc, heldStack, locationStates,
-								 map, timeRemaining -  MOVE_ESTIMATE(src, dest), this, cast);
+			return move(cast);
 		} else if (op instanceof GrabPortOp) {
 			// GRAB ALL FROM Port
 			GrabPortOp cast = (GrabPortOp)op;
@@ -96,6 +94,18 @@ public class GameState {
 		return null;
 	}
 	
+	public GameState move(MoveToLocationOp op) {
+		Pose src = this.locationStates.get(robotLocation).pose;
+		src = new Pose(src.x, src.y, 0);
+		Pose dest = this.locationStates.get(op.loc).pose;
+		dest = new Pose(dest.x, dest.y, 0);
+		List<LocationState> locs = cloneLocations(locationStates);
+		LocationState original = locs.get(op.loc);
+		locs.set(op.loc, new LocationState(original.twoStack, original.type, original.pose, original.visited + 1));
+		return new GameState(op.loc, heldStack, locationStates,
+							 map, timeRemaining -  MOVE_ESTIMATE(src, dest), this, op, movesSinceLastScore + 1);
+	}
+	
 	public GameState grab(GrabPortOp op) {
 		String holding = "";
 		TwoStack newStack = new TwoStack("", "");
@@ -111,7 +121,7 @@ public class GameState {
 		List<LocationState> locs = cloneLocations(locationStates);
 		locs.get(robotLocation).twoStack = newStack;
 		return new GameState(robotLocation, holding, locs,
-		 		   			 map, timeRemaining - GRAB_ESTIMATE(), this, op);
+		 		   			 map, timeRemaining - GRAB_ESTIMATE(), this, op, movesSinceLastScore + 1);
 	}
 	
 	public GameState deploy(DeployPortOp op) {
@@ -125,15 +135,25 @@ public class GameState {
 		}
 		List<LocationState> locs = cloneLocations(locationStates);
 		locs.get(robotLocation).twoStack = newStack;
-		return new GameState(robotLocation, "", locs,
-		 		   			 map, timeRemaining - DEPLOY_ESTIMATE(), this, op);
+		GameState newGameState = new GameState(robotLocation, "", locs,
+		 		   			 	 map, timeRemaining - DEPLOY_ESTIMATE(), this, op, 0);
+		if (newGameState.computeScore() < score) {
+			newGameState = new GameState(robotLocation, "", locs,
+	   			 	       map, timeRemaining - DEPLOY_ESTIMATE(), this, op, movesSinceLastScore + 1);
+		}
+		return newGameState;
 	}
 	
 	public GameState deploy(DeployPlatformOp op) {
 		List<LocationState> locs = cloneLocations(locationStates);
 		locs.get(robotLocation).twoStack = new TwoStack("", heldStack);
-		return new GameState(robotLocation, "", locs,
-		 		   			 map, timeRemaining - DEPLOY_ESTIMATE(), this, op);
+		GameState newGameState = new GameState(robotLocation, "", locs,
+   			 	  				 map, timeRemaining - DEPLOY_ESTIMATE(), this, op, 0);
+		if (newGameState.computeScore() < score) {
+			newGameState = new GameState(robotLocation, "", locs,
+			 	           map, timeRemaining - DEPLOY_ESTIMATE(), this, op, movesSinceLastScore + 1);
+		}
+		return newGameState;
 	}
 	
 	public GameState assemble(AssembleOp op) {
@@ -141,8 +161,14 @@ public class GameState {
 		TwoStack src = new TwoStack(op.src.A, op.src.B);
 		TwoStack dest = new TwoStack(op.dest.A, op.dest.B);
 		locs.get(robotLocation).twoStack = dest;
-		return new GameState(robotLocation, "", locs,
-		 		   			 map, timeRemaining - ASSEMBLE_ESTIMATE(src, dest), this, op);
+		long asmTime = ASSEMBLE_ESTIMATE(src, dest);
+		GameState newGameState = new GameState(robotLocation, "", locs,
+   			 	 			     map, timeRemaining - asmTime, this, op, 0);
+		if (newGameState.computeScore() < score) {
+			newGameState = new GameState(robotLocation, "", locs,
+			 	       	   map, timeRemaining - asmTime, this, op, movesSinceLastScore + 1);
+		}
+		return newGameState;
 	}
 	
 	public int computeScore() {
@@ -153,18 +179,21 @@ public class GameState {
 		int score = 0;
 		int zones = 0x0;
 		int stackHeight = 3;
+		int stacksThatScore = 0;
 		for (LocationState location : locationStates) {
 			// Ally stacks
 			if (validAllyStack(location)) {
 				int a = stackHeight;
 				score += a * a;
 				zones |= 0x1;
+				stacksThatScore++;
 			}
 			// Opponent stacks (in homebase)
 			if (validOpponentStack(location)) {
 				int a = stackHeight;
 				score += a * a;
 				zones |= 0x2;
+				stacksThatScore++;
 			}
 			// Platform stacks
 			if (validPlatformStack(location)) {
@@ -173,6 +202,7 @@ public class GameState {
 				// Mevior taunt bonus
 				score += 2;
 				zones |= 0x4;
+				stacksThatScore++;
 			}
 		}
 		// Reverse engineer bonus
@@ -186,6 +216,7 @@ public class GameState {
 		}
 		this.numZones = multiplier;
 		this.score = multiplier * score;
+		this.stacksThatScore = stacksThatScore;
 	}
 	
 	public int getNumZones() {
@@ -288,12 +319,11 @@ public class GameState {
 		// All navigation options except self
 		if (this.parent==null || this.parent !=null && !(this.op instanceof MoveToLocationOp)) {
 			for (int i = 1; i < locationStates.size(); i++) {
-				if (i != robotLocation) {
+				if (i != robotLocation && locationStates.get(i).visited == 0) {
 					ops.add(new MoveToLocationOp(i));
 				}
 			}
 		}
-		//}
 		
 		return ops;
 	}

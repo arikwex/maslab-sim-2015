@@ -10,6 +10,7 @@ public class Config {
 	public static final double HUB_DISTANCE = 0.31;
 	
 	// MAP CONFIG
+	public static final char TEAM_COLOR = 'R';
 
 	// ROBOT CONFIG
 	public static final double WHEELBASE = 0.18;

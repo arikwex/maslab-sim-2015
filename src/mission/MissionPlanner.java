@@ -51,10 +51,9 @@ public class MissionPlanner {
 			@Override
 			public int compare(GameState o1, GameState o2) {
 				return -o1.computeScore() + o2.computeScore();
-				//return (int)(-o1.timeRemaining + o2.timeRemaining);
 			}
 		});
-		HashMap<String, GameState> visited = new HashMap<String, GameState>();
+		HashMap<String, Boolean> visited = new HashMap<String, Boolean>();
 
 		open.add(start);
 		GameState maximizedState = start;
@@ -63,29 +62,24 @@ public class MissionPlanner {
 
 		while (open.size() > 0) {
 			GameState current = open.poll();
-			visited.put(current.toString(), current);
+			visited.put(current.toString(), true);
 			
-			if (current.getNumZones() == 3) {
-				System.out.println("SCORE = " + maxScore);
-				return backtrace(current);
-			}
-			
-			if (cnt < 0) {
+			if (cnt % 20000 == 0) {
 				System.out.println(open.size() + " | " + visited.size() + " --- max = " + maxScore);
-				cnt = 20000;
-			} else {
-				cnt--;
+			}
+			cnt++;
+			if (cnt > 100000) {
+				break;
 			}
 			
 			for (GameOperation gameOperation : current.getAllowedOps()) {
 				GameState newState = current.apply(gameOperation);
-				if (newState.timeRemaining < 0) {
+				if (newState.timeRemaining <= 0) {
 					continue;
-				}/*
-				if ((newState.timeRemaining < maximizedState.timeRemaining - 30000)
-				 && (newState.computeScore() < maximizedState.computeScore())) {
+				}
+				if (newState.movesSinceLastScore > 3) {
 					continue;
-				}*/
+				}
 				int score = newState.computeScore();
 				if (score >= maxScore) {
 					if (score == maxScore && newState.timeRemaining > maximizedState.timeRemaining) {
@@ -127,7 +121,7 @@ public class MissionPlanner {
 	public GameState createGameState(Map map, long timeRemaining) {
 		List<LocationState> locationStates = new ArrayList<LocationState>();
 		// Create robot location
-		locationStates.add(new LocationState(new TwoStack("", ""), LocationType.START, new Pose(map.bot.pose.x, map.bot.pose.y, 0)));
+		locationStates.add(new LocationState(new TwoStack("", ""), LocationType.START, new Pose(map.bot.pose.x, map.bot.pose.y, 0), 0));
 		
 		// Create stack locations
 		Polygon poly = map.getHomeBase().getPolygon();
@@ -140,7 +134,7 @@ public class MissionPlanner {
 			s = s.trim(Config.HUB_DISTANCE);
 			s = new Segment(s.end, s.start);
 			Pose hub = new Pose(s.start.x, s.start.y, s.theta);
-			locationStates.add(new LocationState(new TwoStack("", stack.cubes), locType, hub));
+			locationStates.add(new LocationState(new TwoStack("", stack.cubes), locType, hub, 0));
 		}
 		
 		// Create platform locations
@@ -149,16 +143,16 @@ public class MissionPlanner {
 			s = s.trim(Config.HUB_DISTANCE);
 			s = new Segment(s.end, s.start);
 			Pose hub = new Pose(s.start.x, s.start.y, s.theta);
-			locationStates.add(new LocationState(new TwoStack("", ""), LocationType.PLATFORM, hub));
+			locationStates.add(new LocationState(new TwoStack("", ""), LocationType.PLATFORM, hub, 0));
 		}
 		
-		// Find random points inside homebase
+		// Find good point inside homebase
 		Segment s = map.getBestHomePose();
 		s = s.trim(Config.HUB_DISTANCE);
 		s = new Segment(s.end, s.start);
 		Pose hub = new Pose(s.start.x, s.start.y, s.theta);
-		locationStates.add(new LocationState(new TwoStack("", ""), LocationType.HOMEBASE, hub));
-		return new GameState(0, "", locationStates, map, timeRemaining, null, null);
+		locationStates.add(new LocationState(new TwoStack("", ""), LocationType.HOMEBASE, hub, 0));
+		return new GameState(0, "", locationStates, map, timeRemaining, null, null, 0);
 	}
 	
 	public static void printPlanString(GameState gs, List<GameOperation> ops) {
@@ -172,7 +166,7 @@ public class MissionPlanner {
 		Map map = Map.getInstance();
 		MapLoader.load(map, new File("gameMaps/practice_field.txt"));
 		MissionPlanner mp = MissionPlanner.getInstance();
-		GameState gs = mp.createGameState(map, (int)(2 * 60 * 1000));
+		GameState gs = mp.createGameState(map, (int)(3 * 60 * 1000));
 		List<GameOperation> ops = mp.plan(gs);
 		MissionPlanner.printPlanString(gs, ops);
 		
