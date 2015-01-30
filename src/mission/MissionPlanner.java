@@ -51,6 +51,7 @@ public class MissionPlanner {
 			@Override
 			public int compare(GameState o1, GameState o2) {
 				return -o1.computeScore() + o2.computeScore();
+				//return (int)(-o1.timeRemaining + o2.timeRemaining);
 			}
 		});
 		HashMap<String, GameState> visited = new HashMap<String, GameState>();
@@ -171,7 +172,6 @@ public class MissionPlanner {
 		Map map = Map.getInstance();
 		MapLoader.load(map, new File("gameMaps/practice_field.txt"));
 		MissionPlanner mp = MissionPlanner.getInstance();
-		
 		GameState gs = mp.createGameState(map, (int)(2 * 60 * 1000));
 		List<GameOperation> ops = mp.plan(gs);
 		MissionPlanner.printPlanString(gs, ops);
@@ -214,12 +214,13 @@ public class MissionPlanner {
 		}
 		*/
 		/*
-		TwoStack src = new TwoStack("RRG", "GGR");
+		TwoStack src = new TwoStack("RGR", "GGR");
 		TwoStack dest = new TwoStack("RRR", "GGG");
 		AssemblyStep[] steps = Assembler.getAssemblySteps(src, dest);
 		System.out.println("# of steps = " + steps.length);
 		for (int i = 0; i < steps.length; i++) {
 			System.out.println(steps[i].name());
-		}*/
+		}
+		*/
 	}
 }

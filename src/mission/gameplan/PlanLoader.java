@@ -101,7 +101,6 @@ public class PlanLoader {
 			System.out.println("DEPLOY TO PLATFORM [" + location + "]: " + start);
 			
 			ops.add(new ApplyElevatorState(ps, ElevatorState.TOP));
-
 			ops.add(new AimState(ps, ports[1]));
 			ops.add(new DriveToStackState(ps, ports[1]));
 			ops.add(new ApplyElevatorState(ps, ElevatorState.MIDDLE));
@@ -110,15 +109,12 @@ public class PlanLoader {
 			ops.add(new BackTravelState(ps, start));
 		} else if (type.equals("_BOT")) {
 			// SET ELEVATOR TO BOT
-			ops.add(new ApplyElevatorState(ps, ElevatorState.BOTTOM));
 			lastElevation = ElevatorState.BOTTOM;
 		} else if (type.equals("_MID")) {
 			// SET ELEVATOR TO MID
-			ops.add(new ApplyElevatorState(ps, ElevatorState.MIDDLE));
 			lastElevation = ElevatorState.MIDDLE;
 		} else if (type.equals("_TOP")) {
 			// SET ELEVATOR TO TOP
-			ops.add(new ApplyElevatorState(ps, ElevatorState.TOP));
 			lastElevation = ElevatorState.TOP;
 		} else if (type.equals("_T1")) {
 			// SET PORT TO 1
@@ -144,11 +140,12 @@ public class PlanLoader {
 			Point aim = new Point(aimPort.x, aimPort.y);
 			ops.add(new ApplyGripperState(ps, GripperState.OPEN));
 			ops.add(new DriveToStackState(ps, aim));
+			ops.add(new ApplyElevatorState(ps, lastElevation));
 			ops.add(new ApplyGripperState(ps, GripperState.CLOSE));
 			ops.add(new ApplyElevatorState(ps, ElevatorState.TRANSIT));
 			ops.add(new BackTravelState(ps, start));
 		} else if (type.equals("_DEPLOY")) {
-			// GRAB FOR ASSMEBLY
+			// DEPLOY FOR ASSMEBLY
 			Point start = new Point(hubPose.x, hubPose.y);
 			Point aim = new Point(aimPort.x, aimPort.y);
 			ops.add(new DriveToStackState(ps, aim));
