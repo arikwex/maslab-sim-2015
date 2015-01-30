@@ -10,6 +10,6 @@ public class DeployPlatformOp extends GameOperation {
 		this.dest = dest;
 	}
 	public String toPlanString() {
-		return "PLATFORM," + loc + "," + dest.x + "," + dest.y;
+		return "PLATFORM," + loc;
 	}
 }

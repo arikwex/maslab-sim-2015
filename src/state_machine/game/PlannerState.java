@@ -29,8 +29,10 @@ public class PlannerState extends State {
     public State transition() {
     	if (actionQueue.size() > 0) {
     		return actionQueue.poll();
+    	} else {
+    		System.out.println("Destiny achieved!");
+            return this;	
     	}
-        return this;
     }
     
     public void run() {

@@ -250,6 +250,9 @@ public class PathPlanning extends Thread {
 	public static double getTotalLength(LinkedList<Point> path) {
 		double totalLength = 0;
 		Point prev = null;
+		if (path == null) {
+			return 0;
+		}
 		for (Point curr : path) {
 			if (prev != null)
 				totalLength += prev.distance(curr);
@@ -288,11 +291,11 @@ public class PathPlanning extends Thread {
 		if (timeMap.containsKey(hash)) {
 			return timeMap.get(hash);
 		} else {
-			System.out.println("estimating..." + a + " --> " + b);
 			LinkedList<Point> path = RRTSearch(new Pose(a.x, a.y, 0), new Pose(b.x, b.y, 0), 1000);
 			double totalLength = PathPlanning.getTotalLength(path);
-			System.out.println("done. (" + totalLength);
-			return (long)(totalLength * 3 * 1000);
+			long value = (long)(totalLength * 5 * 1000);
+			timeMap.put(hash, value);
+			return value;
 		}
 	}
 }

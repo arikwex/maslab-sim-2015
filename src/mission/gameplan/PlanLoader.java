@@ -61,13 +61,13 @@ public class PlanLoader {
 			// MOVE
 			int location = Integer.parseInt(params[1]);
 			Pose pose = loc.get(location);
-			System.out.println("MOVE TO LOC[" + location + "]: " + pose);
+			System.out.println("MOVE TO LOC [" + location + "]: " + pose);
 			ops.add(new TravelState(ps, pose));
 			hubPose = new Pose(pose.x, pose.y, pose.theta);
 		} else if (type.equals("GRAB")) {
 			// GRAB FULL STACK
 			Point start = new Point(hubPose.x, hubPose.y);
-			Point[] ports = ps.getPorts(start, hubPose.theta);
+			Point[] ports = PlannerState.getPorts(start, hubPose.theta);
 			int index = Integer.parseInt(params[1]) - 1;
 			System.out.println("GRAB FULL STACK (port = " + (index+1) + ")");
 			
@@ -82,7 +82,7 @@ public class PlanLoader {
 		} else if (type.equals("DEPLOY")) {
 			// DEPLOY FULL STACK
 			Point start = new Point(hubPose.x, hubPose.y);
-			Point[] ports = ps.getPorts(start, hubPose.theta);
+			Point[] ports = PlannerState.getPorts(start, hubPose.theta);
 			int index = Integer.parseInt(params[1]) - 1;
 			System.out.println("DEPLOY FULL STACK (port = " + (index+1) + ")");
 			
@@ -92,6 +92,21 @@ public class PlanLoader {
 			ops.add(new DriveToStackState(ps, ports[index]));
 	    	
 			ops.add(new ApplyGripperState(ps, GripperState.OPEN));
+			ops.add(new BackTravelState(ps, start));
+		} else if (type.equals("PLATFORM")) {
+			// DEPLOY FULL STACK to PLATFORM
+			Point start = new Point(hubPose.x, hubPose.y);
+			Point[] ports = PlannerState.getPorts(start, hubPose.theta);
+			int location = Integer.parseInt(params[1]);
+			System.out.println("DEPLOY TO PLATFORM [" + location + "]: " + start);
+			
+			ops.add(new ApplyElevatorState(ps, ElevatorState.TOP));
+
+			ops.add(new AimState(ps, ports[1]));
+			ops.add(new DriveToStackState(ps, ports[1]));
+			ops.add(new ApplyElevatorState(ps, ElevatorState.MIDDLE));
+			ops.add(new ApplyGripperState(ps, GripperState.OPEN));
+			ops.add(new ApplyElevatorState(ps, ElevatorState.TRANSIT));
 			ops.add(new BackTravelState(ps, start));
 		} else if (type.equals("_BOT")) {
 			// SET ELEVATOR TO BOT
@@ -108,19 +123,19 @@ public class PlanLoader {
 		} else if (type.equals("_T1")) {
 			// SET PORT TO 1
 			Point start = new Point(hubPose.x, hubPose.y);
-			Point[] ports = ps.getPorts(start, hubPose.theta);
+			Point[] ports = PlannerState.getPorts(start, hubPose.theta);
 			ops.add(new AimState(ps, ports[0]));
 			aimPort = ports[0];
 		} else if (type.equals("_T2")) {
 			// SET PORT TO 2
 			Point start = new Point(hubPose.x, hubPose.y);
-			Point[] ports = ps.getPorts(start, hubPose.theta);
+			Point[] ports = PlannerState.getPorts(start, hubPose.theta);
 			ops.add(new AimState(ps, ports[1]));
 			aimPort = ports[1];
 		} else if (type.equals("_T3")) {
 			// SET PORT TO 3
 			Point start = new Point(hubPose.x, hubPose.y);
-			Point[] ports = ps.getPorts(start, hubPose.theta);
+			Point[] ports = PlannerState.getPorts(start, hubPose.theta);
 			ops.add(new AimState(ps, ports[2]));
 			aimPort = ports[2];
 		} else if (type.equals("_GRAB")) {

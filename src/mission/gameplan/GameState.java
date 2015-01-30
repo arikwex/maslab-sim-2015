@@ -29,6 +29,7 @@ public class GameState {
 	public final GameState parent;
 	public final GameOperation op;
 	private int score;
+	private int numZones;
 	
 	public GameState(int robotLocation, String heldStack,
 					 List<LocationState> locationStates, Map map,
@@ -183,7 +184,12 @@ public class GameState {
 		for (int i = zones; i > 0; i = i >> 1) {
 			multiplier += (i & 0x1);
 		}
+		this.numZones = multiplier;
 		this.score = multiplier * score;
+	}
+	
+	public int getNumZones() {
+		return this.numZones;
 	}
 	
 	public boolean validAllyStack(LocationState ls) {
@@ -213,8 +219,8 @@ public class GameState {
 	
 	// TODO: Make these estimates better?
 	public long MOVE_ESTIMATE(Pose src, Pose dest) {
-		//long time = PathPlanning.getInstance().estimateTravelTime(src, dest);
-		return 10000;//time;
+		long time = PathPlanning.getInstance().estimateTravelTime(src, dest);
+		return time;
 	}
 	
 	public long GRAB_ESTIMATE() {

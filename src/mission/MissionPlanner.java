@@ -63,6 +63,12 @@ public class MissionPlanner {
 		while (open.size() > 0) {
 			GameState current = open.poll();
 			visited.put(current.toString(), current);
+			
+			if (current.getNumZones() == 3) {
+				System.out.println("SCORE = " + maxScore);
+				return backtrace(current);
+			}
+			
 			if (cnt < 0) {
 				System.out.println(open.size() + " | " + visited.size() + " --- max = " + maxScore);
 				cnt = 20000;
@@ -74,9 +80,8 @@ public class MissionPlanner {
 				GameState newState = current.apply(gameOperation);
 				if (newState.timeRemaining < 0) {
 					continue;
-				}
-				/*
-				if ((newState.timeRemaining < maximizedState.timeRemaining - 60000)
+				}/*
+				if ((newState.timeRemaining < maximizedState.timeRemaining - 30000)
 				 && (newState.computeScore() < maximizedState.computeScore())) {
 					continue;
 				}*/
