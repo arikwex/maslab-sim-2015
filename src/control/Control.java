@@ -165,4 +165,9 @@ public class Control {
         double rot = rotPid.step(-thetaErr);
         setMotion(vel, rot);
     }
+    
+    public static void main(String[] argv) {
+    	Control.getInstance().setVelocity(0.25, 0.25);
+    	while (true) {}
+    }
 }
