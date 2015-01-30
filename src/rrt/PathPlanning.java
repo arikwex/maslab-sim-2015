@@ -158,59 +158,36 @@ public class PathPlanning extends Thread {
 	}
 
 	public LinkedList<Point> RRTSearch(Point goal, boolean allowRandom) {
-
-		rrtEdges = new ArrayList<Segment>();
+		Point start = new Point(map.bot.pose.x, map.bot.pose.y);
 		LinkedList<Point> path = new LinkedList<Point>();
 	    
-		Point start = new Point(map.bot.pose.x, map.bot.pose.y);
+		rrtEdges = new ArrayList<Segment>();
+
 		TreeNode root = new TreeNode(start);
 		Tree rrt = new Tree(root);
 
-		Point p;
 		TreeNode closest, newNode, goalNode;
-		Segment seg;
+		
+		// try to shortcut to goal
 		if (map.checkSegment(new Segment(start, goal), map.bot.pose.theta)) {
 			path.add(goal);
 			return path;
 		}
 
-		long count = 0;
+		// can use a counter to reset?
 		while (true) {
-		    count++;
-		    if (count % 5000 == 0) {
-		        if (rrt.nodes.size() > 5000 || count % 50000 == 0) {
-		            rrtEdges.clear();
-		            start = new Point(map.bot.pose.x, map.bot.pose.y);
-		            root = new TreeNode(start);
-		            rrt = new Tree(root);
-		        }
-		        if (count > 100000 && rrt.nodes.size() > 5) {
-		        	if (allowRandom) {
-		        		Log.log("FUCK IT GO TO RANDOM NODE");
-			            
-		                goalNode = rrt.nodes.get((int)(Math.random()*rrt.nodes.size()));
-		                break;		        
-		        	}
-		        	else {
-		        		return null;
-		        	}
-		        }
-		        Log.getInstance().updatePose();
-		    }
-		    
-			p = map.randomPoint();
+			Point p = map.randomPoint();
 			if (Math.random() < Config.RRT_GOAL_BIAS)
-			    p = new Point(map.bot.pose); 
+			    p = new Point(goal); 
 			
 		    closest = root;
-			
-			for (TreeNode node : rrt.nodes) {
+			for (TreeNode node : rrt.nodes) { // faster search? Quad tree?
 				if (node.loc.distance(p) < closest.loc.distance(p)) {
 					closest = node;
 				}
 			}
 
-			seg = new Segment(closest.loc, p);
+			Segment seg = new Segment(closest.loc, p);
 			seg = seg.trim(Config.MAXLENGTH);
 
 			double startAngle;

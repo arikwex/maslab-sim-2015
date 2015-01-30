@@ -11,6 +11,11 @@ public class Pose extends Point{
         this.theta = theta;
     }
     
+    public Pose(Point p, double theta) {
+        super(p);
+        this.theta = theta;
+    }
+    
     public Pose clone() {
         return new Pose(x, y, theta);
     }

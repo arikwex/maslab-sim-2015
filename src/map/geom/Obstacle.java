@@ -35,9 +35,7 @@ public abstract class Obstacle extends Polygon {
     }
 
     private Polygon computeNaiveCSpace(double r) {
-
         List<Point> csoPoints = new LinkedList<Point>();
-
         List<Point> roVertices = this.getVertices();
 
         for (Point p : roVertices) {
