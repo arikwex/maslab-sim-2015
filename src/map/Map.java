@@ -4,6 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import rrt.PathPlanning;
 import map.elements.HomeBase;
 import map.elements.Platform;
 import map.elements.Stack;
@@ -282,5 +283,17 @@ public class Map {
     			}
     		}
     	}
+    }
+    
+    public Segment getBestPlatformApproach(Platform plat) {
+    	Point vector = plat.end.subtract(plat.start).scaleToMagnitude(0.3).getRotated(Math.PI/2);
+    	Point midPoint = plat.start.average(plat.end);
+    	
+    	PathPlanning p = PathPlanning.getInstance();
+    	Object result = p.RRTSearch(bot.pose, midPoint.add(vector), 1000);
+    	if (result != null)
+        	return new Segment(midPoint, midPoint.add(vector.scaleToMagnitude(1.5)));
+    	    	
+    	return new Segment(midPoint, midPoint.subtract(vector.scaleToMagnitude(1.5)));
     }
 }

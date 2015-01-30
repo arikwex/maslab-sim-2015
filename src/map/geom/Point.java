@@ -38,11 +38,20 @@ public class Point extends Point2D {
 		this.y = y;	
 	}
 	
+	public Point scaleToMagnitude(double magnitude) {
+		double scalar = magnitude/this.getMagnitude();
+		return this.scale(scalar);
+	}
+	
 	public double dot(Point p) {
 		return (this.x * p.x) + (this.y * p.y);
 	}
 	public double cross(Point p) {
 		return (this.x * p.y) - (p.x * this.y);
+	}
+	
+	public Point average(Point p) {
+		return this.add(p).scale(0.5);
 	}
 	
 	public Point scale(double scalar) {

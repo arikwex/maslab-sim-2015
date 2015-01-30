@@ -160,8 +160,12 @@ public class PathPlanning extends Thread {
 		hw.motorRight.setSpeed(0);
 		path = RRTSearch(map.bot.pose, goal);
 	}
-
+	
 	public LinkedList<Point> RRTSearch(Pose start, Point goal) {
+		return RRTSearch(start, goal, Integer.MAX_VALUE);
+	}
+	
+	public LinkedList<Point> RRTSearch(Pose start, Point goal, int maxNodes) {
 		LinkedList<Point> path = new LinkedList<Point>();
 	    
 		rrtEdges = new ArrayList<Segment>();
@@ -179,6 +183,9 @@ public class PathPlanning extends Thread {
 
 		// can use a counter to reset?
 		while (true) {
+			if (rrt.nodes.size() > maxNodes)
+				return null;
+			
 			Point p = map.randomPoint();
 			if (Math.random() < Config.RRT_GOAL_BIAS)
 			    p = new Point(goal); 
