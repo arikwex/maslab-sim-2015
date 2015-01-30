@@ -23,6 +23,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -255,6 +256,11 @@ public class RobotGraph extends JFrame implements Runnable {
             paintBot(g);
             paintObstacles(g);
             
+            g.setColor(Color.RED);
+            paintSegments(g, map.getBestApproach(bot.pose, 1.5, true));
+            g.setColor(Color.BLUE);
+            paintSegments(g, map.getBestApproach(bot.pose, 1.5, false));
+            
             g.setColor(Color.black);
             g.setTransform(new AffineTransform());
             g.drawString("Time Remaining: " + (int)(Overlord.timeRemaining() / 1000.0) + "s", 30, 30);
@@ -277,12 +283,23 @@ public class RobotGraph extends JFrame implements Runnable {
             PathPlanning pp = PathPlanning.getInstance();
             if (pp.rrtEdges != null && Control.getInstance().getMode() == ControlMode.TRAVEL_PLAN) {
 	            g.setColor(new Color(0,0,255,128));
-	            Segment s;
-	            for (int i = 0; i < pp.rrtEdges.size(); i++) {
-	                s = pp.rrtEdges.get(i);
-	                g.draw(new Line2D.Double(s.start, s.end));
-	            }
+	            paintSegments(g, pp.rrtEdges);
             }
+        }
+        
+        private void paintPoints(Graphics2D g, Collection<Point> points) {
+        	BasicStroke fatLine = new BasicStroke((float) (10.0f * (x_max - x_min) / (FRAME_WIDTH * total_mag)));
+            Stroke oldStroke = g.getStroke();
+            g.setStroke(fatLine);
+            for (Point p : points)
+            	g.draw(new Line2D.Double(p,p));
+            
+            g.setStroke(oldStroke);
+        }
+        
+        private void paintSegments(Graphics2D g, Collection<Segment> segments) {
+            for (Segment seg : segments)
+                g.draw(new Line2D.Double(seg.start, seg.end));
         }
 
         private void paintObstacles(Graphics2D g) {

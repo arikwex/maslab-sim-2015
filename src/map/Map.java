@@ -143,12 +143,93 @@ public class Map {
         return new Point(x,y);
     }
     
-    public Point getBestApproach(Point center) {
-    	double sample = Math.PI/64;
-    	double range = Math.PI/8;
+    public ArrayList<Point> getWallCollisions(Segment seg) {
+    	ArrayList<Point> collisions = new ArrayList<Point>();
+
+    	for (Wall w : walls) {
+			Segment wallSeg = new Segment(w.start, w.end);
+			Point collision = wallSeg.intersetionPoint(seg);
+			
+			if (collision != null) {
+				collisions.add(collision);
+			}
+		}
     	
+    	return collisions;
+    }
+
+    
+    public ArrayList<Segment> getBestApproach(Point center, double max, boolean useAvg) {
+    	int samples = 64;
+    	double sampleWidth = Math.PI*2/samples;
+    	double scan = Math.PI/4;
+    	int scanWidth = (int)(scan/sampleWidth);
+    	ArrayList<Segment> segments = new ArrayList<Segment>();
     	
+    	for (int i = 0; i < samples; i++) {
+    		Point ray = new Point(max,0).getRotated(i * sampleWidth);
+    		Segment seg = new Segment(center, center.add(ray));
+    		
+    		for (Wall w : walls) {
+    			Segment wallSeg = new Segment(w.start, w.end);
+    			Point collision = wallSeg.intersetionPoint(seg);
+    			if (collision != null && seg.start.distance(collision) < seg.length()) {
+    				seg = new Segment(seg.start, collision);
+    			}
+    		}
+    		
+    		segments.add(seg);
+    	}
     	
-    	return null;
+    	double maxScore = 0;
+    	Segment maxSegment = segments.get(0);
+    	ArrayList<Segment> newSegments = new ArrayList<Segment>();
+    	for (int i = 0; i<segments.size(); i++) {
+    		double score = 0;
+    		if (useAvg)
+    			score = minScore(segments, i, scanWidth);
+    		else 
+    			score = avgScore(segments, i, scanWidth);
+    		
+    		if (score > maxScore) {
+    			maxScore = score;
+    			maxSegment = segments.get(i);
+    		}
+			newSegments.add(segments.get(i).trim(score));
+
+    	}
+    	    	
+    	newSegments.clear();
+    	newSegments.add(maxSegment);
+
+    	return newSegments;
+    	 
+    	
+    	//return null;
+    }
+    
+    
+    public double minScore(ArrayList<Segment> segments, int index, int scanWidth) {
+    	int i = index;
+    	double min = Double.POSITIVE_INFINITY;
+		for (int j = i-scanWidth/2; j<i+scanWidth/2; j++) {
+			Segment seg = segments.get((j+segments.size()) % segments.size());
+			if (seg.length() < min) {
+				min = seg.length();
+			}
+		}
+		
+		return min;
+    }
+    
+    public double avgScore(ArrayList<Segment> segments, int index, int scanWidth) {
+    	int i = index;
+    	double avg = 0;
+		for (int j = i-scanWidth/2; j<i+scanWidth/2; j++) {
+			Segment seg = segments.get((j+segments.size()) % segments.size());
+			avg += seg.length();
+		}
+		
+		return avg/scanWidth;
     }
 }

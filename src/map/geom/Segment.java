@@ -53,6 +53,17 @@ public class Segment {
 
         return true;
     }
+    
+    public Point intersetionPoint(Segment seg) {
+    	if (!intersects(seg))
+    		return null;
+
+    	Point otherVect = seg.end.subtract(seg.start);
+    	Point thisVect = this.end.subtract(this.start);
+    	
+    	double t = seg.start.subtract(this.start).cross(otherVect) / thisVect.cross(otherVect); 
+    	return this.start.add(thisVect.scale(t));
+    }
 
     private boolean side(Point p, Segment seg) {
         if (seg.m == Double.POSITIVE_INFINITY) {

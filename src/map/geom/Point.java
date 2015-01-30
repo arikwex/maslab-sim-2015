@@ -38,6 +38,25 @@ public class Point extends Point2D {
 		this.y = y;	
 	}
 	
+	public double dot(Point p) {
+		return (this.x * p.x) + (this.y * p.y);
+	}
+	public double cross(Point p) {
+		return (this.x * p.y) - (p.x * this.y);
+	}
+	
+	public Point scale(double scalar) {
+		return new Point(this.x * scalar, this.y * scalar);
+	}
+	
+	public Point add(Point p) {
+		return new Point(this.x + p.x, this.y + p.y);
+	}
+	
+	public Point subtract(Point p) {
+		return new Point(this.x - p.x, this.y - p.y);
+	}
+	
 	public double angleTo(Point p) {
         return Math.atan2(p.y-this.y, p.x-this.x);
 	}
