@@ -10,7 +10,7 @@ class LidarRangeSensorData : public SensorData {
   static vector<RobotVector> sensors;
   const RealControl& control;
 
-  LidarRangeSensorData();  
+  LidarRangeSensorData(const RealControl& control);  
   Prob computeProb(const RobotPose& pose, const Map &map) const override;
 };
 

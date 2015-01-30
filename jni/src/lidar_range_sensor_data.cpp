@@ -1,3 +1,7 @@
+#include "lidar_range_sensor_data.h"
+
+#include "random.h"
+
 LidarRangeSensorData::LidarRangeSensorData(const RealControl& control) : control(control) {
   if (sensors.empty()) {
     for (int i = 0; i < 360; ++i) {
@@ -7,7 +11,7 @@ LidarRangeSensorData::LidarRangeSensorData(const RealControl& control) : control
   }
 }
 
-Prob LidarRangeSensorData::computeProb(const RobotPose& pose, const Map &map) const override {
+Prob LidarRangeSensorData::computeProb(const RobotPose& pose, const Map &map) const {
   // cout << "sig done" << endl;
   Prob out = Prob::makeFromLinear(1.0);
   for (int i = 0; i < 360; ++i) {

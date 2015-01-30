@@ -3,6 +3,8 @@
 
 #if EDISON
 
+#include <cmath>
+
 #include "control.h"
 #include "lidar.h"
 #include "encoder.h"

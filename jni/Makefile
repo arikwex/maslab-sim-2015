@@ -9,7 +9,7 @@ ifndef JAVA_HOME
 	$(error JAVA_HOME must be set)
 endif
 
-INCLUDES = -I$(GTEST)/include -I$(GTEST)/ -I$(SRCDIR)/ -I$(JAVA_HOME)/include
+INCLUDES = -I$(GTEST)/include -I$(GTEST)/ -I$(SRCDIR)/ -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
 CXXFLAGS += -std=c++0x -g -Wall -Wextra -pthread -pg 
 ifdef EDISON
 	CXXFLAGS += -DEDISON
