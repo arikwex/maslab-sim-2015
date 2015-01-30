@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import core.Config;
 import state_machine.game.PlannerState;
 import map.Map;
 import map.MapLoader;
@@ -42,7 +43,7 @@ public class MissionPlanner {
 	}
 
 	public List<GameOperation> plan(GameState start) {
-		Queue<GameState> open = new PriorityQueue<GameState>(0, new Comparator<GameState>() {
+		Queue<GameState> open = new PriorityQueue<GameState>(500, new Comparator<GameState>() {
 			@Override
 			public int compare(GameState o1, GameState o2) {
 				return -o1.computeScore() + o2.computeScore();
@@ -125,7 +126,11 @@ public class MissionPlanner {
 			if (poly.contains(stack.pt)) {
 				locType = LocationType.HOMEBASE;
 			}
-			locationStates.add(new LocationState(new TwoStack("", stack.cubes), locType, new Pose(stack.pt.x, stack.pt.y + PlannerState.HUB_DISTANCE, 0)));
+			Segment s = map.getBestApproach(stack.pt);
+			s = s.trim(Config.HUB_DISTANCE);
+			s = new Segment(s.end, s.start);
+			Pose hub = new Pose(s.start.x, s.start.y, s.theta);
+			locationStates.add(new LocationState(new TwoStack("", stack.cubes), locType, hub));
 		}
 		
 		// Create platform locations
@@ -157,7 +162,7 @@ public class MissionPlanner {
 		MapLoader.load(map, new File("gameMaps/practice_field.txt"));
 		MissionPlanner mp = MissionPlanner.getInstance();
 		
-		GameState gs = mp.createGameState(map, (int)(3 * 60 * 1000));
+		GameState gs = mp.createGameState(map, (int)(2 * 60 * 1000));
 		List<GameOperation> ops = mp.plan(gs);
 		MissionPlanner.printPlanString(gs, ops);
 		

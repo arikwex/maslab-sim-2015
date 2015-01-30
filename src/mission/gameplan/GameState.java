@@ -3,6 +3,7 @@ package mission.gameplan;
 import java.util.ArrayList;
 import java.util.List;
 
+import core.Config;
 import state_machine.game.PlannerState;
 import map.Map;
 import map.Pose;
@@ -257,8 +258,8 @@ public class GameState {
 			}
 		} else if (robLoc.type == LocationType.PLATFORM) {
 			Point dest = new Point(
-				robLoc.pose.x - Math.cos(robLoc.pose.theta) * PlannerState.HUB_DISTANCE,
-				robLoc.pose.y - Math.sin(robLoc.pose.theta) * PlannerState.HUB_DISTANCE
+				robLoc.pose.x - Math.cos(robLoc.pose.theta) * Config.HUB_DISTANCE,
+				robLoc.pose.y - Math.sin(robLoc.pose.theta) * Config.HUB_DISTANCE
 			);
 			ops.add(new DeployPlatformOp(robotLocation, dest));
 		}

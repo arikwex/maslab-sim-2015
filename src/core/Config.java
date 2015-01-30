@@ -6,6 +6,9 @@ public class Config {
 	// SIM CONFIG
 	public static final boolean sim = true;
 
+	// PLANNER CONFIG
+	public static final double HUB_DISTANCE = 0.23;
+	
 	// MAP CONFIG
 
 	// ROBOT CONFIG

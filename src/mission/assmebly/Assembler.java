@@ -11,7 +11,7 @@ import mission.TwoStack;
 
 public class Assembler {
 	public static AssemblyStep[] getAssemblySteps(TwoStack src, TwoStack dest) {
-		Queue<AssemblyState> open = new PriorityQueue<AssemblyState>(0, new Comparator<AssemblyState>() {
+		Queue<AssemblyState> open = new PriorityQueue<AssemblyState>(500, new Comparator<AssemblyState>() {
 			@Override
 			public int compare(AssemblyState o1, AssemblyState o2) {
 				return o1.getCost() - o2.getCost();
