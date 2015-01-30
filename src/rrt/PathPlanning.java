@@ -155,11 +155,10 @@ public class PathPlanning extends Thread {
 		Hardware hw = Hardware.getInstance();
 		hw.motorLeft.setSpeed(0);
 		hw.motorRight.setSpeed(0);
-		path = RRTSearch(goal, true);
+		path = RRTSearch(map.bot.pose, goal);
 	}
 
-	public LinkedList<Point> RRTSearch(Point goal, boolean allowRandom) {
-		Point start = new Point(map.bot.pose.x, map.bot.pose.y);
+	public LinkedList<Point> RRTSearch(Pose start, Point goal) {
 		LinkedList<Point> path = new LinkedList<Point>();
 	    
 		rrtEdges = new ArrayList<Segment>();
@@ -170,7 +169,7 @@ public class PathPlanning extends Thread {
 		TreeNode closest, newNode, goalNode;
 		
 		// try to shortcut to goal
-		if (map.checkSegment(new Segment(start, goal), map.bot.pose.theta)) {
+		if (map.checkSegment(new Segment(start, goal), start.theta)) {
 			path.add(goal);
 			return path;
 		}
@@ -193,7 +192,7 @@ public class PathPlanning extends Thread {
 
 			double startAngle;
 			if (closest == root)
-				startAngle = map.bot.pose.theta;
+				startAngle = start.theta;
 			else
 				startAngle = closest.parent.loc.angleTo(closest.loc);
 			
