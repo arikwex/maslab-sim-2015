@@ -11,18 +11,18 @@ import mission.TwoStack;
 
 public class Assembler {
 	public static AssemblyStep[] getAssemblySteps(TwoStack src, TwoStack dest) {
-		Queue<AssemblyState> open = new PriorityQueue<AssemblyState>(
-			new Comparator<AssemblyState>() {
-				public int compare(AssemblyState o1, AssemblyState o2) {
-					return o1.getCost() - o2.getCost();
-				}
-			});
+		Queue<AssemblyState> open = new PriorityQueue<AssemblyState>(0, new Comparator<AssemblyState>() {
+			@Override
+			public int compare(AssemblyState o1, AssemblyState o2) {
+				return o1.getCost() - o2.getCost();
+			}
+		});
 		HashMap<String, Integer> visited = new HashMap<String, Integer>();
-		
+
 		AssemblyState start = new AssemblyState(src.A, src.B, "");
 		open.add(start);
 		visited.put(start.toString(), 0);
-		
+
 		while (open.size() > 0) {
 			AssemblyState current = open.poll();
 			if (current.toTwoStack().toString().equals(dest.toString())) {

@@ -79,3 +79,11 @@ jdouble Java_hardware_jni_HardwareJNI_getPoseY(JNIEnv *env, jclass cls) {
 jdouble Java_hardware_jni_HardwareJNI_getPoseTheta(JNIEnv *env, jclass cls) {
   return best.pose.theta;
 }
+
+jdouble Java_hardware_jni_HardwareJNI_getLeftDistance(JNIEnv *env, jclass cls) {
+  return (control.getLeftEncoder() / (double)MOTOR_TICKS_PER_SPEED);
+}
+
+jdouble Java_hardware_jni_HardwareJNI_getRightDistance(JNIEnv *env, jclass cls) {
+  return (control.getRightEncoder() / (double)MOTOR_TICKS_PER_SPEED);
+}

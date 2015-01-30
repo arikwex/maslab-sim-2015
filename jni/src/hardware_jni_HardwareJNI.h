@@ -47,6 +47,22 @@ JNIEXPORT jdouble JNICALL Java_hardware_jni_HardwareJNI_getPoseY
 JNIEXPORT jdouble JNICALL Java_hardware_jni_HardwareJNI_getPoseTheta
   (JNIEnv *, jclass);
 
+/*
+ * Class:     hardware_jni_HardwareJNI
+ * Method:    getLeftDistance
+ * Signature: ()D
+ */
+JNIEXPORT jdouble JNICALL Java_hardware_jni_HardwareJNI_getLeftDistance
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     hardware_jni_HardwareJNI
+ * Method:    getRightDistance
+ * Signature: ()D
+ */
+JNIEXPORT jdouble JNICALL Java_hardware_jni_HardwareJNI_getRightDistance
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

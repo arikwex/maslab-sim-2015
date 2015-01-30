@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -17,49 +16,43 @@ import map.elements.Stack;
 import map.geom.Point;
 import map.geom.Polygon;
 import map.geom.Segment;
-import mission.assmebly.AssemblyState;
 import mission.gameplan.GameState;
 import mission.gameplan.LocationState;
 import mission.gameplan.LocationType;
-import mission.gameplan.operations.AssembleOp;
-import mission.gameplan.operations.DeployPlatformOp;
-import mission.gameplan.operations.DeployPortOp;
 import mission.gameplan.operations.GameOperation;
-import mission.gameplan.operations.GrabPortOp;
-import mission.gameplan.operations.MoveToLocationOp;
 
 public class MissionPlanner {
 	public static MissionPlanner mp = null;
-	
+
 	public MissionPlanner() {
 	}
-	
+
 	public static MissionPlanner getInstance() {
 		if (mp == null) {
 			mp = new MissionPlanner();
 		}
 		return mp;
 	}
-	
+
 	public TwoStack mergeTwoStack(TwoStack twoStack) {
 		return null;
 	}
-	
+
 	public List<GameOperation> plan(GameState start) {
-		Queue<GameState> open = new PriorityQueue<GameState>(
-			new Comparator<GameState>() {
-				public int compare(GameState o1, GameState o2) {
-					return -o1.computeScore() + o2.computeScore();
-				}
-			});
+		Queue<GameState> open = new PriorityQueue<GameState>(0, new Comparator<GameState>() {
+			@Override
+			public int compare(GameState o1, GameState o2) {
+				return -o1.computeScore() + o2.computeScore();
+			}
+		});
 		HashMap<String, GameState> visited = new HashMap<String, GameState>();
-		
+
 		open.add(start);
 		GameState maximizedState = start;
 		int maxScore = 0;
 		int cnt = 0;
-		
-		while (open.size() > 0 ) {
+
+		while (open.size() > 0) {
 			GameState current = open.poll();
 			visited.put(current.toString(), current);
 			if (cnt < 0) {
