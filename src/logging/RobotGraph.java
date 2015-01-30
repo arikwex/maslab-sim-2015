@@ -26,14 +26,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import map.Map;
+import map.Pose;
 import map.elements.HomeBase;
 import map.geom.Obstacle;
 import map.geom.Point;
 import map.geom.Robot;
 import map.geom.Segment;
 import rrt.PathPlanning;
-import control.Control;
-import control.ControlMode;
+import state_machine.game.PlannerState;
+import core.Config;
 import core.Overlord;
 
 public class RobotGraph extends JFrame implements Runnable {
@@ -51,9 +52,6 @@ public class RobotGraph extends JFrame implements Runnable {
     private static final double Y_MAX_INITIAL = 4.0;
     private static final double Y_MIN_INITIAL = -4.0;
     
-    private int mousex = 0;
-    private int mousey = 0;
-
     private double total_mag = 1;
 
     // all values in meters
@@ -90,8 +88,6 @@ public class RobotGraph extends JFrame implements Runnable {
         }
 
         public void mouseMoved(MouseEvent e) {
-        	mousex = e.getX();
-        	mousey = e.getY();
         }
 
         public void mousePressed(MouseEvent e) {
@@ -100,9 +96,6 @@ public class RobotGraph extends JFrame implements Runnable {
         }
 
         public void mouseDragged(MouseEvent e) {
-        	mousex = e.getX();
-        	mousey = e.getY();
-
             // we need to find the x and y translation
             int diff_x = e.getX() - start_drag[0];
             int diff_y = e.getY() - start_drag[1];
@@ -252,13 +245,14 @@ public class RobotGraph extends JFrame implements Runnable {
             drawAxes(g);
 
             paintHomebase(g);
+            paintLocations(g);
             paintRrt(g);
             paintPath(g);
             paintBot(g);
             paintObstacles(g);
 
-            g.setColor(Color.BLUE);
-            Segment seg = map.getBestApproach(bot.pose);
+            g.setColor(Color.CYAN);
+            Segment seg = map.getBestApproach(bot.pose).trim(0.25);
             g.draw(new Line2D.Double(seg.start, seg.end));
 
             
@@ -274,6 +268,19 @@ public class RobotGraph extends JFrame implements Runnable {
             */
             g.setColor(Color.black);
             g.drawString("Time Remaining: " + (int)(Overlord.timeRemaining() / 1000.0) + "s", 30, 30);
+        }
+        
+        private void paintLocations(Graphics2D g) {
+        	List<Pose> locations = map.getLocations();
+        	// skip starting location ---> size - platforms - homebase
+        	for (int i = 1; i < locations.size() - map.getPlatforms().size() - 1; i++ ) {
+        		Pose pose = locations.get(i);
+        		paintPoint(g, pose, Color.MAGENTA);
+        		Point[] hubs = PlannerState.getPorts(pose, pose.theta);
+        		for (int j = 0; j < hubs.length; j++) {
+        			g.draw(new Line2D.Double(pose, hubs[j]));
+        		}
+        	}
         }
         
         private void paintHomebase(Graphics2D g) {

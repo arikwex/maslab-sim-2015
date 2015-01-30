@@ -20,18 +20,17 @@ import state_machine.game.DriveToStackState;
 import state_machine.game.PlannerState;
 import state_machine.game.TravelState;
 import map.Map;
-import map.MapLoader;
 import map.Pose;
 import map.geom.Point;
 
 public class PlanLoader {
-	private static Point lastPoint = null;
+	private static Pose hubPose = null;
 	private static Point aimPort = null;
 	private static ElevatorState lastElevation = null;
 	
 	public static Queue<State> load(PlannerState ps, File planFile) {
 		System.out.println("Loading plan");
-		List<Point> locations = new ArrayList<Point>();
+		List<Pose> locations = new ArrayList<Pose>();
 		Queue<State> ops = new LinkedList<State>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(planFile));
@@ -44,29 +43,31 @@ public class PlanLoader {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Map.getInstance().setLocations(locations);
 		System.out.println("Plan queue has " + ops.size() + " operations.");
 		return ops;
 	}
 	
-	public static void process(String line, PlannerState ps, List<Point> loc, Queue<State> ops) {
+	public static void process(String line, PlannerState ps, List<Pose> loc, Queue<State> ops) {
 		String[] params = line.split(",");
 		String type = params[0];
 		
 		if (type.equals("LOC")) {
 			// LOCATION OBJECT
-			loc.add(new Point(Double.parseDouble(params[2]),
-							 Double.parseDouble(params[3])));
+			loc.add(new Pose(Double.parseDouble(params[2]),
+							 Double.parseDouble(params[3]),
+							 Double.parseDouble(params[4])));
 		} else if (type.equals("MOV")) {
 			// MOVE
 			int location = Integer.parseInt(params[1]);
-			Point pt = loc.get(location);
-			System.out.println("MOVE TO LOC[" + location + "]: " + pt);
-			ops.add(new TravelState(ps, pt));
-			lastPoint = pt;
+			Pose pose = loc.get(location);
+			System.out.println("MOVE TO LOC[" + location + "]: " + pose);
+			ops.add(new TravelState(ps, pose));
+			hubPose = new Pose(pose.x, pose.y, pose.theta);
 		} else if (type.equals("GRAB")) {
 			// GRAB FULL STACK
-			Point start = new Point(lastPoint.x, lastPoint.y);
-			Point[] ports = ps.getPorts(start, -Math.PI/2);
+			Point start = new Point(hubPose.x, hubPose.y);
+			Point[] ports = ps.getPorts(start, hubPose.theta);
 			int index = Integer.parseInt(params[1]) - 1;
 			System.out.println("GRAB FULL STACK (port = " + (index+1) + ")");
 			
@@ -80,8 +81,8 @@ public class PlanLoader {
 			ops.add(new BackTravelState(ps, start));
 		} else if (type.equals("DEPLOY")) {
 			// DEPLOY FULL STACK
-			Point start = new Point(lastPoint.x, lastPoint.y);
-			Point[] ports = ps.getPorts(start, -Math.PI/2);
+			Point start = new Point(hubPose.x, hubPose.y);
+			Point[] ports = ps.getPorts(start, hubPose.theta);
 			int index = Integer.parseInt(params[1]) - 1;
 			System.out.println("DEPLOY FULL STACK (port = " + (index+1) + ")");
 			
@@ -106,25 +107,25 @@ public class PlanLoader {
 			lastElevation = ElevatorState.TOP;
 		} else if (type.equals("_T1")) {
 			// SET PORT TO 1
-			Point start = new Point(lastPoint.x, lastPoint.y);
-			Point[] ports = ps.getPorts(start, -Math.PI/2);
+			Point start = new Point(hubPose.x, hubPose.y);
+			Point[] ports = ps.getPorts(start, hubPose.theta);
 			ops.add(new AimState(ps, ports[0]));
 			aimPort = ports[0];
 		} else if (type.equals("_T2")) {
 			// SET PORT TO 2
-			Point start = new Point(lastPoint.x, lastPoint.y);
-			Point[] ports = ps.getPorts(start, -Math.PI/2);
+			Point start = new Point(hubPose.x, hubPose.y);
+			Point[] ports = ps.getPorts(start, hubPose.theta);
 			ops.add(new AimState(ps, ports[1]));
 			aimPort = ports[1];
 		} else if (type.equals("_T3")) {
 			// SET PORT TO 3
-			Point start = new Point(lastPoint.x, lastPoint.y);
-			Point[] ports = ps.getPorts(start, -Math.PI/2);
+			Point start = new Point(hubPose.x, hubPose.y);
+			Point[] ports = ps.getPorts(start, hubPose.theta);
 			ops.add(new AimState(ps, ports[2]));
 			aimPort = ports[2];
 		} else if (type.equals("_GRAB")) {
 			// GRAB FOR ASSMEBLY
-			Point start = new Point(lastPoint.x, lastPoint.y);
+			Point start = new Point(hubPose.x, hubPose.y);
 			Point aim = new Point(aimPort.x, aimPort.y);
 			ops.add(new ApplyGripperState(ps, GripperState.OPEN));
 			ops.add(new DriveToStackState(ps, aim));
@@ -133,7 +134,7 @@ public class PlanLoader {
 			ops.add(new BackTravelState(ps, start));
 		} else if (type.equals("_DEPLOY")) {
 			// GRAB FOR ASSMEBLY
-			Point start = new Point(lastPoint.x, lastPoint.y);
+			Point start = new Point(hubPose.x, hubPose.y);
 			Point aim = new Point(aimPort.x, aimPort.y);
 			ops.add(new DriveToStackState(ps, aim));
 			ops.add(new ApplyElevatorState(ps, lastElevation));

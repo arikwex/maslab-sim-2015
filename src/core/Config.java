@@ -7,7 +7,7 @@ public class Config {
 	public static final boolean sim = true;
 
 	// PLANNER CONFIG
-	public static final double HUB_DISTANCE = 0.23;
+	public static final double HUB_DISTANCE = 0.35;
 	
 	// MAP CONFIG
 
@@ -22,7 +22,7 @@ public class Config {
 	// RRT AND PLANNING CONFIG
 
     public static final int CSPACE_RADIUS_SEGMENTS = 3;
-    public static final double BUFFER_SIZE = .00;
+    public static final double BUFFER_SIZE = .02;
     
 	public static final double RRT_GOAL_BIAS = .05;
 	public static final double MAXLENGTH = .75;

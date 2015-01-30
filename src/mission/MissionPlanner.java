@@ -43,7 +43,7 @@ public class MissionPlanner {
 	}
 
 	public List<GameOperation> plan(GameState start) {
-		Queue<GameState> open = new PriorityQueue<GameState>(500, new Comparator<GameState>() {
+		Queue<GameState> open = new PriorityQueue<GameState>(50000, new Comparator<GameState>() {
 			@Override
 			public int compare(GameState o1, GameState o2) {
 				return -o1.computeScore() + o2.computeScore();

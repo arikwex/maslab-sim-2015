@@ -36,11 +36,11 @@ public class PlannerState extends State {
     public void run() {
     }
     
-    public Point[] getPorts(Point hubCore, double heading) {
-    	double split = 0.4;
+    public static Point[] getPorts(Point hubCore, double heading) {
+    	double split = 1.2;
     	double HUB_NEAR = Config.HUB_DISTANCE - 0.13;
     	Point hubA = new Point(hubCore.x + Math.cos(split + heading) * HUB_NEAR, hubCore.y + Math.sin(split + heading) * HUB_NEAR);
-		Point hubB = new Point(hubCore.x + Math.cos(heading) * HUB_NEAR, hubCore.y + Math.sin(split + heading) * HUB_NEAR);
+		Point hubB = new Point(hubCore.x + Math.cos(heading) * HUB_NEAR, hubCore.y + Math.sin(heading) * HUB_NEAR);
 		Point hubC = new Point(hubCore.x + Math.cos(-split + heading) * HUB_NEAR, hubCore.y + Math.sin(-split + heading) * HUB_NEAR);
     	return new Point[]{hubA, hubB, hubC};
     }

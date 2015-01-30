@@ -282,7 +282,7 @@ public class GameState {
 		settings += "N," + locationStates.size() + "\n";
 		for (int i = 0; i < locationStates.size(); i++) {
 			LocationState loc = locationStates.get(i);
-			settings += "LOC," + i + "," + (float)loc.pose.x + "," + (float)loc.pose.y;
+			settings += "LOC," + i + "," + (float)loc.pose.x + "," + (float)loc.pose.y + "," + (float)loc.pose.theta;
 			if (i < locationStates.size() - 1) {
 				settings += "\n";
 			}

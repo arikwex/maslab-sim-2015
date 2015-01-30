@@ -2,6 +2,7 @@ package map;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.List;
 
 import map.elements.HomeBase;
 import map.elements.Platform;
@@ -17,9 +18,10 @@ public class Map {
     
     public java.awt.geom.Rectangle2D.Double worldRect = null;
     
-    private ArrayList<Wall> walls;
-    private ArrayList<Platform> platforms;
-    private ArrayList<Stack> stacks;
+    private List<Wall> walls;
+    private List<Platform> platforms;
+    private List<Stack> stacks;
+    private List<Pose> locations;
     private HomeBase homeBase;
     
     public Robot bot;
@@ -66,7 +68,7 @@ public class Map {
 		stacks.remove(obs);
 	}
 	
-	public synchronized ArrayList<Stack> getStacks() {
+	public synchronized List<Stack> getStacks() {
 		return stacks;
 	}
 	
@@ -80,7 +82,7 @@ public class Map {
 		platforms.remove(obs);
 	}
 	
-	public synchronized ArrayList<Platform> getPlatforms() {
+	public synchronized List<Platform> getPlatforms() {
 		return platforms;
 	}
 	
@@ -94,7 +96,7 @@ public class Map {
 		walls.remove(obs);
 	}
 	
-	public synchronized ArrayList<Wall> getWalls() {
+	public synchronized List<Wall> getWalls() {
 		return walls;
 	}
 	
@@ -106,6 +108,16 @@ public class Map {
 	
 	public synchronized void setHomeBase(HomeBase hb) {
 		homeBase = hb;
+	}
+	
+	/* LOCATIONS */
+	
+	public synchronized void setLocations(List<Pose> locations) {
+		this.locations = locations;
+	}
+	
+	public synchronized List<Pose> getLocations() {
+		return this.locations;
 	}
 	
 	public synchronized ArrayList<Obstacle> getObstacles() {
