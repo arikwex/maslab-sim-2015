@@ -26,7 +26,7 @@ public class Assembler {
 		while (open.size() > 0) {
 			AssemblyState current = open.poll();
 			if (current.toTwoStack().toString().equals(dest.toString())) {
-				System.out.println("SOLVED! Cost = " + current.getCost());
+				//System.out.println("SOLVED! Cost = " + current.getCost());
 				return backtrace(current);
 			}
 			AssemblyStep[] allowedSteps = current.getAllowedSteps();

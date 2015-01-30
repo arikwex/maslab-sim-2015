@@ -3,6 +3,7 @@ package state_machine.game;
 import hardware.enums.ElevatorState;
 import hardware.enums.GripperState;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -11,19 +12,23 @@ import state_machine.State;
 import state_machine.StateMachine;
 import map.Map;
 import map.geom.Point;
+import mission.gameplan.PlanLoader;
 import core.StateEstimator;
 
 public class PlannerState extends State {
 	
 	Queue<State> actionQueue;
 	private int stackIndex = 0;
-	private final float HUB_DISTANCE = 0.2f;
+	public final static float HUB_DISTANCE = 0.2f;
 	
 	public PlannerState() {
 		actionQueue = new LinkedList<State>();
 		// Initialize
 		actionQueue.add(new ApplyGripperState(this, GripperState.OPEN));
     	actionQueue.add(new ApplyElevatorState(this, ElevatorState.TRANSIT));
+    	
+    	// Enqueue actions
+    	actionQueue.addAll(PlanLoader.load(this, new File("mapPlans/practice_field.txt")));
 	}
 	
     public State transition() {
@@ -38,7 +43,7 @@ public class PlannerState extends State {
     	StateEstimator se = StateEstimator.getInstance();
     	PathPlanning pp = PathPlanning.getInstance();
     	Map m = Map.getInstance();
-    	
+    	/*
     	if (actionQueue.isEmpty()) {
     		Point dest = m.getStacks().get(stackIndex).pt;
     		Point hubCore = new Point(dest.x, dest.y + HUB_DISTANCE);
@@ -51,7 +56,7 @@ public class PlannerState extends State {
 	    	dropAndGrabStack(hubCore, 0, ElevatorState.BOTTOM, ElevatorState.MIDDLE);
 	    	dropStack(hubCore, 1, ElevatorState.MIDDLE);
 	    	stackIndex++;
-    	}
+    	}*/
     }
     
     private Point[] getHubs(Point hubCore) {

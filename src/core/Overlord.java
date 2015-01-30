@@ -5,6 +5,7 @@ import java.io.File;
 import logging.Log;
 import map.MapLoader;
 import map.Map;
+import mission.gameplan.PlanLoader;
 import rrt.PathPlanning;
 import state_machine.StateMachine;
 import control.Control;
@@ -20,9 +21,10 @@ public class Overlord extends Thread {
 	private static long startTime;
 	private Map map;
 
-	public Overlord() {
+	public Overlord(String mapName) {
 		map = Map.getInstance();
-		MapLoader.load(map, new File("gameMaps/practice_field.txt"));
+		map = Map.getInstance();
+		MapLoader.load(map, new File("gameMaps/" + mapName));
 
 		try {Thread.sleep(50);} catch (InterruptedException e) {}
 		
@@ -58,7 +60,7 @@ public class Overlord extends Thread {
 	public static void main(String[] args) {
 		System.out.println("Main");
 
-		Overlord me = new Overlord();
+		Overlord me = new Overlord("practice_field.txt");
 		System.out.println("About to start");
 		me.start();
 	}

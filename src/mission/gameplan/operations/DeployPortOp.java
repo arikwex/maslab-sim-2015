@@ -5,4 +5,7 @@ public class DeployPortOp extends GameOperation {
 	public DeployPortOp(int port) {
 		this.port = port;
 	}
+	public String toPlanString() {
+		return "DEPLOY," + port;
+	}
 }

@@ -5,4 +5,7 @@ public class GrabPortOp extends GameOperation {
 	public GrabPortOp(int port) {
 		this.port = port;
 	}
+	public String toPlanString() {
+		return "GRAB," + port;
+	}
 }

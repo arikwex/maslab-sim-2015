@@ -3,8 +3,10 @@ package mission.gameplan;
 import java.util.ArrayList;
 import java.util.List;
 
+import state_machine.game.PlannerState;
 import map.Map;
 import map.Pose;
+import map.geom.Point;
 import mission.TwoStack;
 import mission.gameplan.operations.AssembleOp;
 import mission.gameplan.operations.DeployPlatformOp;
@@ -63,7 +65,7 @@ public class GameState {
 			// MOVE TO LOCATION
 			MoveToLocationOp cast = (MoveToLocationOp)op;
 			return new GameState(cast.loc, heldStack, locationStates,
-								 map, timeRemaining -  MOVE_ESTIMATE(), parent, op);
+								 map, timeRemaining -  MOVE_ESTIMATE(), this, op);
 		} else if (op instanceof GrabPortOp) {
 			// GRAB ALL FROM Port
 			GrabPortOp cast = (GrabPortOp)op;
@@ -76,7 +78,7 @@ public class GameState {
 			// DEPLOY ALL AT PLATFORM
 			DeployPlatformOp cast = (DeployPlatformOp)op;
 			return deploy(cast);
-		}else if (op instanceof AssembleOp) {
+		} else if (op instanceof AssembleOp) {
 			// ASSEMBLE
 			AssembleOp cast = (AssembleOp)op;
 			return assemble(cast);
@@ -99,7 +101,7 @@ public class GameState {
 		List<LocationState> locs = cloneLocations(locationStates);
 		locs.get(robotLocation).twoStack = newStack;
 		return new GameState(robotLocation, holding, locs,
-		 		   			 map, timeRemaining - GRAB_ESTIMATE(), parent, op);
+		 		   			 map, timeRemaining - GRAB_ESTIMATE(), this, op);
 	}
 	
 	public GameState deploy(DeployPortOp op) {
@@ -114,21 +116,21 @@ public class GameState {
 		List<LocationState> locs = cloneLocations(locationStates);
 		locs.get(robotLocation).twoStack = newStack;
 		return new GameState(robotLocation, "", locs,
-		 		   			 map, timeRemaining - DEPLOY_ESTIMATE(), parent, op);
+		 		   			 map, timeRemaining - DEPLOY_ESTIMATE(), this, op);
 	}
 	
 	public GameState deploy(DeployPlatformOp op) {
 		List<LocationState> locs = cloneLocations(locationStates);
 		locs.get(robotLocation).twoStack = new TwoStack("", heldStack);
 		return new GameState(robotLocation, "", locs,
-		 		   			 map, timeRemaining - DEPLOY_ESTIMATE(), parent, op);
+		 		   			 map, timeRemaining - DEPLOY_ESTIMATE(), this, op);
 	}
 	
 	public GameState assemble(AssembleOp op) {
 		List<LocationState> locs = cloneLocations(locationStates);
-		locs.get(robotLocation).twoStack = new TwoStack(op.twoStack.A, op.twoStack.B);
+		locs.get(robotLocation).twoStack = new TwoStack(op.dest.A, op.dest.B);
 		return new GameState(robotLocation, "", locs,
-		 		   			 map, timeRemaining - ASSEMBLE_ESTIMATE(), parent, op);
+		 		   			 map, timeRemaining - ASSEMBLE_ESTIMATE(), this, op);
 	}
 	
 	public int computeScore() {
@@ -212,7 +214,7 @@ public class GameState {
 	}
 	
 	public long ASSEMBLE_ESTIMATE() {
-		return 18000;
+		return 20000;
 	}
 	
 	public List<GameOperation> getAllowedOps() {
@@ -238,15 +240,27 @@ public class GameState {
 					ops.add(new DeployPortOp(2));
 				}
 			}
-			// ASSMEBLY OPTIONS if the ports are loaded
+			// ASSMEBLY OPTIONS if BOTH ports are loaded
 			if (robLoc.twoStack.A.length() > 0 && robLoc.twoStack.B.length() > 0) {
 				TwoStack[] crossOptions = robLoc.twoStack.getCrossOptions();
 				for (int i = 0; i < crossOptions.length; i++) {
-					ops.add(new AssembleOp(crossOptions[i]));
+					ops.add(new AssembleOp(robLoc.twoStack, crossOptions[i]));
+				}
+			} else {
+				// ASSMEBLY OPTIONS if ONE port is loaded
+				if (robLoc.twoStack.A.length() > 0 || robLoc.twoStack.B.length() > 0) {
+					TwoStack[] reorderOptions = robLoc.twoStack.getReorderOptions();
+					for (int i = 0; i < reorderOptions.length; i++) {
+						ops.add(new AssembleOp(robLoc.twoStack, reorderOptions[i]));
+					}
 				}
 			}
 		} else if (robLoc.type == LocationType.PLATFORM) {
-			ops.add(new DeployPlatformOp());
+			Point dest = new Point(
+				robLoc.pose.x - Math.cos(robLoc.pose.theta) * PlannerState.HUB_DISTANCE,
+				robLoc.pose.y - Math.sin(robLoc.pose.theta) * PlannerState.HUB_DISTANCE
+			);
+			ops.add(new DeployPlatformOp(robotLocation, dest));
 		}
 		
 		// All navigation options except self
@@ -257,5 +271,18 @@ public class GameState {
 		}
 		
 		return ops;
+	}
+	
+	public String toSettingsString() {
+		String settings = "";
+		settings += "N," + locationStates.size() + "\n";
+		for (int i = 0; i < locationStates.size(); i++) {
+			LocationState loc = locationStates.get(i);
+			settings += "LOC," + i + "," + (float)loc.pose.x + "," + (float)loc.pose.y;
+			if (i < locationStates.size() - 1) {
+				settings += "\n";
+			}
+		}
+		return settings;
 	}
 }

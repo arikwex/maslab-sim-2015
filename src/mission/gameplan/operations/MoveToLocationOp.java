@@ -5,4 +5,7 @@ public class MoveToLocationOp extends GameOperation {
 	public MoveToLocationOp(int loc) {
 		this.loc = loc;
 	}
+	public String toPlanString() {
+		return "MOV," + loc;
+	}
 }

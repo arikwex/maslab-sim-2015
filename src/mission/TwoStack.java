@@ -15,6 +15,50 @@ public class TwoStack {
 		return "[" + A + "|" + B + "]";
 	}
 	
+	public TwoStack[] getReorderOptions() {
+		HashMap<String, TwoStack> stacks = new HashMap<String, TwoStack>();
+		for (int i = 0; i <= 5; i++ ){
+			TwoStack ts = reorder(i);
+			stacks.put(ts.A + "," + ts.B, ts);
+		}
+		TwoStack[] reorderOps = new TwoStack[stacks.keySet().size()];
+		int i = 0;
+		for (String str : stacks.keySet()) {
+			reorderOps[i] = stacks.get(str);
+			i++;
+		}
+		return reorderOps;
+	}
+	
+	/* Assumes that one stack is empty */
+	public TwoStack reorder(int i) {
+		String stack = A;
+		boolean isA = true;
+		if (stack.length() == 0) {
+			stack = B;
+			isA = false;
+		}
+		if (i == 0) {
+			stack = "" + stack.charAt(0) + stack.charAt(1) + stack.charAt(2);
+		} else if (i == 1) {
+			stack = "" + stack.charAt(0) + stack.charAt(2) + stack.charAt(1);
+		} else if (i == 2) {
+			stack = "" + stack.charAt(1) + stack.charAt(0) + stack.charAt(2);
+		} else if (i == 3) {
+			stack = "" + stack.charAt(1) + stack.charAt(2) + stack.charAt(0);
+		} else if (i == 4) {
+			stack = "" + stack.charAt(2) + stack.charAt(0) + stack.charAt(1);
+		} else if (i == 5) {
+			stack = "" + stack.charAt(2) + stack.charAt(1) + stack.charAt(0);
+		}
+		
+		if (isA) {
+			return new TwoStack(stack, "");
+		} else {
+			return new TwoStack("", stack);
+		}
+	}
+	
 	public TwoStack[] getCrossOptions() {
 		HashMap<String, TwoStack> stacks = new HashMap<String, TwoStack>();
 		for (int i = 0; i <= 7; i++ ){

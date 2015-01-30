@@ -56,41 +56,51 @@ public class MissionPlanner {
 			GameState current = open.poll();
 			visited.put(current.toString(), current);
 			if (cnt < 0) {
-				System.out.println(open.size() + " | " + visited.size() + " --- current = " + current.computeScore());
-				cnt = 10000;
+				System.out.println(open.size() + " | " + visited.size() + " --- max = " + maxScore);
+				cnt = 20000;
 			} else {
 				cnt--;
 			}
-			//System.out.println("{t = " + current.timeRemaining + "} CURRENT ===== " + current);
 			
 			for (GameOperation gameOperation : current.getAllowedOps()) {
 				GameState newState = current.apply(gameOperation);
 				if (newState.timeRemaining < 0) {
 					continue;
 				}
-				if (newState.timeRemaining < 100000 && newState.computeScore() == 0) {
+				if ((newState.timeRemaining < maximizedState.timeRemaining - 30000)
+				 && (newState.computeScore() < maximizedState.computeScore())) {
 					continue;
 				}
 				if (visited.containsKey(newState.toString())) {
 					continue;
 				}
 				int score = newState.computeScore();
-				//System.out.println("["+score+"] " + newState);
-				if (score > maxScore) {
-					maxScore = score;
-					maximizedState = newState;
+				if (score >= maxScore) {
+					if (score == maxScore && newState.timeRemaining < maximizedState.timeRemaining) {
+						maxScore = score;
+						maximizedState = newState;
+					}
+					if (score > maxScore) {
+						maxScore = score;
+						maximizedState = newState;
+					}
 				}
 				open.add(newState);
-			}
-			
-			try {
-				//Thread.sleep(5);
-			} catch (Exception e) {
 			}
 		}
 		
 		System.out.println("Optimal Solution [SCORE = " + maxScore + "], STATE = " + maximizedState.toString());
-		return null;
+		return backtrace(maximizedState);
+	}
+	
+	public List<GameOperation> backtrace(GameState current) {
+		List<GameOperation> ops = new ArrayList<GameOperation>();
+		while (current != null) {
+			ops.add(0, current.op);
+			current = current.parent;
+		}
+		ops.remove(0);
+		return ops;
 	}
 	
 	public GameState createGameState(Map map, long timeRemaining) {
@@ -126,14 +136,21 @@ public class MissionPlanner {
 		return new GameState(0, "", locationStates, map, timeRemaining, null, null);
 	}
 	
+	public static void printPlanString(GameState gs, List<GameOperation> ops) {
+		System.out.println(gs.toSettingsString());
+		for (int i = 0; i < ops.size(); i++) {
+			System.out.println(ops.get(i).toPlanString());
+		}
+	}
+	
 	public static void main(String[] args) {
 		Map map = Map.getInstance();
 		MapLoader.load(map, new File("gameMaps/practice_field.txt"));
 		MissionPlanner mp = MissionPlanner.getInstance();
 		
-		GameState gs = mp.createGameState(map, 3 * 60 * 1000);
-		mp.plan(gs);
-		//gs.getAllowedOps();
+		GameState gs = mp.createGameState(map, (int)(2 * 60 * 1000));
+		List<GameOperation> ops = mp.plan(gs);
+		MissionPlanner.printPlanString(gs, ops);
 		
 		/*
 		System.out.println(gs.toString());
@@ -157,8 +174,12 @@ public class MissionPlanner {
 		*/
 		
 		/*
-		TwoStack src = new TwoStack("RRR", "GRG");
-		TwoStack dest = new TwoStack("RRR", "GGG");
+		TwoStack src = new TwoStack("RRG", "");
+		TwoStack[] combos = src.getReorderOptions();
+		for (int i = 0; i < combos.length; i++) {
+			System.out.println(combos[i]);
+		}
+		TwoStack dest = new TwoStack("", "GRR");
 		AssemblyStep[] steps = Assembler.getAssemblySteps(src, dest);
 		System.out.println("# of steps = " + steps.length);
 		for (int i = 0; i < steps.length; i++) {
