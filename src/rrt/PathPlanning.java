@@ -3,6 +3,8 @@ package rrt;
 import hardware.Hardware;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import control.Control;
@@ -87,9 +89,8 @@ public class PathPlanning extends Thread {
 
 		for (Obstacle o : map.getObstacles()) {
 		    if (o.getPolyCSpace(rotBot).contains(curLoc)) {
-		    	Log.log("WTF?");
+		    	Log.log("WTF? Inside Obsticle?");
 		        Log.log("" + map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta));
-		        //while(true);
 		    }
 		}
 		
@@ -224,5 +225,48 @@ public class PathPlanning extends Thread {
 		}
 		
 		return path;
+	}
+	
+	public LinkedList<Point> trimPath(LinkedList<Point> initialPath) {
+		LinkedList<Point> brokenPath = breakPath(initialPath);
+		
+		int trimPasses = 1000;
+		for (int i = 0; i<trimPasses; i++) {
+			
+		}
+		
+		return brokenPath;
+	}
+	
+	public LinkedList<Point> breakPath(LinkedList<Point> initialPath) {
+		double totalLength = 0;
+		Point prev = null;
+		for (Point curr : initialPath) {
+			if (prev != null)
+				totalLength += prev.distance(curr);
+			prev = curr;
+		}
+		
+		double avgLength = 0.1;
+		ArrayList<Double> breakDistances = new ArrayList<Double>();
+		for (int i = 0; i<totalLength/avgLength; i++)
+			breakDistances.add(Math.random()*totalLength);
+		Collections.sort(breakDistances);
+		
+		LinkedList<Point> brokenPath = new LinkedList<Point>();
+		brokenPath.add(initialPath.get(0));
+		double accumDist = 0;
+
+		Iterator<Point> pathIter = initialPath.iterator();
+		Segment currSeg = new Segment(pathIter.next(), pathIter.next());
+		for (double d : breakDistances) {
+			while (accumDist + currSeg.length() < d) {
+				accumDist += currSeg.length();
+				currSeg = new Segment(currSeg.end, pathIter.next());
+			}
+			brokenPath.add(currSeg.trim(d-accumDist).end);
+		}
+			
+		return brokenPath;
 	}
 }

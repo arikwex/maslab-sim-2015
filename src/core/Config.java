@@ -17,32 +17,17 @@ public class Config {
 	public static double[][] botPoly = new double[][] { { -0.15, -0.1 }, { 0.05, -0.1 }, { 0.05, 0.1 }, { -0.15, 0.1 } };
 
 	// RRT AND PLANNING CONFIG
-	public static final int CSPACE_RADIUS_SEGMENTS = 4;
-	public static final double BUFFER_SIZE = .00;
 
+    public static final int CSPACE_RADIUS_SEGMENTS = 3;
+    public static final double BUFFER_SIZE = .00;
+    
 	public static final double RRT_GOAL_BIAS = .05;
-	public static final double MAXLENGTH = 1.5;
-
-	public static final double minDist = 0;
-
-	public enum BlockColor {
-		RED, GREEN, BLUE, YELLOW, NONE
-	}
-
-	public static final double blockSize = 0.05; // side of the block
-
-	public static BlockColor ColorToBlockColor(Color c) {
-		if (c.equals(Color.RED)) {
-			return BlockColor.RED;
-		} else if (c.equals(Color.GREEN)) {
-			return BlockColor.GREEN;
-		} else if (c.equals(Color.BLUE)) {
-			return BlockColor.BLUE;
-		} else if (c.equals(Color.YELLOW)) {
-			return BlockColor.YELLOW;
-		}
-		return BlockColor.NONE;
-	}
+	public static final double MAXLENGTH = .75;
+	
+	
+    public enum BlockColor {
+        RED, GREEN, BLUE, YELLOW, NONE
+    }
 
 	public static Color BlockColorToColor(BlockColor bc) {
 		if (bc.equals(BlockColor.RED)) {

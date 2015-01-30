@@ -142,4 +142,13 @@ public class Map {
         double y = Math.random()*(worldRect.height) + worldRect.y;
         return new Point(x,y);
     }
+    
+    public Point getBestApproach(Point center) {
+    	double sample = Math.PI/64;
+    	double range = Math.PI/8;
+    	
+    	
+    	
+    	return null;
+    }
 }
