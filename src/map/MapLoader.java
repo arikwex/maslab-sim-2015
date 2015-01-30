@@ -15,7 +15,7 @@ import map.geom.Point;
 
 public class MapLoader {
 	public static final double GRID_SIZE = 24;
-	public static final double scaleFactor = 1.0;//Config.METERS_PER_INCH * GRID_SIZE;
+	public static final double SCALE_FACTOR = 0.5588;//Config.METERS_PER_INCH * GRID_SIZE;
 	private static double minX, maxX, minY, maxY;
 	
 	public static void load(Map map, File mapFile) {
@@ -38,10 +38,7 @@ public class MapLoader {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		map.setWorldRect(new Rectangle2D.Double(minX * scaleFactor,
-											    minY * scaleFactor,
-											    maxX * scaleFactor,
-											    maxY * scaleFactor));
+		map.setWorldRect(new Rectangle2D.Double(minX, minY, maxX-minX, maxY-minY));
 		System.out.println("World rect: " + map.getWorldRect());
 	}
 	
@@ -50,35 +47,26 @@ public class MapLoader {
 		
 		// Start Location
 		if (parts[0].equals("L")) {
-			map.bot.pose = new Pose(Integer.parseInt(parts[1]) * scaleFactor,
-									Integer.parseInt(parts[2]) * scaleFactor,
-									Math.random());
+			map.bot.pose = new Pose(parsePoint(parts[1], parts[2]),	Math.random());
 		}
 		
 		// Wall
 		if (parts[0].equals("W")) {
-			Wall wall = new Wall(new Point(Integer.parseInt(parts[1]) * scaleFactor, Integer.parseInt(parts[2]) * scaleFactor),
-								 new Point(Integer.parseInt(parts[3]) * scaleFactor, Integer.parseInt(parts[4]) *scaleFactor));
+			Wall wall = new Wall(parsePoint(parts[1], parts[2], true), parsePoint(parts[3], parts[4], true));
 			wall.generateObstacleData();
-			accountAsBoundPoint(wall.start);
-			accountAsBoundPoint(wall.end);
 			map.addWall(wall);
 		}
 		
 		// Stack
 		if (parts[0].equals("S")) {
-			Stack stack = new Stack(new Point(Integer.parseInt(parts[1]) * scaleFactor, Integer.parseInt(parts[2]) * scaleFactor),
-								    parts[3] + parts[4] + parts[5]);
+			Stack stack = new Stack(parsePoint(parts[1], parts[2]), parts[3] + parts[4] + parts[5]);
 			map.addStack(stack);
 		}
 		
 		// Platform
 		if (parts[0].equals("P")) {
-			Platform plat = new Platform(new Point(Integer.parseInt(parts[1]) * scaleFactor, Integer.parseInt(parts[2]) * scaleFactor),
-					 					 new Point(Integer.parseInt(parts[3]) * scaleFactor, Integer.parseInt(parts[4]) *scaleFactor));
+			Platform plat = new Platform(parsePoint(parts[1], parts[2], true), parsePoint(parts[3], parts[4], true));
 			plat.generateObstacleData();
-			accountAsBoundPoint(plat.start);
-			accountAsBoundPoint(plat.end);
 			map.addPlatform(plat);
 		}
 		
@@ -87,18 +75,29 @@ public class MapLoader {
 			int N = Integer.parseInt(parts[1]);
 			Point[] poly = new Point[N];
 			for (int q = 0; q < N; q++) {
-				poly[q] = new Point(Integer.parseInt(parts[q*2 + 2]) * scaleFactor,
-									Integer.parseInt(parts[q*2 + 3]) * scaleFactor);
+				poly[q] = new Point(Integer.parseInt(parts[q*2 + 2]) * SCALE_FACTOR,
+									Integer.parseInt(parts[q*2 + 3]) * SCALE_FACTOR);
 			}
 			map.setHomeBase(new HomeBase(poly));
 		}
 	}
 	
+	public static Point parsePoint(String x, String y) {
+		return parsePoint(x, y, false);
+	}
+	
+	public static Point parsePoint(String x, String y, boolean addToBounds) {
+		Point p = new Point(Integer.parseInt(x) * SCALE_FACTOR, Integer.parseInt(y) * SCALE_FACTOR);
+		if (addToBounds)
+			accountAsBoundPoint(p);
+		return p;
+	}
+	
 	public static void accountAsBoundPoint(Point w) {	
 		// Min/max computing for world box
-		if (w.x < minX) minX = w.x / scaleFactor;
-		if (w.x > maxX) maxX = w.x / scaleFactor;
-		if (w.y < minY) minY = w.y / scaleFactor;
-		if (w.y > maxY) maxY = w.y / scaleFactor;
+		if (w.x < minX) minX = w.x;
+		if (w.x > maxX) maxX = w.x;
+		if (w.y < minY) minY = w.y;
+		if (w.y > maxY) maxY = w.y;
 	}
 }

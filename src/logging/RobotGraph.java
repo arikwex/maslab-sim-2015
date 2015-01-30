@@ -79,6 +79,7 @@ public class RobotGraph extends JFrame implements Runnable {
         private int[] start_drag = new int[2];
 
         public void mouseClicked(MouseEvent e) {
+        	// TODO allow clicking to show mouse coord
         }
 
         public void mouseEntered(MouseEvent e) {
@@ -244,6 +245,7 @@ public class RobotGraph extends JFrame implements Runnable {
             g.setStroke(regularLine);
 
             // draw the grid
+            drawWorldRect(g);
             drawGrid(g);
             drawAxes(g);
 
@@ -357,6 +359,14 @@ public class RobotGraph extends JFrame implements Runnable {
             	g.draw(new Ellipse2D.Double(gripPoint.x-0.05, gripPoint.y-0.05, 0.1, 0.1));
             }
         }
+        
+        private void drawWorldRect(Graphics2D g) {
+            AffineTransform t = new AffineTransform();
+            t.setToIdentity();
+
+            g.setColor(new Color(50,50,50,200));
+            g.draw(t.createTransformedShape(map.getWorldRect()));
+        }
 
         /**
          * Draws the grid in green
@@ -389,10 +399,6 @@ public class RobotGraph extends JFrame implements Runnable {
 
             g.setColor(orig);
         }
-    }
-
-    public void paintBot() {
-        p.paint((Graphics2D) p.getGraphics());
     }
 
     public void run() {

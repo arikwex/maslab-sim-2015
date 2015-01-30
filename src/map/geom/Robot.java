@@ -23,7 +23,14 @@ public class Robot extends Polygon {
         Point p;
         for (int i = 0; i<Config.botPoly.length; i++) {
         	p = new Point(Config.botPoly[i][0], Config.botPoly[i][1]);
-            this.addVertex(p);
+        	// add buffers
+        	/*
+        	double scalar = p.distance(new Point(0,0));
+        	scalar = (scalar + Config.BUFFER_SIZE) / scalar;
+            this.addVertex(new Point(p.x*scalar, p.y*scalar));
+            */
+            this.addVertex(new Point(p.x + Math.abs(p.x)/p.x*Config.BUFFER_SIZE, p.y + Math.abs(p.y)/p.y*Config.BUFFER_SIZE));
+
         }
         this.close();
     }

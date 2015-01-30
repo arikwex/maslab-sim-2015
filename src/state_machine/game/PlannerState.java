@@ -17,7 +17,7 @@ public class PlannerState extends State {
 	
 	Queue<State> actionQueue;
 	private int stackIndex = 0;
-	private final float HUB_DISTANCE = 0.4f;
+	private final float HUB_DISTANCE = 0.2f;
 	
 	public PlannerState() {
 		actionQueue = new LinkedList<State>();
