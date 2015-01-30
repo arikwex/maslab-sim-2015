@@ -255,7 +255,7 @@ public class GameState {
 	}
 	
 	public long GRAB_ESTIMATE() {
-		return 2000;
+		return 5000;
 	}
 	
 	public long DEPLOY_ESTIMATE() {

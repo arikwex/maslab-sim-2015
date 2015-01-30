@@ -37,6 +37,6 @@ public class SimulatedMotor implements Motor {
 	}
 	
 	public double getSpeed() {
-		return speed * MAX_RPM;
+		return speed * MAX_RPM * 1.5;
 	}
 }

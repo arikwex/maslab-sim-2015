@@ -57,7 +57,7 @@ public class MissionPlanner {
 
 		open.add(start);
 		GameState maximizedState = start;
-		int maxScore = 0;
+		double maxScore = 0;
 		int cnt = 0;
 
 		while (open.size() > 0) {
@@ -68,7 +68,7 @@ public class MissionPlanner {
 				System.out.println(open.size() + " | " + visited.size() + " --- max = " + maxScore);
 			}
 			cnt++;
-			if (cnt > 100000) {
+			if (cnt > 1000000) {
 				break;
 			}
 			
@@ -80,16 +80,15 @@ public class MissionPlanner {
 				if (newState.movesSinceLastScore > 3) {
 					continue;
 				}
-				int score = newState.computeScore();
-				if (score >= maxScore) {
-					if (score == maxScore && newState.timeRemaining > maximizedState.timeRemaining) {
-						maxScore = score;
-						maximizedState = newState;
-					}
-					if (score > maxScore) {
-						maxScore = score;
-						maximizedState = newState;
-					}
+				/*
+				if (newState.timeRemaining < maximizedState.timeRemaining
+				  && newState.computeScore() < maxScore) {
+					continue;
+				}*/
+				double score = newState.computeScore() + newState.timeRemaining / (3 * 60 * 1000.0);
+				if (score > maxScore) {
+					maxScore = score;
+					maximizedState = newState;
 				}
 				if (visited.containsKey(newState.toString())) {
 					if (newState.timeRemaining > maximizedState.timeRemaining) {

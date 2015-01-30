@@ -42,7 +42,6 @@ public class Overlord extends Thread {
  
 	public void start() {
 		startTime = System.currentTimeMillis();
-		pp.start();
 		long loopStart;
 		while (timeRemaining() > 0) {
 			loopStart = System.currentTimeMillis();

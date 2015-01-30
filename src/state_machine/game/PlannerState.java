@@ -15,6 +15,7 @@ import core.Config;
 public class PlannerState extends State {
 	
 	Queue<State> actionQueue;
+	private boolean isDestinyAchievedQuestionMark = false;
 	
 	public PlannerState() {
 		actionQueue = new LinkedList<State>();
@@ -30,7 +31,10 @@ public class PlannerState extends State {
     	if (actionQueue.size() > 0) {
     		return actionQueue.poll();
     	} else {
-    		System.out.println("Destiny achieved!");
+    		if (!isDestinyAchievedQuestionMark) {
+    			System.out.println("Destiny achieved!");
+    			isDestinyAchievedQuestionMark = true;
+    		}
             return this;	
     	}
     }
