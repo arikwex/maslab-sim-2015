@@ -2,6 +2,7 @@ package state_machine;
 
 import logging.RobotGraph;
 import map.geom.Point;
+import state_machine.game.AimState;
 import state_machine.game.PlannerState;
 import core.Config;
 
@@ -23,7 +24,7 @@ public class StateMachine {
 
 	public void step() {
 		if (state == null) {
-			state = new PlannerState();
+			state = new AimState(null, new Point(3.0, 3.0));
 		}
 		state = state.step();
 	}
