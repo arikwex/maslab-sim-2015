@@ -33,7 +33,7 @@ public class PathPlanning extends Thread {
 	
 	public HashMap<String, Long> timeMap = new HashMap<String, Long>();
 	public ArrayList<Segment> rrtEdges;
-	public LinkedList<Point> path;
+	public LinkedList<Point> path = new LinkedList<Point>();
 	public Point nextWaypoint;
 	public Point goal;
 
@@ -94,11 +94,14 @@ public class PathPlanning extends Thread {
 		    if (o.getPolyCSpace(rotBot).contains(curLoc)) {
 		    	Log.log("WTF? Inside Obsticle?");
 		        Log.log("" + map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta));
+		        return;
 		    }
 		}
 		
 		if (!map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta)) {
 			Log.log("BROKEN PATH");
+			if (true) // TODO often best to just carry on...
+				return;
 			
 			map.checkSegment(new Segment(curLoc, nextWaypoint), curLoc.theta);
 			Log.log("Cur: " + curLoc + " next: " + nextWaypoint);
@@ -158,7 +161,9 @@ public class PathPlanning extends Thread {
 		Hardware hw = Hardware.getInstance();
 		hw.motorLeft.setSpeed(0);
 		hw.motorRight.setSpeed(0);
-		path = RRTSearch(map.bot.pose, goal);
+		synchronized (path) {
+			path = RRTSearch(map.bot.pose, goal);
+		}
 	}
 	
 	public LinkedList<Point> RRTSearch(Pose start, Point goal) {

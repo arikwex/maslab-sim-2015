@@ -1,7 +1,6 @@
 package hardware.simulated;
 
 import hardware.components.Encoder;
-import core.Config;
 
 public class SimulatedEncoder implements Encoder {
 	private long lastTime = System.currentTimeMillis();
@@ -16,11 +15,8 @@ public class SimulatedEncoder implements Encoder {
 	public void sample() {
 		long nowTime = System.currentTimeMillis();
 		double dT = (nowTime - lastTime) / 1000.0;
-		System.out.println(dT);
 		lastTime = nowTime;
 		this.deltaDistance = motor.getSpeed() * dT;
-
-		System.out.println(dT + " " + deltaDistance);
 		this.velocity = motor.getSpeed();
 	}
 	

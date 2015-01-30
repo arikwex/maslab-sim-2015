@@ -30,11 +30,11 @@ public class Control {
         bot = Map.getInstance().bot;
         
         //rotPid = new PID(1, 0.05, 0.7, 0.1, .25);
-        rotPid = new PID(.1, 0.0, .0, 0.1, .25);
+        rotPid = new PID(0.7, 0.3, 0.0, 0.1, 0.2);
         rotPid.start(0, 0);
 
         //velPid = new PID(1.5, 0, 0, 0.1, .4);
-        velPid = new PID(1.5, 0, 0, 0.1, .4);
+        velPid = new PID(1.0, 0.3, 0, 0.05, 0.25);
         velPid.start(0, 0);
     }
     
@@ -77,6 +77,60 @@ public class Control {
 		}
     	this.target = new Point(target.x, target.y);
     }
+
+    public void step() {
+    	if (this.target == null) {
+    		setMotion(0, 0);
+    		return;
+    	}
+    	
+    	goToWaypoint();
+    }
+    
+    public double getDistanceToTarget() {
+    	if (target == null) {
+    		return 0;
+    	}
+    	return bot.pose.distance(target);
+    }
+    
+    public double getAdjustedDistanceToTarget() {
+    	if (this.getMode() == ControlMode.AIM)
+        	return 0;
+    
+    	double distance = getDistanceToTarget() + 0.10;
+        
+        if (this.getMode() == ControlMode.DRIVE_BACK)
+        	distance *= -1;
+
+        return distance;
+    }
+    
+    public double getAngleToTarget() {
+    	if (target == null) {
+    		return 0;
+    	}
+    	
+    	if (this.getMode() == ControlMode.DRIVE_BACK)
+    		return Utils.thetaDiff(bot.pose.theta - Math.PI, bot.pose.angleTo(target));
+    	return Utils.thetaDiff(bot.pose.theta, bot.pose.angleTo(target));
+    }
+    
+    public void goToWaypoint() {
+        double thetaErr = getAngleToTarget();
+        double distance = getAdjustedDistanceToTarget();
+                
+        if (Math.abs(thetaErr) < Math.PI/8) {
+        	distance *= Math.cos(thetaErr * 2);
+    	} else {
+            distance = 0;
+        }
+
+        double rot = rotPid.step(-thetaErr);
+        double vel = velPid.step(-distance);
+        setMotion(vel, rot);
+    }
+    
     
     private void setMotion(double vel, double rot) {
         setVelocity(vel - rot, vel + rot);
@@ -87,94 +141,7 @@ public class Control {
     	hw.motorRight.setSpeed(right * Config.MAX_VELOCITY);
     }
     
-    public void step() {
-    	if (this.target == null) {
-    		setMotion(0, 0);
-    		return;
-    	}
-    	
-    	if (mode == ControlMode.AIM) {
-    		aim();
-    	} else if (mode == ControlMode.TRAVEL_PLAN) {
-    		goToWaypoint();
-    	} else if (mode == ControlMode.DRIVE_FORWARD) {
-     		driveForward();
-     	} else if (mode == ControlMode.DRIVE_BACK) {
-    		driveBackward();
-    	}
-    }
-    
-    public double getDistanceToTarget() {
-    	if (target == null) {
-    		return 9999;
-    	}
-    	return bot.pose.distance(target);
-    }
-    
-    public double getAngleToTarget() {
-    	if (target == null) {
-    		return 0;
-    	}
-    	return Math.toDegrees(Utils.thetaDiff(bot.pose.theta, bot.pose.angleTo(target)));
-    }
-    
-    public void aim() { 
-        double thetaErr = getAngleToTarget();
-        double rot = rotPid.step(-thetaErr);
-        setMotion(0, rot);
-    }
-    
-    public void driveForward() {
-        double distance = getDistanceToTarget();
-    	double vel = distance*4.0;
-        if (vel > 0.25) {
-        	vel = 0.25;
-        }
-        double thetaErr = getAngleToTarget();
-        if (Math.abs(thetaErr) < 15) {
-        	vel *= (15-Math.abs(thetaErr)) / 15;
-    	} else {
-            vel = 0;
-        }
-        double rot = rotPid.step(-thetaErr);
-        setMotion(vel, rot);
-    }
-    
-    public void driveBackward() {
-        double distance = getDistanceToTarget();
-    	double vel = distance*4.0;
-        if (vel > 0.25) {
-        	vel = 0.25;
-        }
-        double thetaErr = 0;
-        if (target != null) {
-        	thetaErr = Math.toDegrees(Utils.thetaDiff(bot.pose.theta + Math.PI, bot.pose.angleTo(target)));
-        	if (Math.abs(thetaErr) < 15) {
-            	vel *= (15-Math.abs(thetaErr)) / 15;
-        	} else {
-                vel = 0;
-            }
-        }
-        double rot = rotPid.step(-thetaErr);
-        setMotion(-vel, rot);
-    }
-
-    public void goToWaypoint() {
-        double distance = getDistanceToTarget();
-        double thetaErr = getAngleToTarget();
-
-        double vel = distance*0.4 + 0.2;
-        if (vel > 0.4) {
-        	vel = 0.4;
-        }
-        
-        if (Math.abs(thetaErr) < 15) {
-        	vel *= (15-Math.abs(thetaErr)) / 15;
-    	} else {
-            vel = 0;
-        }
-
-        double rot = rotPid.step(-thetaErr);
-        setMotion(vel, rot);
+    private double round(double val, double digits) {
+    	return Math.round(val*Math.pow(10, digits))/Math.pow(10,digits);
     }
 }

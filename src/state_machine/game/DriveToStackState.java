@@ -36,7 +36,7 @@ public class DriveToStackState extends State {
     	
     	if (extractionPoint == null) {
 	    	// TODO: select the stack based on vision (most centered)
-	    	double minDiff = 15;
+	    	double minDiff = 0.25;
 	    	double targetDist = 100000;
 	    	Point targetStack = null;
 	    	for (int i = 0; i < m.getStacks().size(); i++) {
@@ -71,7 +71,7 @@ public class DriveToStackState extends State {
 	    	
 	    	attempts++;
     	} else {
-	    	if (Control.getInstance().getDistanceToTarget() < 0.04) {
+	    	if (Control.getInstance().getDistanceToTarget() < 0.05) {
 	    		done = true;
 	    		Control.getInstance().setTarget(null);
 	    	}

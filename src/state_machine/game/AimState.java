@@ -42,7 +42,7 @@ public class AimState extends State {
     		Control.getInstance().setTarget(curGoal);
     		issued = true;
     	} else {
-	    	if (Math.abs(Control.getInstance().getAngleToTarget()) < 1) {
+	    	if (Math.abs(Control.getInstance().getAngleToTarget()) < .05) {
 	    		finished = true;
 	    	}
     	}

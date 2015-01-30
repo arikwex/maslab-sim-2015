@@ -22,7 +22,7 @@ public abstract class Obstacle extends Polygon {
     public Polygon getMaxCSpace() {
         if (maxCSpace == null) {
             double r = Map.getInstance().bot.getMaxRadius();
-            maxCSpace = computeNaiveCSpace(r);
+            maxCSpace = computeNaiveCSpace(r + Config.CSPACE_EXTRA_BUFFER);
         }
         return maxCSpace;
     }
@@ -35,7 +35,7 @@ public abstract class Obstacle extends Polygon {
         return minCSpace;
     }
 
-    private Polygon computeNaiveCSpace(double r) {
+	private Polygon computeNaiveCSpace(double r) {
         List<Point> csoPoints = new LinkedList<Point>();
         List<Point> roVertices = this.getVertices();
 

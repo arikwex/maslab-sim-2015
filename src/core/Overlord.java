@@ -52,9 +52,7 @@ public class Overlord extends Thread {
 			c.step();
 			l.updatePose();
 			
-			try {Thread.sleep(5);} catch (Exception e){};
-			//try {Thread.sleep(3-(System.currentTimeMillis()-loopStart));} catch (Exception e){};
-			//try {Thread.sleep(50-(System.currentTimeMillis()-startTime));} catch (Exception e){};
+			try {Thread.sleep(5-(System.currentTimeMillis()-loopStart));} catch (Exception e){};
 		}
 		pp.end();
 	}

@@ -5,7 +5,7 @@ public class Utils {
         return Math.round(v * Math.pow(10, sigfig)) / Math.pow(10, sigfig);
     }
 
-    public static double thetaDiff(double start, double end) {
+	public static double thetaDiff(double start, double end) {
         double thetaErr = end - start;
         return wrapAngle(thetaErr);
     }

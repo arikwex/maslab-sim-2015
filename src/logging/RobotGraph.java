@@ -360,10 +360,12 @@ public class RobotGraph extends JFrame implements Runnable {
 	                    return;
 	                g.setColor(Color.RED);
 		            Point start = bot.pose;
-		            for (Point p : pp.path) {
-		                g.draw(new Line2D.Double(start, p));
-		                start = p;
-		            }
+		            synchronized (pp.path) {
+			            for (Point p : pp.path) {
+			                g.draw(new Line2D.Double(start, p));
+			                start = p;
+			            }
+					}
 		            g.draw(new Ellipse2D.Double(pointer.x-0.1, pointer.y-0.1, 0.2, 0.2));
 	            } else if (Control.getInstance().getMode() == ControlMode.DRIVE_FORWARD) {
 	            	g.setColor(Color.BLUE);
