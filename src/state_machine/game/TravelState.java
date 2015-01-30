@@ -43,7 +43,7 @@ public class TravelState extends State {
     		Control.getInstance().setTarget(curGoal);
     		issued = true;
     	} else {
-	    	if (m.bot.pose.distance(curGoal) < 0.1) {
+	    	if (m.bot.pose.distance(curGoal) < 0.05) {
 	    		arrived = true;
 	    		Control.getInstance().setTarget(null);
 	    	}

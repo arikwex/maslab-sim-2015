@@ -129,6 +129,11 @@ public class Control {
         	vel = 0.25;
         }
         double thetaErr = getAngleToTarget();
+        if (Math.abs(thetaErr) < 15) {
+        	vel *= (15-Math.abs(thetaErr)) / 15;
+    	} else {
+            vel = 0;
+        }
         double rot = rotPid.step(-thetaErr);
         setMotion(vel, rot);
     }
@@ -142,6 +147,11 @@ public class Control {
         double thetaErr = 0;
         if (target != null) {
         	thetaErr = Math.toDegrees(Utils.thetaDiff(bot.pose.theta + Math.PI, bot.pose.angleTo(target)));
+        	if (Math.abs(thetaErr) < 15) {
+            	vel *= (15-Math.abs(thetaErr)) / 15;
+        	} else {
+                vel = 0;
+            }
         }
         double rot = rotPid.step(-thetaErr);
         setMotion(-vel, rot);

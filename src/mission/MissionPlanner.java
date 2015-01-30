@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import state_machine.game.PlannerState;
 import map.Map;
 import map.MapLoader;
 import map.Pose;
@@ -20,6 +21,8 @@ import mission.gameplan.GameState;
 import mission.gameplan.LocationState;
 import mission.gameplan.LocationType;
 import mission.gameplan.operations.GameOperation;
+import mission.gameplan.operations.GrabPortOp;
+import mission.gameplan.operations.MoveToLocationOp;
 
 public class MissionPlanner {
 	public static MissionPlanner mp = null;
@@ -67,16 +70,14 @@ public class MissionPlanner {
 				if (newState.timeRemaining < 0) {
 					continue;
 				}
-				if ((newState.timeRemaining < maximizedState.timeRemaining - 30000)
+				/*
+				if ((newState.timeRemaining < maximizedState.timeRemaining - 60000)
 				 && (newState.computeScore() < maximizedState.computeScore())) {
 					continue;
-				}
-				if (visited.containsKey(newState.toString())) {
-					continue;
-				}
+				}*/
 				int score = newState.computeScore();
 				if (score >= maxScore) {
-					if (score == maxScore && newState.timeRemaining < maximizedState.timeRemaining) {
+					if (score == maxScore && newState.timeRemaining > maximizedState.timeRemaining) {
 						maxScore = score;
 						maximizedState = newState;
 					}
@@ -84,6 +85,15 @@ public class MissionPlanner {
 						maxScore = score;
 						maximizedState = newState;
 					}
+				}
+				if (visited.containsKey(newState.toString())) {
+					if (newState.timeRemaining > maximizedState.timeRemaining) {
+						if (newState.toString().equals(maximizedState.toString())) {
+							maxScore = newState.computeScore();
+							maximizedState = newState;
+						}
+					}
+					continue;
 				}
 				open.add(newState);
 			}
@@ -115,7 +125,7 @@ public class MissionPlanner {
 			if (poly.contains(stack.pt)) {
 				locType = LocationType.HOMEBASE;
 			}
-			locationStates.add(new LocationState(new TwoStack("", stack.cubes), locType, new Pose(stack.pt.x, stack.pt.y, 0)));
+			locationStates.add(new LocationState(new TwoStack("", stack.cubes), locType, new Pose(stack.pt.x, stack.pt.y + PlannerState.HUB_DISTANCE, 0)));
 		}
 		
 		// Create platform locations
@@ -127,8 +137,7 @@ public class MissionPlanner {
 		for (int i = 0; i < 2; i++) {
 			// TODO: This is horrible.
 			Point hb = map.randomPoint();
-			Segment seg = new Segment(new Point(1, 1), new Point(0, 0));
-			while (poly.contains(hb) && !map.checkSegment(seg, 0)) {
+			while (!poly.contains(hb)) {
 				hb = map.randomPoint();
 			}
 			locationStates.add(new LocationState(new TwoStack("", ""), LocationType.HOMEBASE, new Pose(hb.x, hb.y, 0)));
@@ -148,17 +157,26 @@ public class MissionPlanner {
 		MapLoader.load(map, new File("gameMaps/practice_field.txt"));
 		MissionPlanner mp = MissionPlanner.getInstance();
 		
-		GameState gs = mp.createGameState(map, (int)(2 * 60 * 1000));
+		GameState gs = mp.createGameState(map, (int)(3 * 60 * 1000));
 		List<GameOperation> ops = mp.plan(gs);
 		MissionPlanner.printPlanString(gs, ops);
 		
 		/*
 		System.out.println(gs.toString());
-		gs = gs.apply(new MoveToLocationOp(2));
+		gs = gs.apply(new MoveToLocationOp(7));
 		System.out.println(gs.toString());
 		gs = gs.apply(new GrabPortOp(2));
 		System.out.println(gs.toString());
-		gs = gs.apply(new MoveToLocationOp(5));
+		gs = gs.apply(new MoveToLocationOp(8));
+		System.out.println(gs.toString());
+		
+		List<GameOperation> ops = gs.getAllowedOps();
+		for (GameOperation op : ops) {
+			System.out.println(" -----> " + op.toPlanString());
+		}
+		*/
+		
+		/*
 		System.out.println(gs.toString());
 		gs = gs.apply(new DeployPortOp(1));
 		System.out.println(gs.toString());

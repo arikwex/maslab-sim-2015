@@ -19,7 +19,7 @@ public class GameState {
 	public final Map map;
 	public final int robotLocation;
 	public final String heldStack;
-	public List<LocationState> locationStates;
+	public final List<LocationState> locationStates;
 	public final long timeRemaining;
 	public final GameState parent;
 	public final GameOperation op;
@@ -65,7 +65,7 @@ public class GameState {
 			// MOVE TO LOCATION
 			MoveToLocationOp cast = (MoveToLocationOp)op;
 			return new GameState(cast.loc, heldStack, locationStates,
-								 map, timeRemaining -  MOVE_ESTIMATE(), this, op);
+								 map, timeRemaining -  MOVE_ESTIMATE(), this, cast);
 		} else if (op instanceof GrabPortOp) {
 			// GRAB ALL FROM Port
 			GrabPortOp cast = (GrabPortOp)op;
@@ -264,11 +264,14 @@ public class GameState {
 		}
 		
 		// All navigation options except self
-		for (int i = 1; i < locationStates.size(); i++) {
-			if (i != robotLocation) {
-				ops.add(new MoveToLocationOp(i));
+		if (this.parent==null || this.parent !=null && !(this.op instanceof MoveToLocationOp)) {
+			for (int i = 1; i < locationStates.size(); i++) {
+				if (i != robotLocation) {
+					ops.add(new MoveToLocationOp(i));
+				}
 			}
 		}
+		//}
 		
 		return ops;
 	}

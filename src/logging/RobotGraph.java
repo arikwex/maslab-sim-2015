@@ -56,6 +56,9 @@ public class RobotGraph extends JFrame implements Runnable {
     private static final double X_MIN_INITIAL = -4.0;
     private static final double Y_MAX_INITIAL = 4.0;
     private static final double Y_MIN_INITIAL = -4.0;
+    
+    private int mousex = 0;
+    private int mousey = 0;
 
     private double total_mag = 1;
 
@@ -93,6 +96,8 @@ public class RobotGraph extends JFrame implements Runnable {
         }
 
         public void mouseMoved(MouseEvent e) {
+        	mousex = e.getX();
+        	mousey = e.getY();
         }
 
         public void mousePressed(MouseEvent e) {
@@ -101,6 +106,8 @@ public class RobotGraph extends JFrame implements Runnable {
         }
 
         public void mouseDragged(MouseEvent e) {
+        	mousex = e.getX();
+        	mousey = e.getY();
 
             // we need to find the x and y translation
             int diff_x = e.getX() - start_drag[0];
@@ -236,8 +243,8 @@ public class RobotGraph extends JFrame implements Runnable {
             double yscale = FRAME_HEIGHT / (y_max - y_min);
             AffineTransform t = new AffineTransform();
             t.scale(1.0, -1.0);
-            t.translate(FRAME_WIDTH / 2 - ((x_min + x_max) / 2.0 * xscale), -FRAME_WIDTH / 2
-                    - ((y_min + y_max) / 2.0 * yscale));
+            t.translate(FRAME_WIDTH / 2 - ((x_min + x_max) / 2.0 * xscale), 
+            		   -FRAME_WIDTH / 2 - ((y_min + y_max) / 2.0 * yscale));
             t.scale(xscale, yscale);
             g.setTransform(t);
 
@@ -261,8 +268,17 @@ public class RobotGraph extends JFrame implements Runnable {
             g.draw(new Line2D.Double(seg.start, seg.end));
 
             
-            g.setColor(Color.black);
+            // mouse coords
+            /*
             g.setTransform(new AffineTransform());
+            g.setColor(Color.black);
+            double[] rxfm = new double[6];
+            t.getMatrix(rxfm);
+            double mtx = (mousex - rxfm[4]);//rxfm[0];
+            double mty = -(-FRAME_WIDTH / 2 - ((y_min + y_max) / 2.0 * yscale) + mousey)/yscale;
+            g.drawString("MOUSE: " + (Math.round(mtx * 100)/100.0f) + ", " + (Math.round(mty * 100)/100.0f), 30, 60);            
+            */
+            g.setColor(Color.black);
             g.drawString("Time Remaining: " + (int)(Overlord.timeRemaining() / 1000.0) + "s", 30, 30);
         }
         
@@ -284,6 +300,9 @@ public class RobotGraph extends JFrame implements Runnable {
             if (pp.rrtEdges != null && Control.getInstance().getMode() == ControlMode.TRAVEL_PLAN) {
 	            g.setColor(new Color(0,0,255,128));
 	            paintSegments(g, pp.rrtEdges);
+            }
+            if (pp.goal != null) {
+            	paintPoint(g, pp.goal, Color.RED);
             }
         }
         

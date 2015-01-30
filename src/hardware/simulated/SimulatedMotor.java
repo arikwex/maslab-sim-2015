@@ -6,6 +6,7 @@ public class SimulatedMotor implements Motor {
 	private double pwm;
 	private boolean dir;
 	private double speed;
+	private final double MAX_RPM = 120;
 	
 	public SimulatedMotor(int dir, int pwm) {
 	}
@@ -36,6 +37,6 @@ public class SimulatedMotor implements Motor {
 	}
 	
 	public double getSpeed() {
-		return speed;
+		return speed * MAX_RPM;
 	}
 }
