@@ -2,15 +2,20 @@ package mission.gameplan;
 
 import map.Pose;
 import map.geom.Point;
+import mission.TwoStack;
 
 public class LocationState {
-	public final String stack;
+	public TwoStack twoStack;
 	public final LocationType type;
 	public final Pose pose;
 	
-	public LocationState(String stack, LocationType type, Pose pose) {
-		this.stack = stack;
+	public LocationState(TwoStack twoStack, LocationType type, Pose pose) {
+		this.twoStack = twoStack;
 		this.type = type;
 		this.pose = pose;
+	}
+	
+	public String toString() {
+		return twoStack.toString();
 	}
 }

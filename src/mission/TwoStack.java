@@ -12,7 +12,7 @@ public class TwoStack {
 	}
 	
 	public String toString() {
-		return "[" + A + "], [" + B + "]";
+		return "[" + A + "|" + B + "]";
 	}
 	
 	public TwoStack[] getCrossOptions() {
