@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
 
+import core.Config;
 import map.Map;
 
 public abstract class Obstacle extends Polygon {
@@ -39,7 +40,7 @@ public abstract class Obstacle extends Polygon {
         List<Point> roVertices = this.getVertices();
 
         for (Point p : roVertices) {
-            for (double t = 0; t <= Math.PI * 2; t += Math.PI / 8)
+            for (double t = 0; t <= Math.PI * 2; t += Math.PI / Config.CSPACE_RADIUS_SEGMENTS)
                 csoPoints.add(new Point(p.x + r * Math.cos(t), p.y + r * Math.sin(t)));
         }
 

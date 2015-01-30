@@ -18,11 +18,9 @@ public class Config {
     	{ -0.15, 0.1 }
     };
 	
-	
 	// RRT AND PLANNING CONFIG
-    public static final int COLLISION_RADIUS_SEGMENTS = 4;
-
-    public static final double BUFFER_SIZE = .05;
+    public static final int CSPACE_RADIUS_SEGMENTS = 4;
+    public static final double BUFFER_SIZE = .00;
     
 	public static final double RRT_GOAL_BIAS = .05;
 	public static final double MAXLENGTH = 1.5;
