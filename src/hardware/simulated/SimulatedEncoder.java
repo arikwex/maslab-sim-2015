@@ -15,7 +15,7 @@ public class SimulatedEncoder implements Encoder {
 		long nowTime = System.currentTimeMillis();
 		double dT = (nowTime - lastTime) / 1000.0;
 		lastTime = nowTime;
-		return motor.getSpeed() * dT / 20.0;
+		return motor.getSpeed() * dT / 10.0;
 	}
 
 	public void setSimulatedMotor(SimulatedMotor motor) {
