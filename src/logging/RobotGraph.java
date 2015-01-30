@@ -1,7 +1,5 @@
 package logging;
 
-import hardware.Hardware;
-
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -9,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -21,7 +18,6 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,17 +25,15 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import control.Control;
-import control.ControlMode;
 import map.Map;
 import map.elements.HomeBase;
 import map.geom.Obstacle;
 import map.geom.Point;
-import map.geom.Polygon;
 import map.geom.Robot;
 import map.geom.Segment;
 import rrt.PathPlanning;
-import core.Config;
+import control.Control;
+import control.ControlMode;
 import core.Overlord;
 
 public class RobotGraph extends JFrame implements Runnable {

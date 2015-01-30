@@ -1,6 +1,6 @@
 package map.elements;
 
-import java.awt.geom.Path2D.Double;
+import java.awt.geom.Path2D;
 
 import map.geom.Point;
 import map.geom.Polygon;
@@ -16,7 +16,7 @@ public class HomeBase {
         }
 	}
 	
-    public Double getPath() {
+    public Path2D.Double getPath() {
     	return path.getPath();
     }
     

@@ -229,4 +229,46 @@ public class Map {
 		
 		return avg/scanWidth;
     }
+    
+    public Segment getBestHomePose() {
+    	homeBase.getPolygon().getVertices();
+    	
+    	double maxScore = 0;
+    	Segment maxSegment = null;
+    	
+    	int counter = 0;
+    	outer:
+    	while(true) {
+    		Point p = randomPoint();
+
+    		if (homeBase.getPolygon().contains(p)) {
+    			for (Obstacle o : this.getObstacles()) {
+        	        if (o.getMaxCSpace().contains(p)) {
+        	        	continue outer;
+        	        }
+                }
+    			
+    			
+    			Segment seg = getBestApproach(p);
+    			double min = seg.length();
+    			
+    			for (Stack s : stacks) {
+    				if (s.pt.distance(p) < min) {
+    					min = s.pt.distance(p);
+    				}
+    			}
+    			
+    			if (min > maxScore) {
+    				maxScore = min;
+    				maxSegment = seg;
+    			}
+    			
+
+    			counter++;
+    			if (counter > 20) {
+    		    	return maxSegment;
+    			}
+    		}
+    	}
+    }
 }
