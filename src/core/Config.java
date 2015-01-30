@@ -7,7 +7,7 @@ public class Config {
 	public static final boolean sim = true;
 
 	// PLANNER CONFIG
-	public static final double HUB_DISTANCE = 0.35;
+	public static final double HUB_DISTANCE = 0.31;
 	
 	// MAP CONFIG
 

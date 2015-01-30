@@ -13,6 +13,7 @@ public class AssembleOp extends GameOperation {
 	}
 	public String toPlanString() {
 		// Operations
+		//System.out.println("ASSMEBLER GOAL: " + src + " ---> " + dest);
 		AssemblyStep[] steps = Assembler.getAssemblySteps(src, dest);
 		String asm = "";
 		for (int i = 0; i < steps.length; i++) {

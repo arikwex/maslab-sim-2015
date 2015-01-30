@@ -10,6 +10,8 @@ import java.util.Queue;
 import mission.TwoStack;
 
 public class Assembler {
+	public static HashMap<String,Integer> timeMap = new HashMap<String,Integer>();
+	
 	public static AssemblyStep[] getAssemblySteps(TwoStack src, TwoStack dest) {
 		Queue<AssemblyState> open = new PriorityQueue<AssemblyState>(50000, new Comparator<AssemblyState>() {
 			@Override
@@ -49,5 +51,20 @@ public class Assembler {
 			current = current.getParent();
 		}
 		return steps.toArray(new AssemblyStep[steps.size()]);
+	}
+	
+	public static int estimateAssemblyTime(TwoStack src, TwoStack dest) {
+		String hash = src.toString() + dest.toString();
+		if (timeMap.containsKey(hash)) {
+			return timeMap.get(hash);
+		} else {
+			AssemblyStep[] steps = Assembler.getAssemblySteps(src, dest);
+			int cost = 0;
+			for (int i = 0; i < steps.length; i++) {
+				cost += steps[i].estimatedCost;
+			}
+			timeMap.put(hash, cost);
+			return cost;
+		}
 	}
 }

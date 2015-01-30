@@ -5,7 +5,6 @@ import java.io.File;
 import logging.Log;
 import map.MapLoader;
 import map.Map;
-import mission.gameplan.PlanLoader;
 import rrt.PathPlanning;
 import state_machine.StateMachine;
 import control.Control;

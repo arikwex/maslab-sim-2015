@@ -1,14 +1,18 @@
 package mission.gameplan;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import core.Config;
+import rrt.PathPlanning;
 import state_machine.game.PlannerState;
 import map.Map;
 import map.Pose;
 import map.geom.Point;
 import mission.TwoStack;
+import mission.assmebly.Assembler;
+import mission.assmebly.AssemblyStep;
 import mission.gameplan.operations.AssembleOp;
 import mission.gameplan.operations.DeployPlatformOp;
 import mission.gameplan.operations.DeployPortOp;
@@ -65,8 +69,12 @@ public class GameState {
 		if (op instanceof MoveToLocationOp) {
 			// MOVE TO LOCATION
 			MoveToLocationOp cast = (MoveToLocationOp)op;
+			Pose src = this.locationStates.get(robotLocation).pose;
+			src = new Pose(src.x, src.y, 0);
+			Pose dest = this.locationStates.get(cast.loc).pose;
+			dest = new Pose(dest.x, dest.y, 0);
 			return new GameState(cast.loc, heldStack, locationStates,
-								 map, timeRemaining -  MOVE_ESTIMATE(), this, cast);
+								 map, timeRemaining -  MOVE_ESTIMATE(src, dest), this, cast);
 		} else if (op instanceof GrabPortOp) {
 			// GRAB ALL FROM Port
 			GrabPortOp cast = (GrabPortOp)op;
@@ -129,9 +137,11 @@ public class GameState {
 	
 	public GameState assemble(AssembleOp op) {
 		List<LocationState> locs = cloneLocations(locationStates);
-		locs.get(robotLocation).twoStack = new TwoStack(op.dest.A, op.dest.B);
+		TwoStack src = new TwoStack(op.src.A, op.src.B);
+		TwoStack dest = new TwoStack(op.dest.A, op.dest.B);
+		locs.get(robotLocation).twoStack = dest;
 		return new GameState(robotLocation, "", locs,
-		 		   			 map, timeRemaining - ASSEMBLE_ESTIMATE(), this, op);
+		 		   			 map, timeRemaining - ASSEMBLE_ESTIMATE(src, dest), this, op);
 	}
 	
 	public int computeScore() {
@@ -202,8 +212,9 @@ public class GameState {
 	}
 	
 	// TODO: Make these estimates better?
-	public long MOVE_ESTIMATE() {
-		return 10000;
+	public long MOVE_ESTIMATE(Pose src, Pose dest) {
+		//long time = PathPlanning.getInstance().estimateTravelTime(src, dest);
+		return 10000;//time;
 	}
 	
 	public long GRAB_ESTIMATE() {
@@ -214,8 +225,9 @@ public class GameState {
 		return 5000;
 	}
 	
-	public long ASSEMBLE_ESTIMATE() {
-		return 20000;
+	public long ASSEMBLE_ESTIMATE(TwoStack src, TwoStack dest) {
+		int time = Assembler.estimateAssemblyTime(src, dest);
+		return time;
 	}
 	
 	public List<GameOperation> getAllowedOps() {
@@ -241,18 +253,21 @@ public class GameState {
 					ops.add(new DeployPortOp(2));
 				}
 			}
-			// ASSMEBLY OPTIONS if BOTH ports are loaded
-			if (robLoc.twoStack.A.length() > 0 && robLoc.twoStack.B.length() > 0) {
-				TwoStack[] crossOptions = robLoc.twoStack.getCrossOptions();
-				for (int i = 0; i < crossOptions.length; i++) {
-					ops.add(new AssembleOp(robLoc.twoStack, crossOptions[i]));
-				}
-			} else {
-				// ASSMEBLY OPTIONS if ONE port is loaded
-				if (robLoc.twoStack.A.length() > 0 || robLoc.twoStack.B.length() > 0) {
-					TwoStack[] reorderOptions = robLoc.twoStack.getReorderOptions();
-					for (int i = 0; i < reorderOptions.length; i++) {
-						ops.add(new AssembleOp(robLoc.twoStack, reorderOptions[i]));
+			// only allow assembly if the last step was NOT an assembly step
+			if (this.parent == null || !(this.op instanceof AssembleOp)) {
+				// ASSMEBLY OPTIONS if BOTH ports are loaded
+				if (robLoc.twoStack.A.length() > 0 && robLoc.twoStack.B.length() > 0) {
+					TwoStack[] crossOptions = robLoc.twoStack.getCrossOptions();
+					for (int i = 0; i < crossOptions.length; i++) {
+						ops.add(new AssembleOp(robLoc.twoStack, crossOptions[i]));
+					}
+				} else {
+					// ASSMEBLY OPTIONS if ONE port is loaded
+					if (robLoc.twoStack.A.length() > 0 || robLoc.twoStack.B.length() > 0) {
+						TwoStack[] reorderOptions = robLoc.twoStack.getReorderOptions();
+						for (int i = 0; i < reorderOptions.length; i++) {
+							ops.add(new AssembleOp(robLoc.twoStack, reorderOptions[i]));
+						}
 					}
 				}
 			}

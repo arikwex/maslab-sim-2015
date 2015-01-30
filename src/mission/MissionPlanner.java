@@ -4,11 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 import core.Config;
+import rrt.PathPlanning;
 import state_machine.game.PlannerState;
 import map.Map;
 import map.MapLoader;
@@ -18,6 +20,8 @@ import map.elements.Stack;
 import map.geom.Point;
 import map.geom.Polygon;
 import map.geom.Segment;
+import mission.assmebly.Assembler;
+import mission.assmebly.AssemblyStep;
 import mission.gameplan.GameState;
 import mission.gameplan.LocationState;
 import mission.gameplan.LocationType;
@@ -139,14 +143,11 @@ public class MissionPlanner {
 		}
 		
 		// Find random points inside homebase
-		for (int i = 0; i < 2; i++) {
-			// TODO: This is horrible.
-			Point hb = map.randomPoint();
-			while (!poly.contains(hb)) {
-				hb = map.randomPoint();
-			}
-			locationStates.add(new LocationState(new TwoStack("", ""), LocationType.HOMEBASE, new Pose(hb.x, hb.y, 0)));
-		}
+		Segment s = map.getBestHomePose();
+		s = s.trim(Config.HUB_DISTANCE);
+		s = new Segment(s.end, s.start);
+		Pose hub = new Pose(s.start.x, s.start.y, s.theta);
+		locationStates.add(new LocationState(new TwoStack("", ""), LocationType.HOMEBASE, hub));
 		return new GameState(0, "", locationStates, map, timeRemaining, null, null);
 	}
 	
@@ -202,12 +203,14 @@ public class MissionPlanner {
 		for (int i = 0; i < combos.length; i++) {
 			System.out.println(combos[i]);
 		}
-		TwoStack dest = new TwoStack("", "GRR");
+		*/
+		/*
+		TwoStack src = new TwoStack("RRG", "GGR");
+		TwoStack dest = new TwoStack("RRR", "GGG");
 		AssemblyStep[] steps = Assembler.getAssemblySteps(src, dest);
 		System.out.println("# of steps = " + steps.length);
 		for (int i = 0; i < steps.length; i++) {
 			System.out.println(steps[i].name());
-		}
-		*/
+		}*/
 	}
 }

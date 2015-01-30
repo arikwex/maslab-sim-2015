@@ -4,8 +4,10 @@ import hardware.Hardware;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import control.Control;
 import control.ControlMode;
@@ -29,6 +31,7 @@ public class PathPlanning extends Thread {
 	private Map map;
 	private volatile boolean running = true;
 	
+	public HashMap<String, Long> timeMap = new HashMap<String, Long>();
 	public ArrayList<Segment> rrtEdges;
 	public LinkedList<Point> path;
 	public Point nextWaypoint;
@@ -267,5 +270,21 @@ public class PathPlanning extends Thread {
 		}
 			
 		return brokenPath;
+	}
+	
+	public long estimateTravelTime(Point a, Point b) {
+		String hash = a.toString() + b.toString();
+		if (timeMap.containsKey(hash)) {
+			return timeMap.get(hash);
+		} else {
+			System.out.println("estimating..." + a + " --> " + b);
+			RRTSearch(new Pose(a.x, a.y, 0), new Pose(b.x, b.y, 0));
+			System.out.println("done.");
+			double pathLength = 0;
+			for (int i = 0; i < rrtEdges.size(); i++) {
+				pathLength += rrtEdges.get(i).length();
+			}
+			return (long)(pathLength * 3 * 1000);
+		}
 	}
 }

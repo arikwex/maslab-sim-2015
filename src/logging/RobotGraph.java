@@ -25,6 +25,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import control.Control;
+import control.ControlMode;
 import map.Map;
 import map.Pose;
 import map.elements.HomeBase;
@@ -272,8 +274,8 @@ public class RobotGraph extends JFrame implements Runnable {
         
         private void paintLocations(Graphics2D g) {
         	List<Pose> locations = map.getLocations();
-        	// skip starting location ---> size - platforms - homebase
-        	for (int i = 1; i < locations.size() - map.getPlatforms().size() - 1; i++ ) {
+        	// skip starting location ---> size
+        	for (int i = 1; i < locations.size(); i++ ) {
         		Pose pose = locations.get(i);
         		paintPoint(g, pose, Color.MAGENTA);
         		Point[] hubs = PlannerState.getPorts(pose, pose.theta);
