@@ -18,6 +18,7 @@ class Particle {
   RobotPose pose;
   Prob weight;
 
+  Particle() : Particle(RobotPose(0, 0, 0), Prob(0)) {}
   Particle(RobotPose pose, Prob weight) : pose(pose), weight(weight) {}
 };
 

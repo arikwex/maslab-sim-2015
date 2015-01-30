@@ -5,7 +5,11 @@ LIBDIR = lib
 BINDIR = bin
 TESTDIR = test
 
-INCLUDES = -I$(GTEST)/include -I$(GTEST)/ -I$(SRCDIR)/
+ifndef JAVA_HOME
+	$(error JAVA_HOME must be set)
+endif
+
+INCLUDES = -I$(GTEST)/include -I$(GTEST)/ -I$(SRCDIR)/ -I$(JAVA_HOME)/include
 CXXFLAGS += -std=c++0x -g -Wall -Wextra -pthread -pg 
 ifdef EDISON
 	CXXFLAGS += -DEDISON
@@ -18,7 +22,7 @@ else
 endif
 
 # ALL target: build every binary
-all: builddir tests main_sim main
+all: builddir tests main_sim main librobotjni
 
 builddir:
 	mkdir -p $(OBJDIR)
@@ -41,6 +45,11 @@ $(ROBOT_OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 librobot: $(ROBOT_OBJS)
 	ar -rv $(LIBROBOT) $(ROBOT_OBJS)
 
+# ROBOT JNI library
+LIBROBOTJNI = $(LIBDIR)/librobotjni.so
+librobotjni: $(ROBOT_OBJS) | builddir
+	g++ -shared -o $(LIBROBOTJNI) $(LINKFLAGS) $(OBJS)
+
 # TESTS
 TEST_SRCS = $(wildcard $(TESTDIR)/*.cpp)
 tests_depend: .tests_depend
@@ -56,7 +65,7 @@ main_sim_depend: .main_sim_depend
 .main_sim_depend: $(MAIN_SIM_SRCS)
 	rm -f .main_sim_depend
 	g++ $(INCLUDES) $(CXXFLAGS) -MM $^ > .main_sim_depend
-main_sim: $(MAIN_SIM_SRCS) librobot
+main_sim: $(MAIN_SIM_SRCS) librobot | builddir
 	g++ $(INCLUDES) $(CXXFLAGS) $(MAIN_SIM_SRCS) $(LIBROBOT) $(LINKFLAGS) -o $(BINDIR)/$@
 
 # MAIN
@@ -65,7 +74,7 @@ main_depend: .main_depend
 .main_depend: $(MAIN_SRCS)
 	rm -f .main_depend
 	g++ $(INCLUDES) $(CXXFLAGS) -MM $^ > .main_depend
-main: $(MAIN_SRCS) librobot
+main: $(MAIN_SRCS) librobot | builddir
 ifdef EDISON
 	g++ $(INCLUDES) $(CXXFLAGS) $(MAIN_SRCS) $(LIBROBOT) $(LINKFLAGS) -o $(BINDIR)/$@
 endif

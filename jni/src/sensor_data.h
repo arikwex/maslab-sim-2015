@@ -2,6 +2,8 @@
 #define SENSOR_DATA_H
 
 #include "error.h"
+#include "map.h"
+#include "prob.h"
 
 // Interface for a sensor data bundle
 class SensorData {
