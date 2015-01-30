@@ -23,8 +23,8 @@ public class Config {
 	// RRT AND PLANNING CONFIG
 
     public static final int CSPACE_RADIUS_SEGMENTS = 4;
-    public static final double CSPACE_EXTRA_BUFFER = 0.03;
-    public static final double BUFFER_SIZE = 0.07;
+    public static final double CSPACE_EXTRA_BUFFER = 0.02;
+    public static final double BUFFER_SIZE = 0.03;
     
 	public static final double RRT_GOAL_BIAS = 0.1;
 	public static final double MAXLENGTH = 0.75;

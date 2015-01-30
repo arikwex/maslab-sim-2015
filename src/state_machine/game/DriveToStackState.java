@@ -71,7 +71,7 @@ public class DriveToStackState extends State {
 	    	
 	    	attempts++;
     	} else {
-	    	if (Control.getInstance().getDistanceToTarget() < 0.05) {
+	    	if (Control.getInstance().getDistanceToTarget() < 0.02) {
 	    		done = true;
 	    		Control.getInstance().setTarget(null);
 	    	}

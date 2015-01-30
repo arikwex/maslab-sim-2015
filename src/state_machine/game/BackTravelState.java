@@ -42,7 +42,7 @@ public class BackTravelState extends State {
     		Control.getInstance().setTarget(curGoal);
     		issued = true;
     	} else {
-	    	if (Control.getInstance().getDistanceToTarget() < 0.05) {
+	    	if (Control.getInstance().getDistanceToTarget() < 0.02) {
 	    		arrived = true;
 	    		Control.getInstance().setTarget(null);
 	    	}
