@@ -255,11 +255,11 @@ public class RobotGraph extends JFrame implements Runnable {
             paintPath(g);
             paintBot(g);
             paintObstacles(g);
-            
-            g.setColor(Color.RED);
-            paintSegments(g, map.getBestApproach(bot.pose, 1.5, true));
+
             g.setColor(Color.BLUE);
-            paintSegments(g, map.getBestApproach(bot.pose, 1.5, false));
+            Segment seg = map.getBestApproach(bot.pose);
+            g.draw(new Line2D.Double(seg.start, seg.end));
+
             
             g.setColor(Color.black);
             g.setTransform(new AffineTransform());

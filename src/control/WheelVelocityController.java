@@ -68,11 +68,11 @@ public class WheelVelocityController {
         double ff = .02 + 1.0 * targetVel/Config.MAX_VELOCITY;
         
         double actual = Config.WHEEL_RADIUS;
-        if (wheel == RIGHT)
+        /*if (wheel == RIGHT)
         	actual *= hw.encoderRight.getAngularSpeed();
         else
         	actual *= hw.encoderLeft.getAngularSpeed();
-        
+        */
         System.out.println("Actual: " + wheel + " " + actual + " desired " + targetVel);
         
         return pid.step(actual) + ff;

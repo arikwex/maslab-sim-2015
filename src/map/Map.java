@@ -158,17 +158,20 @@ public class Map {
     	return collisions;
     }
 
+    public Segment getBestApproach(Point target) {
+    	return getBestApproach(target, 1.5, false);
+    }
     
-    public ArrayList<Segment> getBestApproach(Point center, double max, boolean useAvg) {
+    public Segment getBestApproach(Point target, double max, boolean useAvg) {
     	int samples = 64;
     	double sampleWidth = Math.PI*2/samples;
-    	double scan = Math.PI/4;
+    	double scan = Math.PI/3;
     	int scanWidth = (int)(scan/sampleWidth);
     	ArrayList<Segment> segments = new ArrayList<Segment>();
     	
     	for (int i = 0; i < samples; i++) {
     		Point ray = new Point(max,0).getRotated(i * sampleWidth);
-    		Segment seg = new Segment(center, center.add(ray));
+    		Segment seg = new Segment(target, target.add(ray));
     		
     		for (Wall w : walls) {
     			Segment wallSeg = new Segment(w.start, w.end);
@@ -198,14 +201,8 @@ public class Map {
 			newSegments.add(segments.get(i).trim(score));
 
     	}
-    	    	
-    	newSegments.clear();
-    	newSegments.add(maxSegment);
 
-    	return newSegments;
-    	 
-    	
-    	//return null;
+    	return maxSegment;
     }
     
     
