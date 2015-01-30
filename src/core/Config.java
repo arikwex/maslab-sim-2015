@@ -12,10 +12,11 @@ public class Config {
 	// MAP CONFIG
 
 	// ROBOT CONFIG
-	public static final double WHEELBASE = 0.213995;
-	public static final double WHEEL_RADIUS = 0.0492125;
+	public static final double WHEELBASE = 0.18;
+	public static final double WHEEL_RADIUS = .073025/2;
 	public static final double WHEEL_CIRCUMFERENCE = WHEEL_RADIUS * Math.PI * 2.0;
-	public static final double MAX_VELOCITY = WHEEL_CIRCUMFERENCE * 5.833;
+	public static final double MAX_WHEEL_RPS = 2;
+	public static final double MAX_VELOCITY = WHEEL_CIRCUMFERENCE * MAX_WHEEL_RPS;
 
 	public static double[][] botPoly = new double[][] { { -0.15, -0.1 }, { 0.05, -0.1 }, { 0.05, 0.1 }, { -0.15, 0.1 } };
 

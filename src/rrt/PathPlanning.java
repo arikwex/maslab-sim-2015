@@ -213,7 +213,9 @@ public class PathPlanning extends Thread {
 			newNode = new TreeNode(seg.end);
 			closest.addChild(newNode);
 
-            rrtEdges.add(seg);
+			synchronized (rrtEdges) {
+	            rrtEdges.add(seg);
+			}
 
 			if (p.distance(goal) < .1) {
 			    goalNode = new TreeNode(goal);

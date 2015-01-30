@@ -303,7 +303,9 @@ public class RobotGraph extends JFrame implements Runnable {
             PathPlanning pp = PathPlanning.getInstance();
             if (pp.rrtEdges != null && Control.getInstance().getMode() == ControlMode.TRAVEL_PLAN) {
 	            g.setColor(new Color(0,0,255,128));
-	            paintSegments(g, pp.rrtEdges);
+	            synchronized (pp.rrtEdges) {
+		            paintSegments(g, pp.rrtEdges);
+				}
             }
             if (pp.goal != null) {
             	paintPoint(g, pp.goal, Color.RED);

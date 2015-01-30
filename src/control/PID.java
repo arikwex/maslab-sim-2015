@@ -63,6 +63,9 @@ public class PID {
 
 		double p = kp * currError;
 
+		//System.out.println("currError: " + currError);
+		//System.out.println("deltaT: " + deltaT);
+
 		this.accumI += currError * deltaT;
 		if (accumI > maxi) {
 			accumI = maxi;
@@ -74,7 +77,9 @@ public class PID {
 		double d = 0;
 		if (deltaT > 0)
 			d = kd * (currError - prevError) / deltaT;
-
+		
+		//System.out.println("accumI: " + accumI);
+		//System.out.println(p + ", " + i + ", " + d);
 		double result = p + i + d;
 		if (result > max) {
 			result = max;
@@ -114,5 +119,25 @@ public class PID {
 
 	public double getOutput() {
 		return output;
+	}
+	
+	public static void main(String[] args) {
+		PID pid = new PID(1, 0, 0.001, 1, 2);
+		pid.start(0, 10);
+		double actual = 0;
+		for (int i = 0; i<20; i++) {
+			sleep(10);
+			System.out.println(actual);
+			actual += pid.step(actual);
+		}
+	}
+	
+	public static void sleep(long millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

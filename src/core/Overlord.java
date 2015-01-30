@@ -8,9 +8,11 @@ import map.Map;
 import rrt.PathPlanning;
 import state_machine.StateMachine;
 import control.Control;
+import data_collection.DataCollection;
 
 public class Overlord extends Thread {
 
+	DataCollection dc;
 	StateEstimator se;
 	StateMachine sm;
 	PathPlanning pp;
@@ -27,6 +29,7 @@ public class Overlord extends Thread {
 
 		try {Thread.sleep(50);} catch (InterruptedException e) {}
 		
+		dc = DataCollection.getInstance();
 		se = StateEstimator.getInstance();
 		sm = StateMachine.getInstance();
 		pp = PathPlanning.getInstance();
@@ -40,14 +43,18 @@ public class Overlord extends Thread {
 	public void start() {
 		startTime = System.currentTimeMillis();
 		pp.start();
+		long loopStart;
 		while (timeRemaining() > 0) {
-			
+			loopStart = System.currentTimeMillis();
+			dc.step();
 			se.step();
 			sm.step();
 			c.step();
 			l.updatePose();
 			
-			try {Thread.sleep(50-(System.currentTimeMillis()-startTime));} catch (Exception e){};
+			try {Thread.sleep(5);} catch (Exception e){};
+			//try {Thread.sleep(3-(System.currentTimeMillis()-loopStart));} catch (Exception e){};
+			//try {Thread.sleep(50-(System.currentTimeMillis()-startTime));} catch (Exception e){};
 		}
 		pp.end();
 	}

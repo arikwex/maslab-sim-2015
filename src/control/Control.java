@@ -29,9 +29,11 @@ public class Control {
         this.pp = PathPlanning.getInstance();
         bot = Map.getInstance().bot;
         
-        rotPid = new PID(1, 0.05, 0.7, 0.1, .25);
+        //rotPid = new PID(1, 0.05, 0.7, 0.1, .25);
+        rotPid = new PID(.1, 0.0, .0, 0.1, .25);
         rotPid.start(0, 0);
 
+        //velPid = new PID(1.5, 0, 0, 0.1, .4);
         velPid = new PID(1.5, 0, 0, 0.1, .4);
         velPid.start(0, 0);
     }
@@ -80,9 +82,9 @@ public class Control {
         setVelocity(vel - rot, vel + rot);
     }
     
-    private void setVelocity(double left, double right) {   
-    	hw.motorLeft.setSpeed(left);
-    	hw.motorRight.setSpeed(right);
+    private void setVelocity(double left, double right) {
+    	hw.motorLeft.setSpeed(left * Config.MAX_VELOCITY);
+    	hw.motorRight.setSpeed(right * Config.MAX_VELOCITY);
     }
     
     public void step() {
