@@ -247,15 +247,19 @@ public class PathPlanning extends Thread {
 		return brokenPath;
 	}
 	
-	public LinkedList<Point> breakPath(LinkedList<Point> initialPath) {
+	public static double getTotalLength(LinkedList<Point> path) {
 		double totalLength = 0;
 		Point prev = null;
-		for (Point curr : initialPath) {
+		for (Point curr : path) {
 			if (prev != null)
 				totalLength += prev.distance(curr);
 			prev = curr;
 		}
-		
+		return totalLength;
+	}
+	
+	public LinkedList<Point> breakPath(LinkedList<Point> initialPath) {
+		double totalLength = getTotalLength(initialPath);
 		double avgLength = 0.1;
 		ArrayList<Double> breakDistances = new ArrayList<Double>();
 		for (int i = 0; i<totalLength/avgLength; i++)
@@ -285,13 +289,10 @@ public class PathPlanning extends Thread {
 			return timeMap.get(hash);
 		} else {
 			System.out.println("estimating..." + a + " --> " + b);
-			RRTSearch(new Pose(a.x, a.y, 0), new Pose(b.x, b.y, 0));
-			System.out.println("done.");
-			double pathLength = 0;
-			for (int i = 0; i < rrtEdges.size(); i++) {
-				pathLength += rrtEdges.get(i).length();
-			}
-			return (long)(pathLength * 3 * 1000);
+			LinkedList<Point> path = RRTSearch(new Pose(a.x, a.y, 0), new Pose(b.x, b.y, 0), 1000);
+			double totalLength = PathPlanning.getTotalLength(path);
+			System.out.println("done. (" + totalLength);
+			return (long)(totalLength * 3 * 1000);
 		}
 	}
 }

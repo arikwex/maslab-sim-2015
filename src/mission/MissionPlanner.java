@@ -139,7 +139,11 @@ public class MissionPlanner {
 		
 		// Create platform locations
 		for (Platform platform : map.getPlatforms()) {
-			locationStates.add(new LocationState(new TwoStack("", ""), LocationType.PLATFORM, platform.getDockingPose()));
+			Segment s = map.getBestPlatformApproach(platform);
+			s = s.trim(Config.HUB_DISTANCE);
+			s = new Segment(s.end, s.start);
+			Pose hub = new Pose(s.start.x, s.start.y, s.theta);
+			locationStates.add(new LocationState(new TwoStack("", ""), LocationType.PLATFORM, hub));
 		}
 		
 		// Find random points inside homebase

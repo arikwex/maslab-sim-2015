@@ -268,6 +268,7 @@ public class RobotGraph extends JFrame implements Runnable {
             double mty = -(-FRAME_WIDTH / 2 - ((y_min + y_max) / 2.0 * yscale) + mousey)/yscale;
             g.drawString("MOUSE: " + (Math.round(mtx * 100)/100.0f) + ", " + (Math.round(mty * 100)/100.0f), 30, 60);            
             */
+            g.setTransform(new AffineTransform());
             g.setColor(Color.black);
             g.drawString("Time Remaining: " + (int)(Overlord.timeRemaining() / 1000.0) + "s", 30, 30);
         }

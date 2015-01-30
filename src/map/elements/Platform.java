@@ -15,10 +15,6 @@ public class Platform extends Obstacle {
 		end = B;
 	}
 	
-	public Pose getDockingPose() {
-		return new Pose((start.x + end.x)/2, (start.y + end.y)/2, 0);
-	}
-	
 	public Color getColor() {
 		return new Color(220,220,0);
 	}
